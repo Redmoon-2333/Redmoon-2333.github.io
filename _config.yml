@@ -7,9 +7,9 @@ description: >-
 
 # ★ 二选一（见 README）：
 #  A) 用户主站点仓库 <username>.github.io → url 如下，baseurl 保持 ""
-url: "https://YOUR_GITHUB_USERNAME.github.io"
+url: "https://redmoon-2333.github.io"
 baseurl: ""
-github_username: YOUR_GITHUB_USERNAME
+github_username: Redmoon-2333
 
 lang: zh-CN
 permalink: /:year/:month/:day/:title/
@@ -20,6 +20,9 @@ highlighter: rouge
 plugins:
   - jekyll-feed
   - jekyll-seo-tag
+
+author:
+  name: 胡淙煜
 
 show_excerpts: true
 encoding: utf-8
