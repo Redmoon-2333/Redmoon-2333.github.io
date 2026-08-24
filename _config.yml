@@ -1,5 +1,5 @@
 # ===== 站点信息（改成你自己的）=====
-title: 胡淙煜 · 训练日志
+title: RedMoon · 训练日志
 email: 10245101417@stu.ecnu.edu.cn
 description: >-
   把大模型拆开，一个 token 一个 token 地学。
@@ -11,6 +11,7 @@ url: "https://redmoon-2333.github.io"
 baseurl: ""
 github_username: Redmoon-2333
 
+name: RedMoon
 lang: zh-CN
 permalink: /:year/:month/:day/:title/
 markdown: kramdown
@@ -22,7 +23,8 @@ plugins:
   - jekyll-seo-tag
 
 author:
-  name: 胡淙煜
+  name: RedMoon
+  uri: https://redmoon-2333.github.io
 
 show_excerpts: true
 encoding: utf-8
