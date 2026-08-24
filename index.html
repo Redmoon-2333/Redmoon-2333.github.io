@@ -1,0 +1,38 @@
+---
+layout: default
+---
+<section class="hero">
+  <p class="eyebrow mono rise" style="--d:0s">∇ TRAINING LOG · EST. 2026</p>
+  <h1 class="hero-title rise" style="--d:.06s">把大模型拆开，<br>一个 token 一个 token 地学。</h1>
+  <p class="lede rise" style="--d:.12s">我是胡淙煜，华东师大软件工程在读。这里公开记录我训练、精读、拆解大模型的全过程——从手写 Transformer，到后训练与推理优化。</p>
+  <div class="log mono rise" style="--d:.18s" aria-label="训练日志">
+    <span class="log-prompt">$</span> <span id="log-text"></span><span class="log-caret" aria-hidden="true"></span>
+  </div>
+</section>
+
+{% assign recent = site.posts | slice: 0, 8 %}
+<section class="feed">
+  <div class="section-head rise">
+    <h2 class="mono">近期 checkpoint</h2>
+    <a class="more mono" href="{{ '/archive/' | relative_url }}">全部文章 →</a>
+  </div>
+
+  {% if recent.size > 0 %}
+    <ol class="post-list">
+      {% for post in recent %}
+      <li class="post-item reveal-on-scroll">
+        <a href="{{ post.url | relative_url }}">
+          <p class="eyebrow mono">
+            <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: '%Y-%m-%d' }}</time>
+            {% if post.tags != empty %}· {% for t in post.tags limit:3 %}<span>{{ t }}</span>{% unless forloop.last %} / {% endunless %}{% endfor %}{% endif %}
+          </p>
+          <h3 class="post-item-title">{{ post.title }}</h3>
+          {% if post.excerpt and post.excerpt != '' %}<p class="excerpt">{{ post.excerpt | strip_html | truncate: 96 }}</p>{% endif %}
+        </a>
+      </li>
+      {% endfor %}
+    </ol>
+  {% else %}
+    <p class="empty mono">还没有 checkpoint。第一篇正在训练中。</p>
+  {% endif %}
+</section>

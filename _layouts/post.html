@@ -1,0 +1,18 @@
+---
+layout: default
+---
+<article class="post" itemscope itemtype="https://schema.org/BlogPosting">
+  <header class="post-header rise" style="--d:.02s">
+    <p class="eyebrow mono">
+      <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: '%Y-%m-%d' }}</time>
+      {% if page.tags and page.tags != empty %}· {% for t in page.tags %}<span class="tag">{{ t }}</span>{% unless forloop.last %} / {% endunless %}{% endfor %}{% endif %}
+    </p>
+    <h1 class="post-title" itemprop="headline">{{ page.title }}</h1>
+  </header>
+  <div class="prose rise" style="--d:.08s" itemprop="articleBody">
+    {{ content }}
+  </div>
+  <footer class="post-foot rise" style="--d:.12s">
+    <a class="back mono" href="{{ '/archive/' | relative_url }}">← 返回全部文章</a>
+  </footer>
+</article>

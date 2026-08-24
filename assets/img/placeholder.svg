@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" font-family="ui-monospace,Consolas,monospace">
+  <rect width="1200" height="520" fill="#F3F2ED"/>
+  <g stroke="#E6E5DF" stroke-width="1" fill="none">
+    <path d="M0 130H1200M0 260H1200M0 390H1200M300 0V520M600 0V520M900 0V520"/>
+  </g>
+  <text x="600" y="252" text-anchor="middle" font-size="26" fill="#565B66">assets/img/ · 把图片放进这个目录</text>
+  <text x="600" y="292" text-anchor="middle" font-size="18" fill="#B31B1B">![说明文字](/assets/img/你的图片.png)</text>
+</svg>

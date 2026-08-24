@@ -1,0 +1,31 @@
+# ===== 站点信息（改成你自己的）=====
+title: 胡淙煜 · 训练日志
+email: 10245101417@stu.ecnu.edu.cn
+description: >-
+  把大模型拆开，一个 token 一个 token 地学。
+  记录 LLM 原理、后训练、推理优化与 Agent 开发的学习与实践。
+
+# ★ 二选一（见 README）：
+#  A) 用户主站点仓库 <username>.github.io → url 如下，baseurl 保持 ""
+url: "https://YOUR_GITHUB_USERNAME.github.io"
+baseurl: ""
+github_username: YOUR_GITHUB_USERNAME
+
+lang: zh-CN
+permalink: /:year/:month/:day/:title/
+markdown: kramdown
+kramdown:
+  input: GFM
+highlighter: rouge
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+
+show_excerpts: true
+encoding: utf-8
+
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - vendor

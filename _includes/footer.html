@@ -1,0 +1,22 @@
+</main>
+<footer class="colophon">
+  <div class="wrap colophon-inner">
+    <p class="mono"><span aria-hidden="true">∇ </span>{{ site.name | default: '胡淙煜' }} · Jekyll · GitHub Pages · <a href="{{ '/feed.xml' | relative_url }}">RSS</a></p>
+    <p class="mono dim">训练中，请勿中断 © <span data-year>2026</span> · 内容采用 CC BY-SA 4.0</p>
+  </div>
+</footer>
+{% if page.math %}
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkIuoN2nrRpnPm9lE9HxdltB4pScfMEdBmUQWahUA/rBoVCLLqYbUjHdJcSm" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43visoc4STo8QKk3ERGbc5UsRYGPBQXvXIpxYmZOrUK+lbCAHpBHF5rBHJXC9O/" crossorigin="anonymous"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  renderMathInElement(document.querySelector(".prose"), {
+    delimiters: [
+      {left: "$$", right: "$$", display: true},
+      {left: "\(", right: "\)", display: false}
+    ]
+  });
+});
+</script>
+{% endif %}
+<script src="{{ '/assets/js/main.js' | relative_url }}"></script>
