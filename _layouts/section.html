@@ -1,0 +1,21 @@
+---
+layout: default
+---
+{% assign posts = site.categories[page.cat] %}
+<h1 class="page-title rise">{{ page.title }}</h1>
+{% if page.desc %}<p class="lede rise" style="--d:.05s">{{ page.desc }}</p>{% endif %}
+
+<p class="count mono dim rise" style="--d:.08s">{{ posts.size }} 篇</p>
+<ol class="post-list">
+  {% for post in posts %}
+  <li class="post-item reveal-on-scroll">
+    <a href="{{ post.url | relative_url }}">
+      <p class="eyebrow mono"><time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: '%Y-%m-%d' }}</time>{% if post.tags != empty %} · {% for t in post.tags limit:3 %}<span>#{{ t }}</span> {% endfor %}{% endif %}</p>
+      <h3 class="post-item-title">{{ post.title }}</h3>
+      {% if post.excerpt and post.excerpt != '' %}<p class="excerpt">{{ post.excerpt | strip_html | truncate: 96 }}</p>{% endif %}
+    </a>
+  </li>
+  {% else %}
+  <p class="empty mono">这个栏目还没有文章。</p>
+  {% endfor %}
+</ol>

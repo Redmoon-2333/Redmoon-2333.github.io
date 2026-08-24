@@ -23,6 +23,7 @@ layout: default
       <li class="post-item reveal-on-scroll">
         <a href="{{ post.url | relative_url }}">
           <p class="eyebrow mono">
+            {% assign cat = post.categories | first %}{% if cat %}<span class="cat">{{ cat }}</span> · {% endif %}
             <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: '%Y-%m-%d' }}</time>
             {% if post.tags != empty %}· {% for t in post.tags limit:3 %}<span>{{ t }}</span>{% unless forloop.last %} / {% endunless %}{% endfor %}{% endif %}
           </p>
