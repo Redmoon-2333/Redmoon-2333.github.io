@@ -71,7 +71,7 @@ math: true                  # 仅需公式时加，加载 KaTeX
 
 ```bash
 # 用 Docker 真实构建（Gemfile 已是轻量版，直接可用）
-docker run --rm -v "//d/My_Project/personal-site://site" -w //site \
+docker run --rm -v "//d/大学相关/03_个人成长与记录/LLM学习体系/02_博客站点/personal-site://site" -w //site \
   jekyll/jekyll:4 bash -lc "bundle install --quiet && bundle exec jekyll build"
 # 检查产物：_site/ 下对应页面无裸标签、Liquid 配对
 # 测完恢复：rm -rf _site .jekyll-cache .bundle Gemfile.lock；若 Gemfile 被换过则 mv Gemfile.prod Gemfile

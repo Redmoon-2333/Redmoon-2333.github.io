@@ -11,7 +11,7 @@
 2. 把本目录推上去：
 
 ```bash
-cd /d/My_Project/personal-site
+cd /d/大学相关/03_个人成长与记录/LLM学习体系/02_博客站点/personal-site
 git remote add origin git@github.com:你的用户名/仓库名.git
 git branch -M main
 git push -u origin main
