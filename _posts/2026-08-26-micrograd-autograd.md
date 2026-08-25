@@ -3,7 +3,7 @@ title: "从零手写 autograd：micrograd 全记录"
 date: 2026-08-26 05:00:00 +0800
 categories: [技术实践]
 tags: [micrograd, 反向传播, Karpathy, autograd, 零基础]
-excerpt: 跟着 Karpathy 从导数定义一路写到 MLP 训练循环：Value 引擎、闭包式 _backward、拓扑排序反传，以及我踩过的三个 bug。
+excerpt: 追随Karpathy大佬的脚步
 math: true
 ---
 
