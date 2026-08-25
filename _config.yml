@@ -13,10 +13,12 @@ github_username: Redmoon-2333
 
 name: RedMoon
 lang: zh-CN
+timezone: Asia/Shanghai   # 全站按北京时间生成：URL 日期与显示日期不因 UTC 偏移
 permalink: /:year/:month/:day/:title/
 markdown: kramdown
 kramdown:
   input: GFM
+  math_engine: ~   # 不转 script 标签，保留 $...$ 原文交给 KaTeX auto-render
 highlighter: rouge
 plugins:
   - jekyll-feed
@@ -31,6 +33,8 @@ encoding: utf-8
 
 exclude:
   - README.md
+  - AGENTS.md
+  - CLAUDE.md
   - Gemfile
   - Gemfile.lock
   - vendor
