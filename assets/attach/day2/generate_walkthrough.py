@@ -6,6 +6,8 @@
 模型定义与 two_pass_training.py 完全一致，但训练 N_PASSES 轮直到收敛，
 然后分析最终权重的含义。
 """
+from pathlib import Path
+
 import numpy as np
 
 np.random.seed(7)
@@ -441,8 +443,8 @@ add("**Q4：为什么初始注意力是均匀的？**\n")
 add("初始 W 是随机小数 → Q·K 分数差距很小 → softmax 接近均匀（≈1/3）。"
     "训练让\"该看的方向\"打分变大，softmax 逐渐变尖。INIT_SCALE 调大，初始分布就会变尖。\n")
 
-out_path = r"D:\大学相关\03_个人成长与记录\LLM学习体系\07_MyProject\02_transformer\TRAINING_WALKTHROUGH.md"
-with open(out_path, "w", encoding="utf-8") as fp:
+out_path = Path(__file__).with_name("TRAINING_WALKTHROUGH.md")
+with out_path.open("w", encoding="utf-8") as fp:
     fp.write("\n".join(md))
 print(f"written: {out_path}  ({len(md)} blocks)")
 print(f"final loss = {final_loss:.4f}  (pass1 = {pass1_loss:.4f})")
