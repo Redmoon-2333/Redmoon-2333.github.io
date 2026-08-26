@@ -1,5 +1,5 @@
 ---
-title: "从零手写 autograd：micrograd 全记录"
+title: "Day1：从零手写 autograd：micrograd 全记录"
 date: 2026-08-26 05:00:00 +0800
 categories: [技术实践]
 tags: [micrograd, 反向传播, Karpathy, autograd, 零基础]
