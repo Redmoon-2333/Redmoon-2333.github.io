@@ -14,8 +14,6 @@ excerpt: 从状态模式、Reducer归约，到动态分支Send、Command指令�
 math: true
 ---
 
-# Langgraph的一次小回顾
-
 
 ## 前言
 
