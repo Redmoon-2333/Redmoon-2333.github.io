@@ -1,5 +1,5 @@
 ﻿---
-title: "Day4：图驱动 Agent 的状态、控制流与记忆回放——LangGraph CP1-CP3 全景精析"
+title: "Langgraph的一次小回顾"
 date: 2026-08-28 02:00:00 +0800
 categories:
   - 技术实践
@@ -14,7 +14,7 @@ excerpt: 从状态模式、Reducer归约，到动态分支Send、Command指令�
 math: true
 ---
 
-# 图驱动 Agent 的状态、控制流与记忆回放（LangGraph CP1-CP3 全景精析）
+# Langgraph的一次小回顾
 
 
 ## 前言
