@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="620" viewBox="0 0 1200 620">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#1f2933"/>
+    </marker>
+    <style>
+      .title { font: 700 25px 'Microsoft YaHei', sans-serif; fill: #1f2933; }
+      .subtitle { font: 15px 'Microsoft YaHei', sans-serif; fill: #56616f; }
+      .box { stroke: #1f2933; stroke-width: 1.5; rx: 10; ry: 10; }
+      .label { font: 600 17px 'Microsoft YaHei', sans-serif; fill: #1f2933; text-anchor: middle; }
+      .small { font: 14px 'Microsoft YaHei', sans-serif; fill: #56616f; text-anchor: middle; }
+      .note { font: 13px 'Microsoft YaHei', sans-serif; fill: #56616f; }
+      .arrow { stroke: #1f2933; stroke-width: 2; fill: none; marker-end: url(#arrow); }
+    </style>
+  </defs>
+  <rect width="100%" height="100%" fill="#fafaf7"/>
+  
+<text x="600" y="42" class="title" text-anchor="middle">为什么按行归一化需要 keepdim=True</text>
+<text x="600" y="70" class="subtitle" text-anchor="middle">目标：每一行除以自己的行和，而不是让行和沿最后一维误对齐</text>
+<text x="215" y="132" class="label">计数矩阵 N</text><text x="215" y="157" class="small">shape = (27, 27)</text>
+<rect x="90" y="185" width="250" height="215" fill="#dcecff" class="box"/>
+<path d="M150 215 h135 M150 255 h135 M150 295 h135 M150 335 h135" stroke="#2b6cb0" stroke-width="2"/>
+<text x="215" y="445" class="small">每一行：固定当前字符</text>
+<path d="M350 292 L480 292" class="arrow"/>
+<text x="535" y="132" class="label">N.sum(1, keepdim=True)</text><text x="535" y="157" class="small">shape = (27, 1)</text>
+<rect x="485" y="185" width="100" height="215" fill="#ddf4e6" class="box"/>
+<path d="M505 215 h60 M505 255 h60 M505 295 h60 M505 335 h60" stroke="#2f855a" stroke-width="2"/>
+<text x="535" y="445" class="small">每个元素是一行的总和</text>
+<path d="M595 292 L720 292" class="arrow"/>
+<text x="930" y="132" class="label">P = (N + 1) / row_sum</text><text x="930" y="157" class="small">(27, 27) / (27, 1)</text>
+<rect x="805" y="185" width="250" height="215" fill="#fff1d6" class="box"/>
+<path d="M865 215 h135 M865 255 h135 M865 295 h135 M865 335 h135" stroke="#d97706" stroke-width="2"/>
+<text x="930" y="445" class="small">row_sum 沿列方向广播，每行和为 1</text>
+<rect x="110" y="510" width="980" height="75" fill="#fbe4e4" class="box"/>
+<text x="600" y="542" class="label">若省略 keepdim：N.sum(1) 的 shape 是 (27,)</text>
+<text x="600" y="566" class="small">对 27×27 方阵，代码可能不报错；但广播从最后一维对齐，容易把“每行分母”误当成“每列分母”。</text>
+</svg>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="610" viewBox="0 0 1200 610">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#1f2933"/>
+    </marker>
+    <style>
+      .title { font: 700 25px 'Microsoft YaHei', sans-serif; fill: #1f2933; }
+      .subtitle { font: 15px 'Microsoft YaHei', sans-serif; fill: #56616f; }
+      .box { stroke: #1f2933; stroke-width: 1.5; rx: 10; ry: 10; }
+      .label { font: 600 17px 'Microsoft YaHei', sans-serif; fill: #1f2933; text-anchor: middle; }
+      .small { font: 14px 'Microsoft YaHei', sans-serif; fill: #56616f; text-anchor: middle; }
+      .note { font: 13px 'Microsoft YaHei', sans-serif; fill: #56616f; }
+      .arrow { stroke: #1f2933; stroke-width: 2; fill: none; marker-end: url(#arrow); }
+    </style>
+  </defs>
+  <rect width="100%" height="100%" fill="#fafaf7"/>
+  
+<text x="600" y="42" class="title" text-anchor="middle">loss.backward() 的计算图入口：W.requires_grad</text>
+<text x="245" y="105" class="label">错误：W 不求导</text><text x="865" y="105" class="label">正确：W 可求导</text>
+<rect x="110" y="140" width="270" height="62" fill="#fbe4e4" class="box"/><text x="245" y="177" class="label">W.requires_grad = False</text>
+<rect x="110" y="255" width="270" height="62" fill="#f5f6f7" class="box"/><text x="245" y="292" class="label">logits → probs → loss</text>
+<rect x="110" y="370" width="270" height="62" fill="#fbe4e4" class="box"/><text x="245" y="401" class="label">loss.grad_fn = None</text><text x="245" y="420" class="small">backward() 无图可走 → 报错</text>
+<path d="M245 203 L245 252" class="arrow"/><path d="M245 318 L245 367" class="arrow"/>
+<rect x="730" y="140" width="270" height="62" fill="#ddf4e6" class="box"/><text x="865" y="177" class="label">W.requires_grad = True</text>
+<rect x="730" y="255" width="270" height="62" fill="#dcecff" class="box"/><text x="865" y="292" class="label">logits → probs → loss</text>
+<rect x="730" y="370" width="270" height="62" fill="#ddf4e6" class="box"/><text x="865" y="401" class="label">loss.backward() → W.grad</text><text x="865" y="420" class="small">沿计算图计算 d(loss)/dW</text>
+<path d="M865 203 L865 252" class="arrow"/><path d="M865 318 L865 367" class="arrow"/>
+<rect x="395" y="500" width="410" height="67" fill="#fff1d6" class="box"/><text x="600" y="527" class="label">W.grad = None 只清空旧梯度</text><text x="600" y="550" class="small">它不会把 requires_grad 从 False 改为 True</text>
+</svg>
