@@ -50,6 +50,8 @@ math: true                  # 仅需公式时加，加载 KaTeX
 
 新增栏目的步骤在 README.md「新增一个栏目（3 步）」。
 
+**附 · 资料下载（Day2/Day3 约定）**：不在正文内粘贴完整 notebook 代码；文末用 `## 附 · 资料下载` + 小节标题 + 列表，指向 `/assets/attach/dayX/` 下的可下载附件（`.ipynb` / `.md` / `.py`），与 Day2 的 `generate_walkthrough.py` / `07_卷积神经网络.md` 形式保持一致。附件与正文图片分开：正文技术图仍用 `/assets/img/`。
+
 ## 设计系统（勿破坏）
 
 - 主题「训练日志」：冷白纸 `#FAFAF7` + 墨色 + **arXiv 红 `#B31B1B`** 唯一强调色（暗色模式自动反色，令牌在 main.css 的 prefers-color-scheme 块）

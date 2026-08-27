@@ -1,12 +1,31 @@
-﻿---
-title: "Day3：从 bigram 统计到可训练的字符语言模型（活字乱刷术）"
+---
+title: 从 bigram 统计到可训练的字符语言模型
 date: 2026-08-27 08:00:00 +0800
-categories: [技术实践]
-tags: [makemore, bigram, 字符语言模型, PyTorch, softmax, autograd]
-excerpt: 追随Karpathy大佬的脚步
+categories:
+  - 技术实践
+tags:
+  - makemore
+  - bigram
+  - 字符语言模型
+  - PyTorch
+  - softmax
+  - autograd
+excerpt: 从名字数据出发，先数出字符转移概率，再用 one-hot、softmax 和梯度下降训练一个最小字符语言模型。
 math: true
 ---
-![Day3：活字乱刷术](/assets/img/day3-cover.png)
+
+# 从 bigram 统计到可训练的字符语言模型（活字乱刷术）
+
+| 项目 | 内容 |
+| --- | --- |
+| 对应代码 | [`build_makemore_yay.ipynb`](../../07_MyProject/03_makemore/build_makemore_yay.ipynb) |
+| 学习主题 | Karpathy makemore Part 1：字符级 bigram |
+| 数据集 | `names.txt`，32033 个英文名字 |
+| 执行环境 | PyTorch 2.11.0+cpu，`python3` kernel |
+| 配图脚本 | [`assets/make_figures.py`](assets/make_figures.py) |
+| 配图说明 | 技术图由 Matplotlib / SVG 本地生成，封面由 Faro 生成 |
+
+![Day3：活字乱刷术](assets/img/day3-cover.png)
 
 ## 前言
 
@@ -35,7 +54,7 @@ math: true
 
 > 计数矩阵和神经网络不是两个完全无关的模型。one-hot 输入乘以 `W`，本质上仍然是在查询“当前字符应该转移到哪些字符”；区别只在于表中的数值是直接统计得到的，还是通过损失函数和梯度下降学出来的。
 
-![直接计数模型与可训练神经网络的两条路径](/assets/img/day3-count-vs-neural.svg)
+![直接计数模型与可训练神经网络的两条路径](assets/img/day3-count-vs-neural.svg)
 
 ## 1. 数据集与起止标记
 
@@ -225,7 +244,7 @@ N[0]
 
 ### 3.3 热图应该怎么看
 
-![字符 Bigram 计数矩阵](/assets/img/bigram-count-matrix.svg)
+![字符 Bigram 计数矩阵](assets/img/bigram-count-matrix.svg)
 
 横轴是下一个字符，纵轴是当前字符。每一行回答一个问题：
 
@@ -362,7 +381,7 @@ A.sum(1, keepdim=True).shape    # torch.Size([2, 1])
 
 当前 notebook 的矩阵恰好是方阵 `(27, 27)`，省略 `keepdim` 可能不报错，但这只是形状碰巧相容，不能说明归一化方向正确。
 
-![keepdim=True 与 Bigram 概率的逐行广播](/assets/img/bigram-keepdim-broadcast.svg)
+![keepdim=True 与 Bigram 概率的逐行广播](assets/img/bigram-keepdim-broadcast.svg)
 
 可以用下面这句检查结果：
 
@@ -425,7 +444,7 @@ ka.
 
 这些字符串看起来像名字，是因为局部拼写规律已经被保留下来；但它们不代表模型理解了词义、语法或真实姓名的语义结构。
 
-![从训练后的开始边界出发，比较两种模型的首字符分布](/assets/img/day3-start-distribution.svg)
+![从训练后的开始边界出发，比较两种模型的首字符分布](assets/img/day3-start-distribution.svg)
 
 上图比较的是平滑计数模型与训练后神经网络在首字符上的分布。它不是在比较“谁更聪明”，只是把两种参数化方式放在同一个条件分布上观察。
 
@@ -685,7 +704,7 @@ loss.backward()
 
 就没有反向路径可走。
 
-![Bigram 模型的前向计算与 autograd 路径](/assets/img/bigram-autograd-chain.svg)
+![Bigram 模型的前向计算与 autograd 路径](assets/img/bigram-autograd-chain.svg)
 
 ### 10.3 正确初始化与重新运行顺序
 
@@ -912,7 +931,7 @@ W.data += -50 * W.grad
 
 notebook 现在记录了三条曲线：总目标、纯 NLL、L2 正则项。
 
-![Bigram 神经网络训练损失与正则项](/assets/img/day3-training-loss.svg)
+![Bigram 神经网络训练损失与正则项](assets/img/day3-training-loss.svg)
 
 当前输出的关键节点是：
 
@@ -990,14 +1009,3 @@ ka.
 3. **加一平滑解决零概率**：它作用在计数/概率层面，让未见过的转移也能参与对数似然计算。
 4. **NLL、autograd、梯度下降组成训练闭环**：NLL 衡量真实字符概率有多低，autograd 计算参数该往哪里改，梯度下降执行更新。
 7. **局部规律不等于语言理解**：模型已经能生成“像名字”的字符串，但它只记住了相邻字符统计。
-
-## 附 · 资料下载
-
-本篇配套的 bigram 统计模型与一层神经网络字符语言模型的完整代码，以及用于回顾的原始笔记，可直接下载。
-
-### 完整实验代码与笔记
-
-- [build_makemore_yay.ipynb](/assets/attach/day3/build_makemore_yay.ipynb)：教学化注释版（已补齐阶段目标、张量形状与报错修复，可直接从头执行）
-- [Day3.md](/assets/attach/day3/Day3.md)：原始 Day3 笔记原文（含详细推导与 “模型血肉” 讲解）
-
-
