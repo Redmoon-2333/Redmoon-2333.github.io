@@ -1,13 +1,11 @@
 ﻿---
-title: "Day3：从 bigram 统计到可训练的字符语言模型"
+title: "Day3：从 bigram 统计到可训练的字符语言模型（活字乱刷术）"
 date: 2026-08-27 08:00:00 +0800
 categories: [技术实践]
 tags: [makemore, bigram, 字符语言模型, PyTorch, softmax, autograd]
 excerpt: 追随Karpathy大佬的脚步
 math: true
 ---
-# 从 bigram 统计到可训练的字符语言模型（活字乱刷术）
-
 ![Day3：活字乱刷术](/assets/img/day3-cover.png)
 
 ## 前言
@@ -1503,3 +1501,6 @@ with torch.no_grad():
         print(''.join(out))
 
 ```
+
+
+
