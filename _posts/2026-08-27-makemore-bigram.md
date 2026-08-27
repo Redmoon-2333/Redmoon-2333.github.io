@@ -6,8 +6,6 @@ tags: [makemore, bigram, 字符语言模型, PyTorch, softmax, autograd]
 excerpt: 追随Karpathy大佬的脚步
 math: true
 ---
-![Day3：活字乱刷术](/assets/img/day3-cover.png)
-
 ## 前言
 
 昨天的打脸来的好快，本来想CNN，RNN暂且放下不表，但是AI给我的下一个学习建议赫然又回到了基础巩固。不过也好，那就让我们找回从前的记忆吧。
@@ -999,5 +997,6 @@ ka.
 
 - [build_makemore_yay.ipynb](/assets/attach/day3/build_makemore_yay.ipynb)：教学化注释版（已补齐阶段目标、张量形状与报错修复，可直接从头执行）
 - [Day3.md](/assets/attach/day3/Day3.md)：原始 Day3 笔记原文（含详细推导与 “模型血肉” 讲解）
+
 
 
