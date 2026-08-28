@@ -460,9 +460,10 @@ for step in range(300):
 
 ### 300 轮注意力实验
 
-- [generate_walkthrough.py](/assets/attach/day2/generate_walkthrough.py)：训练 300 轮并生成训练过程拆解
+- [generate_walkthrough.py](https://github.com/Redmoon-2333/Redmoon-2333.github.io/releases/download/day2-assets/generate_walkthrough.py)：训练 300 轮并生成训练过程拆解
 
 ### CNN / RNN 基础笔记
 
-- [07_卷积神经网络.md](/assets/attach/day2/07_卷积神经网络.md)
-- [08_循环神经网络.md](/assets/attach/day2/08_循环神经网络.md)
+- [07_卷积神经网络.md](https://github.com/Redmoon-2333/Redmoon-2333.github.io/releases/download/day2-assets/07_%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C.md)
+- [08_循环神经网络.md](https://github.com/Redmoon-2333/Redmoon-2333.github.io/releases/download/day2-assets/08_%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C.md)
+

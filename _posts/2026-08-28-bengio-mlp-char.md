@@ -388,8 +388,9 @@ $$
 
 ### 完整实验代码与笔记
 
-- [MLP.ipynb](/assets/attach/day5/MLP.ipynb)：注释版 MLP（在原始课程跟写版上新增 123 行中文注释）
-- [MLP_original.ipynb](/assets/attach/day5/MLP_original.ipynb)：原版备份（无注释原版，含输出）
+- [MLP.ipynb](https://github.com/Redmoon-2333/Redmoon-2333.github.io/releases/download/day5-assets/MLP.ipynb)：注释版 MLP（在原始课程跟写版上新增 123 行中文注释）
+- [MLP_original.ipynb](https://github.com/Redmoon-2333/Redmoon-2333.github.io/releases/download/day5-assets/MLP_original.ipynb)：原版备份（无注释原版，含输出）
+
 
 
 

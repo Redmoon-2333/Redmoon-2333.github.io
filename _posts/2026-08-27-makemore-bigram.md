@@ -1,4 +1,4 @@
-﻿---
+---
 title: "Day3：从 bigram 统计到可训练的字符语言模型（活字乱刷术）"
 date: 2026-08-27 08:00:00 +0800
 categories: [技术实践]
@@ -995,8 +995,9 @@ ka.
 
 ### 完整实验代码与笔记
 
-- [build_makemore_yay.ipynb](/assets/attach/day3/build_makemore_yay.ipynb)：教学化注释版（已补齐阶段目标、张量形状与报错修复，可直接从头执行）
-- [Day3.md](/assets/attach/day3/Day3.md)：原始 Day3 笔记原文（含详细推导与 “模型血肉” 讲解）
+- [build_makemore_yay.ipynb](https://github.com/Redmoon-2333/Redmoon-2333.github.io/releases/download/day3-assets/build_makemore_yay.ipynb)：教学化注释版（已补齐阶段目标、张量形状与报错修复，可直接从头执行）
+- [Day3.md](https://github.com/Redmoon-2333/Redmoon-2333.github.io/releases/download/day3-assets/Day3.md)：原始 Day3 笔记原文（含详细推导与 “模型血肉” 讲解）
+
 
 
 
