@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="628.2pt" height="202.896pt" viewBox="0 0 628.2 202.896" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-08-29T04:44:41.247467</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.10.0, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 202.896 
+L 628.2 202.896 
+L 628.2 -0 
+L 0 -0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 35.1 129.168 
+L 325.26 129.168 
+L 325.26 62.64 
+L 35.1 62.64 
+z
+" clip-path="url(#p6f1eb58eaa)" style="fill: #dcecff; stroke: #2b6cb0; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 369.9 118.08 
+L 514.98 118.08 
+L 514.98 73.728 
+L 369.9 73.728 
+z
+" clip-path="url(#p6f1eb58eaa)" style="fill: #fff1d6; stroke: #d97706; stroke-width: 1.4; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 13px; font-family: 'Microsoft YaHei', 'SimHei', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #1f2933" x="314.1" y="26.604" transform="rotate(-0 314.1 26.604)">小批量：32 个随机索引撬动 228k</text>
+   </g>
+   <g id="text_2">
+    <text style="font-size: 8px; font-family: 'Microsoft YaHei', 'SimHei', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #1f2933" x="180.18" y="95.904" transform="rotate(-0 180.18 95.904)">全量池 228k 行  10亿 FLOPs</text>
+   </g>
+   <g id="text_3">
+    <text style="font-size: 7px; font-family: 'Microsoft YaHei', 'SimHei', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #56616f" x="180.18" y="118.08" transform="rotate(-0 180.18 118.08)">一次前向慢 5000 倍</text>
+   </g>
+   <g id="text_4">
+    <text style="font-weight: 700; font-size: 8px; font-family: 'Microsoft YaHei', 'SimHei', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #d97706" x="442.44" y="95.904" transform="rotate(-0 442.44 95.904)">batch 32  0.19M</text>
+   </g>
+   <g id="patch_4">
+    <path d="M 327.262588 95.904 
+Q 347.580678 95.904 366.109915 95.904 
+" style="fill: none; stroke: #d97706; stroke-width: 1.6; stroke-linecap: round"/>
+    <path d="M 362.109915 93.904 
+L 366.109915 95.904 
+L 362.109915 97.904 
+" style="fill: none; stroke: #d97706; stroke-width: 1.6; stroke-linecap: round"/>
+   </g>
+   <g id="text_5">
+    <text style="font-size: 7px; font-family: 'Microsoft YaHei', 'SimHei', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #56616f" x="442.44" y="137.484" transform="rotate(-0 442.44 137.484)">randint 有放回 噪声即正则</text>
+   </g>
+   <g id="text_6">
+    <text style="font-size: 7.5px; font-family: 'Microsoft YaHei', 'SimHei', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #56616f" x="314.1" y="176.292" transform="rotate(-0 314.1 176.292)">全量仅作诊断 train 1.18 vs dev 2.02；训练靠小批量 50000 步</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p6f1eb58eaa">
+   <rect x="7.2" y="7.2" width="613.8" height="188.496"/>
+  </clipPath>
+ </defs>
+</svg>

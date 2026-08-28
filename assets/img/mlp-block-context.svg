@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="628.2pt" height="191.808pt" viewBox="0 0 628.2 191.808" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-08-29T04:44:41.090303</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.10.0, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 191.808 
+L 628.2 191.808 
+L 628.2 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 40.68 118.08 
+L 129.96 118.08 
+L 129.96 79.272 
+L 40.68 79.272 
+z
+" clip-path="url(#p0e9e7c5613)" style="fill: #dcecff; stroke: #2b6cb0; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 60.21 165.204 
+L 110.43 165.204 
+L 110.43 137.484 
+L 60.21 137.484 
+z
+" clip-path="url(#p0e9e7c5613)" style="fill: #fff1d6; stroke: #d97706; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 155.07 118.08 
+L 244.35 118.08 
+L 244.35 79.272 
+L 155.07 79.272 
+z
+" clip-path="url(#p0e9e7c5613)" style="fill: #dcecff; stroke: #2b6cb0; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 174.6 165.204 
+L 224.82 165.204 
+L 224.82 137.484 
+L 174.6 137.484 
+z
+" clip-path="url(#p0e9e7c5613)" style="fill: #fff1d6; stroke: #d97706; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 269.46 118.08 
+L 358.74 118.08 
+L 358.74 79.272 
+L 269.46 79.272 
+z
+" clip-path="url(#p0e9e7c5613)" style="fill: #dcecff; stroke: #2b6cb0; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 288.99 165.204 
+L 339.21 165.204 
+L 339.21 137.484 
+L 288.99 137.484 
+z
+" clip-path="url(#p0e9e7c5613)" style="fill: #fff1d6; stroke: #d97706; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 383.85 118.08 
+L 473.13 118.08 
+L 473.13 79.272 
+L 383.85 79.272 
+z
+" clip-path="url(#p0e9e7c5613)" style="fill: #dcecff; stroke: #2b6cb0; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 403.38 165.204 
+L 453.6 165.204 
+L 453.6 137.484 
+L 403.38 137.484 
+z
+" clip-path="url(#p0e9e7c5613)" style="fill: #fff1d6; stroke: #d97706; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_10">
+    <path d="M 498.24 118.08 
+L 587.52 118.08 
+L 587.52 79.272 
+L 498.24 79.272 
+z
+" clip-path="url(#p0e9e7c5613)" style="fill: #dcecff; stroke: #2b6cb0; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_11">
+    <path d="M 517.77 165.204 
+L 567.99 165.204 
+L 567.99 137.484 
+L 517.77 137.484 
+z
+" clip-path="url(#p0e9e7c5613)" style="fill: #fff1d6; stroke: #d97706; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 13px; font-family: 'Microsoft YaHei', 'SimHei', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #1f2933" x="314.1" y="26.604" transform="rotate(-0 314.1 26.604)">滑窗 block_size=3 构造 (X,Y)：emma -&gt; 5 个样本</text>
+   </g>
+   <g id="text_2">
+    <text style="font-size: 7.5px; font-family: 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', 'Computer Modern Typewriter', 'Andale Mono', 'Nimbus Mono L', 'Courier New', 'Courier', 'Fixed', 'Terminal', monospace; text-anchor: middle; fill: #1f2933" x="85.32" y="98.676" transform="rotate(-0 85.32 98.676)">[.,.,.]</text>
+   </g>
+   <g id="text_3">
+    <text style="font-weight: 700; font-size: 9px; font-family: 'Microsoft YaHei', 'SimHei', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #d97706" x="85.32" y="151.344" transform="rotate(-0 85.32 151.344)">e</text>
+   </g>
+   <g id="patch_12">
+    <path d="M 141.907412 98.676 
+Q 141.119613 98.676 141.673454 98.676 
+" style="fill: none; stroke: #cfd8e3; stroke-width: 1.2; stroke-linecap: round"/>
+    <path d="M 145.673454 100.676 
+L 141.673454 98.676 
+L 145.673454 96.676 
+" style="fill: none; stroke: #cfd8e3; stroke-width: 1.2; stroke-linecap: round"/>
+   </g>
+   <g id="text_4">
+    <text style="font-size: 6px; font-family: 'Microsoft YaHei', 'SimHei', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #56616f" x="143.91" y="82.044" transform="rotate(-0 143.91 82.044)">滑一格</text>
+   </g>
+   <g id="text_5">
+    <text style="font-size: 7.5px; font-family: 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', 'Computer Modern Typewriter', 'Andale Mono', 'Nimbus Mono L', 'Courier New', 'Courier', 'Fixed', 'Terminal', monospace; text-anchor: middle; fill: #1f2933" x="199.71" y="98.676" transform="rotate(-0 199.71 98.676)">[.,.,e]</text>
+   </g>
+   <g id="text_6">
+    <text style="font-weight: 700; font-size: 9px; font-family: 'Microsoft YaHei', 'SimHei', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #d97706" x="199.71" y="151.344" transform="rotate(-0 199.71 151.344)">m</text>
+   </g>
+   <g id="patch_13">
+    <path d="M 256.297412 98.676 
+Q 255.509613 98.676 256.063454 98.676 
+" style="fill: none; stroke: #cfd8e3; stroke-width: 1.2; stroke-linecap: round"/>
+    <path d="M 260.063454 100.676 
+L 256.063454 98.676 
+L 260.063454 96.676 
+" style="fill: none; stroke: #cfd8e3; stroke-width: 1.2; stroke-linecap: round"/>
+   </g>
+   <g id="text_7">
+    <text style="font-size: 6px; font-family: 'Microsoft YaHei', 'SimHei', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #56616f" x="258.3" y="82.044" transform="rotate(-0 258.3 82.044)">滑一格</text>
+   </g>
+   <g id="text_8">
+    <text style="font-size: 7.5px; font-family: 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', 'Computer Modern Typewriter', 'Andale Mono', 'Nimbus Mono L', 'Courier New', 'Courier', 'Fixed', 'Terminal', monospace; text-anchor: middle; fill: #1f2933" x="314.1" y="98.676" transform="rotate(-0 314.1 98.676)">[.,e,m]</text>
+   </g>
+   <g id="text_9">
+    <text style="font-weight: 700; font-size: 9px; font-family: 'Microsoft YaHei', 'SimHei', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #d97706" x="314.1" y="151.344" transform="rotate(-0 314.1 151.344)">m</text>
+   </g>
+   <g id="patch_14">
+    <path d="M 370.687412 98.676 
+Q 369.899613 98.676 370.453454 98.676 
+" style="fill: none; stroke: #cfd8e3; stroke-width: 1.2; stroke-linecap: round"/>
+    <path d="M 374.453454 100.676 
+L 370.453454 98.676 
+L 374.453454 96.676 
+" style="fill: none; stroke: #cfd8e3; stroke-width: 1.2; stroke-linecap: round"/>
+   </g>
+   <g id="text_10">
+    <text style="font-size: 6px; font-family: 'Microsoft YaHei', 'SimHei', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #56616f" x="372.69" y="82.044" transform="rotate(-0 372.69 82.044)">滑一格</text>
+   </g>
+   <g id="text_11">
+    <text style="font-size: 7.5px; font-family: 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', 'Computer Modern Typewriter', 'Andale Mono', 'Nimbus Mono L', 'Courier New', 'Courier', 'Fixed', 'Terminal', monospace; text-anchor: middle; fill: #1f2933" x="428.49" y="98.676" transform="rotate(-0 428.49 98.676)">[e,m,m]</text>
+   </g>
+   <g id="text_12">
+    <text style="font-weight: 700; font-size: 9px; font-family: 'Microsoft YaHei', 'SimHei', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #d97706" x="428.49" y="151.344" transform="rotate(-0 428.49 151.344)">a</text>
+   </g>
+   <g id="patch_15">
+    <path d="M 485.077412 98.676 
+Q 484.289613 98.676 484.843454 98.676 
+" style="fill: none; stroke: #cfd8e3; stroke-width: 1.2; stroke-linecap: round"/>
+    <path d="M 488.843454 100.676 
+L 484.843454 98.676 
+L 488.843454 96.676 
+" style="fill: none; stroke: #cfd8e3; stroke-width: 1.2; stroke-linecap: round"/>
+   </g>
+   <g id="text_13">
+    <text style="font-size: 6px; font-family: 'Microsoft YaHei', 'SimHei', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #56616f" x="487.08" y="82.044" transform="rotate(-0 487.08 82.044)">滑一格</text>
+   </g>
+   <g id="text_14">
+    <text style="font-size: 7.5px; font-family: 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', 'Computer Modern Typewriter', 'Andale Mono', 'Nimbus Mono L', 'Courier New', 'Courier', 'Fixed', 'Terminal', monospace; text-anchor: middle; fill: #1f2933" x="542.88" y="98.676" transform="rotate(-0 542.88 98.676)">[m,m,a]</text>
+   </g>
+   <g id="text_15">
+    <text style="font-weight: 700; font-size: 9px; font-family: 'Microsoft YaHei', 'SimHei', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #d97706" x="542.88" y="151.344" transform="rotate(-0 542.88 151.344)">.</text>
+   </g>
+   <g id="text_16">
+    <text style="font-size: 7.5px; font-family: 'Microsoft YaHei', 'SimHei', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #56616f" x="314.1" y="181.836" transform="rotate(-0 314.1 181.836)">每个名字 L 贡献 L+1 样本；全量 32033 名字 -&gt; 228146 行 (X 228k,3) (Y 228k)</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p0e9e7c5613">
+   <rect x="7.2" y="7.2" width="613.8" height="177.408"/>
+  </clipPath>
+ </defs>
+</svg>

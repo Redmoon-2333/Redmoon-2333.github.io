@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="628.2pt" height="213.984pt" viewBox="0 0 628.2 213.984" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-08-29T04:44:41.294993</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.10.0, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 213.984 
+L 628.2 213.984 
+L 628.2 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 63 173.52 
+L 565.2 173.52 
+L 565.2 51.552 
+L 63 51.552 
+L 63 173.52 
+z
+" clip-path="url(#peafaed496d)" style="fill: none; stroke: #cfd8e3; stroke-linejoin: miter"/>
+   </g>
+   <g id="line2d_1">
+    <path d="M 63 91.018257 
+L 73.24898 89.555664 
+L 83.497959 88.211263 
+L 93.746939 86.96737 
+L 103.995918 85.809997 
+L 114.244898 84.727888 
+L 124.493878 83.711848 
+L 134.742857 82.754272 
+L 144.991837 81.848795 
+L 155.240816 80.990041 
+L 165.489796 80.173423 
+L 175.738776 79.394999 
+L 185.987755 78.651354 
+L 196.236735 77.939515 
+L 206.485714 77.256871 
+L 216.734694 76.601121 
+L 226.983673 75.970227 
+L 237.232653 75.362373 
+L 247.481633 74.775935 
+L 257.730612 74.209456 
+L 267.979592 73.661621 
+L 278.228571 73.131242 
+L 288.477551 72.617241 
+L 298.726531 72.118636 
+L 308.97551 71.634533 
+L 319.22449 71.164111 
+L 329.473469 70.706619 
+L 339.722449 70.261364 
+L 349.971429 69.827709 
+L 360.220408 69.405064 
+L 370.469388 68.992885 
+L 380.718367 68.590666 
+L 390.967347 68.197936 
+L 401.216327 67.814259 
+L 411.465306 67.439226 
+L 421.714286 67.072456 
+L 431.963265 66.713593 
+L 442.212245 66.362304 
+L 452.461224 66.018275 
+L 462.710204 65.681212 
+L 472.959184 65.350838 
+L 483.208163 65.026894 
+L 493.457143 64.709134 
+L 503.706122 64.397326 
+L 513.955102 64.091251 
+L 524.204082 63.790703 
+L 534.453061 63.495484 
+L 544.702041 63.205411 
+L 554.95102 62.920305 
+L 565.2 62.64 
+" clip-path="url(#peafaed496d)" style="fill: none; stroke: #2b6cb0; stroke-width: 1.6; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_2">
+    <path d="M 63 91.683537 
+L 73.24898 90.104361 
+L 83.497959 88.654598 
+L 93.746939 87.316565 
+L 103.995918 86.076275 
+L 114.244898 84.922471 
+L 124.493878 83.845957 
+L 134.742857 82.839129 
+L 144.991837 81.895623 
+L 155.240816 81.01006 
+L 165.489796 80.177856 
+L 175.738776 79.395068 
+L 185.987755 78.658282 
+L 196.236735 77.964522 
+L 206.485714 77.311179 
+L 216.734694 76.695953 
+L 226.983673 76.116805 
+L 237.232653 75.571918 
+L 247.481633 75.05967 
+L 257.730612 74.578602 
+L 267.979592 74.1274 
+L 278.228571 73.704876 
+L 288.477551 73.309952 
+L 298.726531 72.941647 
+L 308.97551 72.599064 
+L 319.22449 72.281385 
+L 329.473469 71.987858 
+L 339.722449 71.717789 
+L 349.971429 71.470543 
+L 360.220408 71.245529 
+L 370.469388 71.042203 
+L 380.718367 70.860058 
+L 390.967347 70.698624 
+L 401.216327 70.557465 
+L 411.465306 70.436172 
+L 421.714286 70.334365 
+L 431.963265 70.251686 
+L 442.212245 70.187803 
+L 452.461224 70.142401 
+L 462.710204 70.115188 
+L 472.959184 70.105886 
+L 483.208163 70.114236 
+L 493.457143 70.139991 
+L 503.706122 70.182921 
+L 513.955102 70.242805 
+L 524.204082 70.319438 
+L 534.453061 70.412623 
+L 544.702041 70.522174 
+L 554.95102 70.647916 
+L 565.2 70.78968 
+" clip-path="url(#peafaed496d)" style="fill: none; stroke: #d97706; stroke-width: 1.6; stroke-linecap: square"/>
+   </g>
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 13px; font-family: 'Microsoft YaHei', 'SimHei', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #1f2933" x="314.1" y="23.832" transform="rotate(-0 314.1 23.832)">过拟合分叉：train 下 dev 上 早停</text>
+   </g>
+   <g id="text_2">
+    <text style="font-weight: 700; font-size: 7px; font-family: 'Microsoft YaHei', 'SimHei', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #b31b1b" x="537.3" y="70.78968" transform="rotate(-0 537.3 70.78968)">过拟合</text>
+   </g>
+   <g id="text_3">
+    <text style="font-size: 7.5px; font-family: 'Microsoft YaHei', 'SimHei', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #56616f" x="314.1" y="187.38" transform="rotate(-0 314.1 187.38)">BatchNorm 把 h 按 batch 归一化 拉回非饱和区 比 L2 更稳</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="peafaed496d">
+   <rect x="7.2" y="7.2" width="613.8" height="199.584"/>
+  </clipPath>
+ </defs>
+</svg>

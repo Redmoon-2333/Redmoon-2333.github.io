@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="628.2pt" height="213.984pt" viewBox="0 0 628.2 213.984" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-08-29T04:44:41.274722</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.10.0, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 213.984 
+L 628.2 213.984 
+L 628.2 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 63 173.52 
+L 565.2 173.52 
+L 565.2 51.552 
+L 63 51.552 
+L 63 173.52 
+z
+" clip-path="url(#p0926f51e88)" style="fill: none; stroke: #cfd8e3; stroke-linejoin: miter"/>
+   </g>
+   <g id="line2d_1">
+    <path d="M 63 97.012668 
+L 68.072727 97.146982 
+L 73.145455 97.281244 
+L 78.218182 97.415425 
+L 83.290909 97.549481 
+L 88.363636 97.683346 
+L 93.436364 97.816922 
+L 98.509091 97.950067 
+L 103.581818 98.082577 
+L 108.654545 98.21416 
+L 113.727273 98.344407 
+L 118.8 98.47275 
+L 123.872727 98.598413 
+L 128.945455 98.720343 
+L 134.018182 98.837141 
+L 139.090909 98.946967 
+L 144.163636 99.047432 
+L 149.236364 99.135488 
+L 154.309091 99.207296 
+L 159.381818 99.258098 
+L 164.454545 99.282093 
+L 169.527273 99.272324 
+L 174.6 99.220596 
+L 179.672727 99.117437 
+L 184.745455 98.952125 
+L 189.818182 98.712785 
+L 194.890909 98.386599 
+L 199.963636 97.960118 
+L 205.036364 97.419709 
+L 210.109091 96.752125 
+L 215.181818 95.945205 
+L 220.254545 94.988681 
+L 225.327273 93.875067 
+L 230.4 92.600585 
+L 235.472727 91.166078 
+L 240.545455 89.577846 
+L 245.618182 87.848332 
+L 250.690909 85.996588 
+L 255.763636 84.048462 
+L 260.836364 82.036433 
+L 265.909091 79.999077 
+L 270.981818 77.980133 
+L 276.054545 76.027192 
+L 281.127273 74.190046 
+L 286.2 72.518779 
+L 291.272727 71.061678 
+L 296.345455 69.863109 
+L 301.418182 68.961468 
+L 306.490909 68.387344 
+L 311.563636 68.162024 
+L 316.636364 68.296424 
+L 321.709091 68.790544 
+L 326.781818 69.633468 
+L 331.854545 70.803909 
+L 336.927273 72.271278 
+L 342 73.997179 
+L 347.072727 75.937246 
+L 352.145455 78.043192 
+L 357.218182 80.264933 
+L 362.290909 82.552677 
+L 367.363636 84.858833 
+L 372.436364 87.139662 
+L 377.509091 89.356588 
+L 382.581818 91.477132 
+L 387.654545 93.475446 
+L 392.727273 95.332478 
+L 397.8 97.035785 
+L 402.872727 98.579067 
+L 407.945455 99.961481 
+L 413.018182 101.186805 
+L 418.090909 102.262525 
+L 423.163636 103.198909 
+L 428.236364 104.008118 
+L 433.309091 104.703399 
+L 438.381818 105.298385 
+L 443.454545 105.806525 
+L 448.527273 106.240637 
+L 453.6 106.612596 
+L 458.672727 106.933124 
+L 463.745455 107.211693 
+L 468.818182 107.456498 
+L 473.890909 107.674496 
+L 478.963636 107.871488 
+L 484.036364 108.052232 
+L 489.109091 108.220567 
+L 494.181818 108.379541 
+L 499.254545 108.531543 
+L 504.327273 108.678413 
+L 509.4 108.82155 
+L 514.472727 108.962007 
+L 519.545455 109.10056 
+L 524.618182 109.237777 
+L 529.690909 109.374067 
+L 534.763636 109.509722 
+L 539.836364 109.644946 
+L 544.909091 109.779881 
+L 549.981818 109.914625 
+L 555.054545 110.049244 
+L 560.127273 110.183782 
+L 565.2 110.318268 
+" clip-path="url(#p0926f51e88)" style="fill: none; stroke: #2b6cb0; stroke-width: 1.8; stroke-linecap: square"/>
+   </g>
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 13px; font-family: 'Microsoft YaHei', 'SimHei', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #1f2933" x="314.1" y="26.604" transform="rotate(-0 314.1 26.604)">学习率扫描：10的-3到0次方找0.1</text>
+   </g>
+   <g id="PathCollection_1">
+    <defs>
+     <path id="m0728e127c7" d="M 0 3.872983 
+C 1.027127 3.872983 2.012324 3.464901 2.738613 2.738613 
+C 3.464901 2.012324 3.872983 1.027127 3.872983 0 
+C 3.872983 -1.027127 3.464901 -2.012324 2.738613 -2.738613 
+C 2.012324 -3.464901 1.027127 -3.872983 0 -3.872983 
+C -1.027127 -3.872983 -2.012324 -3.464901 -2.738613 -2.738613 
+C -3.464901 -2.012324 -3.872983 -1.027127 -3.872983 0 
+C -3.872983 1.027127 -3.464901 2.012324 -2.738613 2.738613 
+C -2.012324 3.464901 -1.027127 3.872983 0 3.872983 
+z
+" style="stroke: #b31b1b"/>
+    </defs>
+    <g clip-path="url(#p0926f51e88)">
+     <use xlink:href="#m0728e127c7" x="314.1" y="81.4896" style="fill: #b31b1b; stroke: #b31b1b"/>
+    </g>
+   </g>
+   <g id="text_2">
+    <text style="font-weight: 700; font-size: 7px; font-family: 'Microsoft YaHei', 'SimHei', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #b31b1b" x="314.1" y="67.6296" transform="rotate(-0 314.1 67.6296)">最优点 0.1</text>
+   </g>
+   <g id="text_3">
+    <text style="font-size: 7px; font-family: 'Microsoft YaHei', 'SimHei', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #56616f" x="63" y="181.836" transform="rotate(-0 63 181.836)">1e-3</text>
+   </g>
+   <g id="text_4">
+    <text style="font-size: 7px; font-family: 'Microsoft YaHei', 'SimHei', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #56616f" x="565.2" y="181.836" transform="rotate(-0 565.2 181.836)">1.0</text>
+   </g>
+   <g id="text_5">
+    <text style="font-size: 7.5px; font-family: 'Microsoft YaHei', 'SimHei', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #56616f" x="314.1" y="195.696" transform="rotate(-0 314.1 195.696)">对数学习率扫参 lrs = 10的linspace(-3,0)</text>
+   </g>
+   <g id="text_6">
+    <text style="font-style: italic; font-size: 7px; font-family: 'Microsoft YaHei', 'SimHei', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #56616f" x="118.8" y="46.008" transform="rotate(-0 118.8 46.008)">小步蹭 大步飞</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p0926f51e88">
+   <rect x="7.2" y="7.2" width="613.8" height="199.584"/>
+  </clipPath>
+ </defs>
+</svg>

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="628.2pt" height="213.984pt" viewBox="0 0 628.2 213.984" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-08-29T04:44:41.134140</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.10.0, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 213.984 
+L 628.2 213.984 
+L 628.2 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 29.52 173.52 
+L 208.08 173.52 
+L 208.08 51.552 
+L 29.52 51.552 
+z
+" clip-path="url(#p375c07cc45)" style="fill: #ffffff; stroke: #56616f; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 224.82 173.52 
+L 403.38 173.52 
+L 403.38 51.552 
+L 224.82 51.552 
+z
+" clip-path="url(#p375c07cc45)" style="fill: #ffffff; stroke: #2b6cb0; stroke-width: 1.6; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 420.12 173.52 
+L 598.68 173.52 
+L 598.68 51.552 
+L 420.12 51.552 
+z
+" clip-path="url(#p375c07cc45)" style="fill: #ffffff; stroke: #2f855a; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 13px; font-family: 'Microsoft YaHei', 'SimHei', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #1f2933" x="314.1" y="23.832" transform="rotate(-0 314.1 23.832)">查表三形态：one-hot 选行 vs C 索引 vs Embedding</text>
+   </g>
+   <g id="text_2">
+    <text style="font-weight: 700; font-size: 9px; font-family: 'Microsoft YaHei', 'SimHei', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #56616f" x="118.8" y="68.184" transform="rotate(-0 118.8 68.184)">one-hot(27) 乘 W(27,27)</text>
+   </g>
+   <g id="text_3">
+    <text style="font-size: 7.5px; font-family: 'Microsoft YaHei', 'SimHei', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #1f2933" x="118.8" y="95.904" transform="rotate(-0 118.8 95.904)">27 维中1个为1 其余0</text>
+   </g>
+   <g id="text_4">
+    <text style="font-size: 7.5px; font-family: 'Microsoft YaHei', 'SimHei', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #1f2933" x="118.8" y="118.08" transform="rotate(-0 118.8 118.08)">选 W 的第 r 行</text>
+   </g>
+   <g id="text_5">
+    <text style="font-size: 7px; font-family: 'Microsoft YaHei', 'SimHei', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #b31b1b" x="118.8" y="151.344" transform="rotate(-0 118.8 151.344)">无瓶颈 27到27</text>
+   </g>
+   <g id="text_6">
+    <text style="font-weight: 700; font-size: 9px; font-family: 'Microsoft YaHei', 'SimHei', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #2b6cb0" x="314.1" y="68.184" transform="rotate(-0 314.1 68.184)">C[X] 查表</text>
+   </g>
+   <g id="text_7">
+    <text style="font-size: 7.5px; font-family: 'Microsoft YaHei', 'SimHei', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #1f2933" x="314.1" y="95.904" transform="rotate(-0 314.1 95.904)">C 是27乘10的表</text>
+   </g>
+   <g id="text_8">
+    <text style="font-size: 7.5px; font-family: 'Microsoft YaHei', 'SimHei', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #1f2933" x="314.1" y="118.08" transform="rotate(-0 314.1 118.08)">C[5] 即 e 的向量</text>
+   </g>
+   <g id="text_9">
+    <text style="font-weight: 700; font-size: 7px; font-family: 'Microsoft YaHei', 'SimHei', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #2f855a" x="314.1" y="151.344" transform="rotate(-0 314.1 151.344)">有瓶颈 10 维 学聚类</text>
+   </g>
+   <g id="text_10">
+    <text style="font-weight: 700; font-size: 9px; font-family: 'Microsoft YaHei', 'SimHei', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #2f855a" x="509.4" y="68.184" transform="rotate(-0 509.4 68.184)">nn.Embedding(27,10)</text>
+   </g>
+   <g id="text_11">
+    <text style="font-size: 7.5px; font-family: 'Microsoft YaHei', 'SimHei', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #1f2933" x="509.4" y="95.904" transform="rotate(-0 509.4 95.904)">等价于 C[X]</text>
+   </g>
+   <g id="text_12">
+    <text style="font-size: 7.5px; font-family: 'Microsoft YaHei', 'SimHei', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #1f2933" x="509.4" y="118.08" transform="rotate(-0 509.4 118.08)">梯度只回被查行 稀疏</text>
+   </g>
+   <g id="text_13">
+    <text style="font-size: 7px; font-family: 'Microsoft YaHei', 'SimHei', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #2f855a" x="509.4" y="151.344" transform="rotate(-0 509.4 151.344)">写法更优</text>
+   </g>
+   <g id="text_14">
+    <text style="font-size: 7.5px; font-family: 'Microsoft YaHei', 'SimHei', 'Arial Unicode MS', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #56616f" x="330.84" y="198.468" transform="rotate(-0 330.84 198.468)">三者数值等价 差异在瓶颈与写法；拼瓶颈才能让 a与e被迫共享子空间</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p375c07cc45">
+   <rect x="7.2" y="7.2" width="613.8" height="199.584"/>
+  </clipPath>
+ </defs>
+</svg>
