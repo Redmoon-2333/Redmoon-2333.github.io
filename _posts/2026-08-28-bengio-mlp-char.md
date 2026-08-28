@@ -349,7 +349,18 @@ $$
 
 
 ![学习率扫描与 loss 曲线：log10 loss 随 lr/步数下降](/assets/img/mlp-lr-loss-curve.svg)
-> 以上为概念图，实际的曲线是一个先下后上的曲线，大概有点像对勾函数吧，然后最低点在0.1处左右:
+
+> 以上为概念图。
+
+下图为实际的 lr 扫描曲线，整体呈先下后上、类似对勾函数的形状，最低点约在 0.1 附近：
+
+
+
+
+<p style="text-align:center;"><img src="/assets/img/mlp-lr-actual.png" alt="lr 扫描实际曲线：先下后上的对勾形，最低点约 0.1" style="max-width:82%;height:auto;display:inline-block;" /></p>
+
+
+
 ---
 
 ## 14. 采样复盘：multinomial 如何“写”出新名字
@@ -390,6 +401,9 @@ $$
 
 - [MLP.ipynb](https://github.com/Redmoon-2333/Redmoon-2333.github.io/releases/download/day5-assets/MLP.ipynb)：注释版 MLP（在原始课程跟写版上新增 123 行中文注释）
 - [MLP_original.ipynb](https://github.com/Redmoon-2333/Redmoon-2333.github.io/releases/download/day5-assets/MLP_original.ipynb)：原版备份（无注释原版，含输出）
+
+
+
 
 
 
