@@ -1,11 +1,24 @@
 ---
+layout: post
 title: "Day5：字符级 MLP 实战——把 Bengio 的图跑通在名字上"
 date: 2026-08-28 08:01:00 +0800
 categories: [技术实践]
 tags: [makemore, Bengio, MLP, Embedding, BatchNorm, PyTorch]
 excerpt: 追随Karpathy大佬的脚步
 math: true
+mermaid: true
 ---
+
+# A Neural Probabilistic Language Model 精读 + MLP 实战
+
+| 项目   | 内容                                                                                                                                                  |
+| ---- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 论文   | Bengio et al., *A Neural Probabilistic Language Model*, JMLR 2003（[jmlr.org/bengio03a](http://www.jmlr.org/papers/volume3/bengio03a/bengio03a.pdf)） |
+| 学习主题 | 从 n-gram 到 NNLM 再到字符级 MLP（makemore Part2）：嵌入查表、隐层与非线性、初始化、小批量与过拟合                                                                                   |
+| 对应代码 | [MLP.ipynb](../../07_MyProject/03_makemore/MLP.ipynb)                                              |
+| 数据集  | `names.txt` 32033 行，block_size=3 → 228k 样本                                                                                                          |
+| 执行环境 | PyTorch + `torch.Generator` 固定 seed                                                                                                                 |
+| 配图脚本 | [`assets/make_figures.py`](assets/make_figures.py)（本地 SVG 技术图 + Faro 概念示意）                                                                          |
 
 ## 前言
 
@@ -18,17 +31,27 @@ math: true
 
 ## 0. 这篇论文讲了什么
 
-```text
-名字数据（names.txt, 32033 行）
-→ block_size=3 滑窗构造 (X, Y) 样本（共 228146 行）
-→ C 查表：字符 → 10 维向量（Embedding 的雏形）
-→ 展平拼接：view(-1, 30)
-→ 隐藏层：tanh(xW1 + b1) → (B, 200)
-→ 输出层：hW2 + b2 → 27 个字符得分
-→ softmax → 交叉熵损失
-→ 小批量梯度 + 学习率扫描
-→ 验证集评估与过拟合
-→ 自回归采样生成新名字
+```mermaid
+flowchart TD
+    A["名字数据<br/>names.txt，32033 行"] --> B["block_size=3 滑窗构造 X、Y 样本<br/>共 228146 行"]
+    B --> C["C 查表：字符到 10 维向量<br/>Embedding 的雏形"]
+    C --> D["展平拼接：view(-1, 30)"]
+    D --> E["隐藏层：tanh(xW1 + b1)<br/>(B, 200)"]
+    E --> F["输出层：hW2 + b2<br/>27 个字符得分"]
+    F --> G["softmax<br/>交叉熵损失"]
+    G --> H["小批量梯度<br/>学习率扫描"]
+    H --> I["验证集评估<br/>过拟合"]
+    I --> J["自回归采样<br/>生成新名字"]
+    classDef data fill:#eef5ff,stroke:#2b6cb0,color:#1f2933;
+    classDef embedding fill:#edf8f1,stroke:#2f855a,color:#1f2933;
+    classDef model fill:#fff5e5,stroke:#d97706,color:#1f2933;
+    classDef train fill:#f3edff,stroke:#6b46c1,color:#1f2933;
+    classDef sample fill:#fff0f0,stroke:#b31b1b,color:#1f2933;
+    class A,B data;
+    class C embedding;
+    class D,E,F,G model;
+    class H,I train;
+    class J sample;
 ```
 
 一句话：**论文负责“为什么用向量”，MLP 负责“在字符上把这条链路亲手跑通”**。前半部分是 Bengio 精读（第 1-7 节），后半部分是 Karpathy 代码实战（第 8-17 节）。
@@ -39,45 +62,49 @@ math: true
 
 | 符号 | 怎么读 | 它是什么 | 形状/取值 | 一句话通俗理解 |
 | --- | --- | --- | --- | --- |
-| `V` | Vocabulary | **词表**：所有允许出现的词的集合 | 大小 &#124;V&#124;，如 17 000 或 100 000 | 一本词典的“目录页”，共 &#124;V&#124; 个词 |
-| `R^{m}` | R 的 m 次方 | **m 维实数向量空间** | `m = 30/60/100`，远小于 &#124;V&#124; | 每个词的“坐标系”，`m` 是坐标轴根数 |
-| `C` | C 矩阵 | **查表**：词 `i → 向量 C(i)` 的映射表 | &#124;V&#124;×m 矩阵，行是词，列是特征 | 一张“词→坐标”的大表格，第 `i` 行就是词 `i` 的向量 |
+| `V` | Vocabulary | **词表**：所有允许出现的词的集合 | $\lvert V\rvert$，如 17 000 或 100 000 | 一本词典的“目录页”，共 $\lvert V\rvert$ 个词 |
+| $R^m$ | R 的 m 次方 | **m 维实数向量空间** | $m = 30/60/100$，远小于 $\lvert V\rvert$ | 每个词的“坐标系”，`m` 是坐标轴根数 |
+| `C` | C 矩阵 | **查表**：词 `i → 向量 C(i)` 的映射表 | $\lvert V\rvert\times m$ 矩阵，行是词，列是特征 | 一张“词→坐标”的大表格，第 `i` 行就是词 `i` 的向量 |
 | `C(i)` | C of i | 词 `i` 的向量 | `m` 维，如 `[0.1, -0.3, ...]` | `cat` 的坐标 |
-| `g` | g 函数 | **神经网络**：把上下文向量算成概率 | 输入 `(n-1)·m` 维，输出 &#124;V&#124; 维 | 一台“概率计算器”，输入旧词向量，输出下一个词的概率分布 |
+| `g` | g 函数 | **神经网络**：把上下文向量算成概率 | 输入 $(n-1)m$ 维，输出 $\lvert V\rvert$ 维 | 一台“概率计算器”，输入旧词向量，输出下一个词的概率分布 |
 | `n` | n | **上下文窗口** | 如 3/5/8 | 每次看前面 `n-1` 个词来猜第 `n` 个 |
 | `h` | hidden | **隐藏单元数** | 如 50/100 | 隐藏层的“神经元个数” |
 | `H` | H 矩阵 | 隐藏层权重 | `h × (n-1)m` | 把长向量 `x` 压进隐藏层的“投影仪” |
-| `U` | U 矩阵 | 隐藏→输出权重 | &#124;V&#124;×h | 把隐藏层信号“翻译”回词表大小 |
-| `W` | W 直连 | 输入→输出直连权重 | &#124;V&#124;×(n-1)m，可省略 | 一条“捷径”，让 `x` 直接对输出投票（论文称直连） |
-| `b` | bias 输出偏置 | 输出偏置 | &#124;V&#124; 维 | 每个词的“基础人气分” |
+| `U` | U 矩阵 | 隐藏→输出权重 | $\lvert V\rvert\times h$ | 把隐藏层信号“翻译”回词表大小 |
+| `W` | W 直连 | 输入→输出直连权重 | $\lvert V\rvert\times(n-1)m$，可省略 | 一条“捷径”，让 `x` 直接对输出投票（论文称直连） |
+| `b` | bias 输出偏置 | 输出偏置 | $\lvert V\rvert$ 维 | 每个词的“基础人气分” |
 | `d` | bias 隐藏偏置 | 隐藏偏置 | `h` 维 | 隐藏层的“起点偏移” |
 | `x` | x 向量 | 上下文拼接向量 | `(n-1)·m` 维 | `n-1` 个词向量排成一排 |
-| `y` | y 向量 | 未归一化分数（logits） | &#124;V&#124; 维 | 每个词的“原始票数”，进 softmax 前 |
+| `y` | y 向量 | 未归一化分数（logits） | $\lvert V\rvert$ 维 | 每个词的“原始票数”，进 softmax 前 |
 | `y_i` | y 的第 i 维 | 词 `i` 的分数 | 标量 | 词 `i` 比别人高多少分 |
-| &#124;V&#124;×m 类记号 | — | 矩阵形状 | 行×列 | 如 `17000×30` 就是 51 万个参数 |
+| $\lvert V\rvert\times m$ 类记号 | — | 矩阵形状 | 行×列 | 如 $17000\times30$ 就是 51 万个参数 |
 
 **三条快速区分**
 
 1.  **`C` vs `g`**：`C` 是**记忆**（查表得向量），`g` 是**计算**（向量→概率），合起来 `f = g∘C` 才是完整语言模型。
-2.  **`C(i)` vs `R^{m}`**：`C(i)` 是一个具体向量（如 `cat` 的坐标），`R^{m}` 是所有这类向量住的空间（`m` 维实数空间）。
+2.  **`C(i)` vs $R^m$**：`C(i)` 是一个具体向量（如 `cat` 的坐标），$R^m$ 是所有这类向量住的空间（$m$ 维实数空间）。
 3.  **`H/U` vs `W`**：`H/U` 走“隐藏层弯路”（非线性，能力强），`W` 走“直连高速路”（线性，快但简单）；论文实测直连有益但非必须，核心是 `C→H→U` 的主干。
 
-> 读法小贴士：`R^{m}` 读“R 的 m 次方”即 `m` 维实向量；`C ∈ R^{|V|×m}` 表示 `C` 住在 `|V|×m` 的矩阵空间里。
+> 读法小贴士：$R^m$ 读“R 的 m 次方”即 $m$ 维实向量；$C\in\mathbb{R}^{\lvert V\rvert\times m}$ 表示 `C` 住在 $\lvert V\rvert\times m$ 的矩阵空间里。
 
 ## 0.2 这篇论文解决了什么
 
 n-gram 靠“背诵短语”泛化，神经模型靠“词的相似性”泛化。
 
-```text
-n-gram（离散查表）：
-  训练集见过 "The cat is walking in the bedroom" →
-  但 "A dog was running in a room" 算全新句子 → 概率直接归零或回退
-  泛化方式：把句子切成 1-3 词的小块（trigram），用小块的计数硬拼
-
-Bengio 2003（连续分布式）：
-  把 the/a、cat/dog、bedroom/room 看成空间中相邻的点 →
-  见过第一句，就等于见过了它的“语义邻居们”的指数级变体
-  泛化方式：词向量相近 → 句子向量相近 → 概率自然相近（光滑函数）
+```mermaid
+flowchart TD
+    subgraph N["n-gram（离散查表）"]
+        N1["训练集见过<br/>‘The cat is walking in the bedroom’"] --> N2["‘A dog was running in a room’<br/>算全新句子：概率直接归零或回退"]
+        N2 --> N3["泛化方式：把句子切成 1-3 词小块（trigram）<br/>用小块的计数硬拼"]
+    end
+    subgraph B["Bengio 2003（连续分布式）"]
+        B1["把 the/a、cat/dog、bedroom/room<br/>看成空间中相邻的点"] --> B2["见过第一句，就等于见过了它的<br/>‘语义邻居们’的指数级变体"]
+        B2 --> B3["泛化方式：词向量相近<br/>句子向量相近 → 概率自然相近（光滑函数）"]
+    end
+    classDef ngram fill:#fff5e5,stroke:#d97706,color:#1f2933;
+    classDef neural fill:#edf8f1,stroke:#2f855a,color:#1f2933;
+    class N1,N2,N3 ngram;
+    class B1,B2,B3 neural;
 ```
 
 ![n-gram 靠拼接短块 vs 神经模型靠语义邻居的泛化对比](/assets/img/curse-vs-distributed.png)
@@ -86,13 +113,13 @@ Bengio 2003（连续分布式）：
 
 ## 1. 维度灾难：为什么离散建模注定走不远
 
-> **原文关键内容**：For example, if one wants to model the joint distribution of 10 consecutive words ... with |V|=100,000, there are potentially 100000^{10}−1 = 10^{50}−1 free parameters.
+> **原文关键内容**：For example, if one wants to model the joint distribution of 10 consecutive words ... with $\lvert V\rvert=100,000$, there are potentially $100000^{10}-1 = 10^{50}-1$ free parameters.
 
-**翻译**：若想对词表 `|V|=100000` 的连续 10 个词的联合分布直接建模，自由参数数量是 `100000^{10}−1 = 10^{50}−1`。
+**翻译**：若想对词表 $\lvert V\rvert=100000$ 的连续 10 个词的联合分布直接建模，自由参数数量是 $100000^{10}-1 = 10^{50}-1$。
 
 **解释**：
 
-想象词表是 10 万个抽屉，10 个词的句子就是从 10 万个抽屉里连续抽 10 次，有 `100000^{10}` 种抽法。为了给每种抽法都单独学一个概率，你需要 10^{50} 个独立旋钮——比地球原子数还多，根本学不完。
+想象词表是 10 万个抽屉，10 个词的句子就是从 10 万个抽屉里连续抽 10 次，有 $100000^{10}$ 种抽法。为了给每种抽法都单独学一个概率，你需要 $10^{50}$ 个独立旋钮——比地球原子数还多，根本学不完。
 
 核心矛盾是：**离散空间没有“中间地带”**。连续世界里 `3.01` 和 `3.02` 很近，学了前者就能猜后者；但离散世界里 `cat` 和 `dog` 是两个毫不相干的编号，`cat` 的统计结果分不到 `dog` 半点好处。
 
@@ -102,19 +129,19 @@ Bengio 2003（连续分布式）：
 
 ## 2. 核心方案
 
-> **原文关键内容**：1. associate with each word ... a distributed word feature vector in R^m, 2. express the joint probability function ... in terms of the feature vectors, 3. learn simultaneously the word feature vectors and the parameters of that probability function.
+> **原文关键内容**：1. associate with each word ... a distributed word feature vector in $R^m$, 2. express the joint probability function ... in terms of the feature vectors, 3. learn simultaneously the word feature vectors and the parameters of that probability function.
 
 **翻译**：1. 为每个词关联一个 `m` 维实值分布式特征向量；2. 用这些特征向量来表达词序列的联合概率；3. 同时学习词向量与概率函数的参数。
 
 **解释**：
 
-把每个词从“门牌号”变成“坐标”：`C(the) = [0.2, -1.1, ..., 0.5]`，`m` 通常 30/60/100，远小于 `|V|=17000`。然后所有概率都基于这些坐标来算，而坐标本身和算概率的神经网络一起被反向传播更新——词的意义是在预测下一个词的任务中“顺带”学会的。
+把每个词从“门牌号”变成“坐标”：$C(\mathrm{the})=[0.2,-1.1,\ldots,0.5]$，$m$ 通常 30/60/100，远小于 $\lvert V\rvert=17000$。然后所有概率都基于这些坐标来算，而坐标本身和算概率的神经网络一起被反向传播更新——词的意义是在预测下一个词的任务中“顺带”学会的。
 
 注意“同时”二字的分量：**不是先用别的办法把词向量训好，再去训语言模型；而是端到端一起学**。这让词向量天生就对“预测下一个词”最有用，而不是对“统计共现”最有用。
 
 **为什么重要**：这是实现 MLP 时 `nn.Embedding(vocab, m)` + `MLP` 的精确对应。
 
-**关键思想提炼**：**表示学习与概率建模联合优化**。`C(|V|×m)` 是知识载体，`g`（MLP）是概率计算器，二者共享梯度，泛化源于 `向量近 ≈ 语义近 ≈ 概率近`。
+**关键思想提炼**：**表示学习与概率建模联合优化**。$C(\lvert V\rvert\times m)$ 是知识载体，`g`（MLP）是概率计算器，二者共享梯度，泛化源于 $向量近\approx语义近\approx概率近$。
 
 ## 3. 为什么能泛化：一个训练句照亮指数个邻居
 
@@ -130,9 +157,9 @@ Bengio 2003（连续分布式）：
 
 ## 4. 模型全貌：C 表 + g 网络
 
-> **原文关键内容**：We decompose f(w_t, ..., w_{t-n+1}) = \hat{P}(w_t|w_{t-n+1}...w_{t-1}) in two parts: 1. A mapping C from any element i of V to C(i) in R^m (|V|×m matrix). 2. The probability function g maps (C(w_{t-n+1}), ..., C(w_{t-1})) to a distribution over V.
+> **原文关键内容**：We decompose $f(w_t,\ldots,w_{t-n+1})=\hat{P}(w_t\mid w_{t-n+1}\ldots w_{t-1})$ in two parts: 1. A mapping $C$ from any element $i$ of $V$ to $C(i)$ in $R^m$ ($\lvert V\rvert\times m$ matrix). 2. The probability function $g$ maps $(C(w_{t-n+1}),\ldots,C(w_{t-1}))$ to a distribution over $V$.
 
-**翻译**：把条件概率 `f` 拆成两部分：1. 查表 `C` 把词编号 `i` 映成向量 `C(i) ∈ R^m`；2. 函数 `g` 把上下文 `(n-1)` 个向量映射成词表上的概率分布。
+**翻译**：把条件概率 $f$ 拆成两部分：1. 查表 $C$ 把词编号 $i$ 映成向量 $C(i)\in R^m$；2. 函数 $g$ 把上下文 $(n-1)$ 个向量映射成词表上的概率分布。
 
 **公式**：
 
@@ -140,33 +167,29 @@ $$
 f(i, w_{t-1}, ..., w_{t-n+1}) = g(i, C(w_{t-1}), ..., C(w_{t-n+1}))
 $$
 
-约束：对任意上下文，$\sum_{i=1}^{|V|} f(i, \cdot) = 1$，$f > 0$。
+约束：对任意上下文，$\sum_{i=1}^{\lvert V\rvert} f(i, \cdot) = 1$，$f > 0$。
 
 ### 4.1 逐层数据流（以 `n=3` 为例，`m=2` 可视化）
 
-输入 `w_{t-2} w_{t-1} → w_t`，词表 `|V|=5`（a, cat, dog, in, bedroom）：
+输入 $w_{t-2}\ w_{t-1}\to w_t$，词表 $\lvert V\rvert=5$（a, cat, dog, in, bedroom）：
 
-```
-词 id:   w_{t-2}=cat(2)   w_{t-1}=in(4)
-           │               │
-           ▼               ▼
-     ┌─────────────────────────────────┐
-     │  C 表 (|V|×m)：查两次，复用同一张表  │  ← 参数共享的关键：cat 在位置1和位置2是同一个向量
-     │  C(cat)=[0.1, 0.8]  C(in)=[-0.5,0.3] │
-     └─────────────────────────────────┘
-           │               │
-           └──────┬────────┘
-                  ▼
-        x = concat(C(w_{t-2}), C(w_{t-1}))  ∈ R^{(n-1)m}  —— 例：4 维
-                  │
-                  ▼
-        h = tanh(d + H x)               —— 隐藏层，H ∈ R^{h×(n-1)m}
-                  │
-                  ▼
-        y = b + W x + U h               —— 输出层（含直连 W）
-                  │
-                  ▼
-        p = softmax(y)  ∈ R^{|V|}  —— 第 i 维即 P(w_t=i | 上文)
+```mermaid
+flowchart TD
+    A["词编号：cat 和 in"] --> B["C 查表<br/>每个词得到 m 维向量<br/>所有位置共享同一张表"]
+    B --> C["拼接 x<br/>n 减 1 个向量排成一列<br/>本例为 4 维"]
+    C --> D["隐藏层 h<br/>加权和后经过 tanh<br/>完成非线性变换"]
+    D --> E["输出 y<br/>偏置加直连项加隐藏层项<br/>每个候选词一个分数"]
+    E --> F["概率 p<br/>softmax 归一化<br/>得到下一个词的概率分布"]
+    classDef input fill:#eef5ff,stroke:#2b6cb0,color:#1f2933;
+    classDef memory fill:#edf8f1,stroke:#2f855a,color:#1f2933;
+    classDef hidden fill:#fff5e5,stroke:#d97706,color:#1f2933;
+    classDef output fill:#f3edff,stroke:#6b46c1,color:#1f2933;
+    classDef prob fill:#fff0f0,stroke:#b31b1b,color:#1f2933;
+    class A input;
+    class B memory;
+    class C,D hidden;
+    class E output;
+    class F prob;
 ```
 
 ![Bengio NNLM 前向结构：查表 C → 拼接 → tanh 隐藏层 → 仿射输出 → softmax](/assets/img/nnlm-forward.svg)
@@ -175,24 +198,24 @@ $$
 
 | | Day3 bigram `one-hot×W` | Bengio NNLM |
 | --- | --- | --- |
-| 查表 | `W ∈ R^{27×27}`，one-hot 选行，等价于查表 | `C ∈ R^{|V|×m}`，编号查表 |
+| 查表 | $W\in\mathbb{R}^{27\times27}$，one-hot 选行，等价于查表 | $C\in\mathbb{R}^{\lvert V\rvert\times m}$，编号查表 |
 | 上下文 | 只看前 1 个词 (`n=2`) | 看前 `n-1` 个词，拼接成长向量 |
 | 非线性 | 无（线性+softmax） | `tanh` 隐藏层，学复杂交互 |
 | 参数共享 | 无 | `C` 在所有位置、所有样本间共享 |
 
 **为什么重要**：这幅图是全论文的“唯一架构图”，后来的 `Embedding → Concat/Sum/Attention → MLP → Softmax` 都在它的影子里。`C` 的共享是灵魂——`cat` 不管出现在句首还是句尾，都贡献同一个梯度方向。
 
-**关键思想提炼**：**查表（记忆）+ 函数（推理）分离，但参数共享**。`C` 学“词是什么”，`g` 学“词怎么组合成句”，二者拼接即 `f = g∘C`。
+**关键思想提炼**：**查表（记忆）+ 函数（推理）分离，但参数共享**。`C` 学“词是什么”，`g` 学“词怎么组合成句”，二者拼接即 $f=g\circ C$。
 
 ### 4.2 维度与复杂度
 
-- **参数量**：`C: |V|×m` 主导（如 17000×30=510k），`H: h×(n-1)m`，`U: |V|×h`，`W: |V|×(n-1)m`（直连可省）。总数百万级，2003 年已算“大模型”。
-- **计算量**：每预测一次只算一次前向，与 `|V|^n` 无关，因此 `n` 可从 trigram 的 3 轻松提到 5/8。
-- **训练目标**：最大化对数似然 $\sum_t \log f(w_t|w_{t-n+1}...w_{t-1})$，等价于最小化困惑度（perplexity）。
+- **参数量**：$C:\lvert V\rvert\times m$ 主导（如 $17000\times30=510k$），$H:h\times(n-1)m$，$U:\lvert V\rvert\times h$，$W:\lvert V\rvert\times(n-1)m$（直连可省）。总数百万级，2003 年已算“大模型”。
+- **计算量**：每预测一次只算一次前向，与 $\lvert V\rvert^n$ 无关，因此 `n` 可从 trigram 的 3 轻松提到 5/8。
+- **训练目标**：最大化对数似然 $\sum_t \log f(w_t\mid w_{t-n+1}\ldots w_{t-1})$，等价于最小化困惑度（perplexity）。
 
 ## 5. 与 n-gram、聚类、LSI 的边界
 
-**n-gram**：离散拼接短块，`P(w_t|w_{t-n+1}...w_{t-1})` 直接查计数表 + 回退/插值平滑。泛化靠“多看短块”，天花板是数据稀疏与上下文长度。
+**n-gram**：离散拼接短块，$P(w_t\mid w_{t-n+1}\ldots w_{t-1})$ 直接查计数表 + 回退/插值平滑。泛化靠“多看短块”，天花板是数据稀疏与上下文长度。
 
 **词聚类 n-gram**（Brown 等）：把词硬/软分到 `K` 个离散类，类内共享计数。已在利用相似性，但**类是离散跳变**，类内一视同仁、类间老死不相往来，不够细腻。
 
@@ -206,7 +229,7 @@ $$
 
 - **样本量**：百万到千万词，上下文滑窗每步一个样本，远超当时常见的 UCI 小表。
 - **优化**：随机梯度下降 + 权重衰减（weight decay，岭回归思想），梯度需穿过 `softmax → U/W → tanh → H → C`，`C` 的梯度是**多个位置的和**（共享带来的聚合）。
-- **提速技巧**：论文已讨论用重要性采样/层次 softmax 逼近归一化分母（完整 softmax 需对 `|V|` 求和，`O(|V|)` 是瓶颈），这为后来的层次 softmax、负采样埋下伏笔。
+- **提速技巧**：论文已讨论用重要性采样/层次 softmax 逼近归一化分母（完整 softmax 需对 $\lvert V\rvert$ 求和，$O(\lvert V\rvert)$ 是瓶颈），这为后来的层次 softmax、负采样埋下伏笔。
 
 ## 7. 关键公式
 
@@ -236,8 +259,9 @@ $$
 
 ---
 
+# MLP 实战：把 Bengio 的图跑通在字符上
 
-## 8. 上下文窗口：block_size=3 
+## 8. 上下文窗口：block_size=3
 
 **类比：** 模型是“滑窗猜下一个字母”。`block_size=3` 就是窗口宽度——每次只看前 3 个字符来猜第 4 个。像玩填空：`... → e`、`..e → m`、`.em → m`，哪怕名字很长，也是一格一格滑过去的。
 
@@ -313,7 +337,7 @@ $$
 
 > **实现要点：** `h = tanh(emb.view(B,30)W1 + b1)`，形状 `(B,30)→(B,200)`；去掉 `tanh` 则退化为 `Day3` 的线性 bigram。
 
-<p class="fig-wide" markdown="1"><img src="/assets/img/mlp-tanh-hidden.png" alt="tanh 非线性门" style="max-width:78%;height:auto;display:block;margin:1rem auto;" /></p>
+![tanh 隐层：线性拼接待非线性门](/assets/img/mlp-tanh-hidden.png)
 
 ---
 
@@ -349,18 +373,8 @@ $$
 
 
 ![学习率扫描与 loss 曲线：log10 loss 随 lr/步数下降](/assets/img/mlp-lr-loss-curve.svg)
-
-> 以上为概念图。
-
-下图为实际的 lr 扫描曲线，整体呈先下后上、类似对勾函数的形状，最低点约在 0.1 附近：
-
-
-
-
-<p style="text-align:center;"><img src="/assets/img/mlp-lr-actual.png" alt="lr 扫描实际曲线：先下后上的对勾形，最低点约 0.1" style="max-width:82%;height:auto;display:inline-block;" /></p>
-
-
-
+> 以上为概念图，实际的曲线是一个先下后上的曲线，大概有点像对勾函数吧，然后最低点在0.1处左右:
+![lr 扫描实际曲线：先下后上的对勾形，最低点约 0.1](/assets/img/mlp-lr-actual.png)
 ---
 
 ## 14. 采样复盘：multinomial 如何“写”出新名字
@@ -375,7 +389,7 @@ $$
 
 > **实现要点：** `context=[0]*3 → emb=C[context] → tanh → softmax → multinomial` 接龙 20 行，与 `Day3 §6` 的 `multinomial` 采样同源。
 
-<p class="fig-wide" markdown="1"><img src="/assets/img/mlp-sampling.png" alt="自回归采样" style="max-width:82%;height:auto;display:block;margin:1rem auto;" /></p>
+![自回归采样：滑窗上下文 → 概率 → 掷骰子 → 新字符](/assets/img/mlp-sampling.png)
 
 ---
 
@@ -383,29 +397,11 @@ $$
 
 1.  **N-gram**：`N[27,27]` 把转移次数摆在桌上，按行归一就是概率，窗口稍长参数会指数爆炸。
 2.  **Bengio**：`C(|V|×m)` 把离散编号压进连续空间，`g=C→H→U` 的光滑函数让“相似词相似句”自动泛化，`C` 与 `g` 联合端到端优化。
-3.  **MLP**：`C[X] → view 拼接 → tanh(30→200) → logits(200→27) → cross_entropy` 在 `32` 的小批量下用 `lr≈0.1` 跑 5 万步，能直观看到元音字母在 Embedding 空间里的聚类过程。
+3.  **MLP**：`C[X] → view 拼接 → tanh(30→200) → logits(200→27) → cross_entropy` 在 `32` 的小批量下用 `lr≈0.1` 跑 5 万步，我们能亲眼看到语义相近的“元音”字母成功在训练下汇聚到一起。（虽然我也不知道为什么后续再训一次得不到同样的效果了，大败）
 
 ![Embedding 2D 投影：首次训练后 a/e/i/o/u 的聚类情况（成功）](/assets/img/mlp-embedding-scatter-try1.png)
 
-> 注：同一份代码多次训练会有随机性。首次运行可得到清晰的元音聚类，另一次重试也可能出现聚类分散的情况，图示如下——这正是随机初始化与小批量随机性的体现。
+不妨再附上一次重新训练过的话，虽然这五小只没有成功聚集到一起，但是还是有四只重新聚集到一起了QAQ：
 
 ![Embedding 2D 投影：重新训练后的聚类情况（较分散）](/assets/img/mlp-embedding-scatter-try2.png)
-
----
-
-## 附 · 资料下载
-
-本篇配套的 Bengio 精读与 MLP 字符级实战代码、图示，可直接下载。
-
-### 完整实验代码与笔记
-
-- [MLP.ipynb](https://github.com/Redmoon-2333/Redmoon-2333.github.io/releases/download/day5-assets/MLP.ipynb)：注释版 MLP（在原始课程跟写版上新增 123 行中文注释）
-- [MLP_original.ipynb](https://github.com/Redmoon-2333/Redmoon-2333.github.io/releases/download/day5-assets/MLP_original.ipynb)：原版备份（无注释原版，含输出）
-
-
-
-
-
-
-
 

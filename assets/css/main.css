@@ -188,7 +188,7 @@ img { max-width: 100%; height: auto; display: block; }
 }
 .prose a:hover { text-decoration-thickness: 2px; }
 .prose blockquote {
-  margin: 1.6em 0; padding: .1em 0 .1em 1.2em;
+  margin: 1.6em 0; padding: .1em 0 .1em 1.2em; overflow-x: auto;
   border-left: 2px solid var(--accent); color: var(--ink-2);
 }
 .prose blockquote p { margin: .6em 0; }
@@ -211,10 +211,15 @@ img { max-width: 100%; height: auto; display: block; }
 .prose th { font-family: var(--mono); font-size: .78rem; letter-spacing: .06em; color: var(--ink-2); }
 .prose img { border: 1px solid var(--line); border-radius: 6px; margin: 1.8em auto; }
 .prose figure { margin: 1.8em 0; }
+.prose .mermaid {
+  margin: 1.8em 0; overflow-x: auto; text-align: center;
+}
+.prose .mermaid svg { display: block; max-width: 100%; height: auto; margin: 0 auto; }
 .prose figcaption {
   font-family: var(--mono); font-size: .76rem; color: var(--ink-2);
   text-align: center; margin-top: .5rem;
 }
+.prose .katex { white-space: nowrap; }
 .prose .katex-display { overflow-x: auto; overflow-y: hidden; padding: .3em 0; }
 .prose sup a { text-decoration: none; font-family: var(--mono); font-size: .72em; }
 .prose .footnotes { font-size: .88rem; color: var(--ink-2); }
