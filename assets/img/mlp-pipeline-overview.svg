@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 1000" role="img" aria-labelledby="title desc">
+  <title id="title">字符级 MLP 实战总流程</title>
+  <desc id="desc">从名字数据和滑窗样本，到 Embedding、非线性网络、训练和自回归采样的垂直流程图。</desc>
+  <defs>
+    <style>
+      .heading { font: 700 24px 'Noto Serif SC', serif; }
+      .label { font: 700 18px 'Noto Sans SC', sans-serif; }
+      .detail { font: 14px 'IBM Plex Mono', monospace; }
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#495057"/>
+    </marker>
+  </defs>
+  <rect width="720" height="1000" fill="#fafaf7"/>
+  <rect x="60" y="24" width="600" height="72" rx="6" fill="#1f2933"/>
+  <text x="360" y="68" text-anchor="middle" class="heading" fill="#ffffff">字符级 MLP 实战</text>
+  <text x="360" y="122" text-anchor="middle" class="detail" fill="#6c757d">从名字数据到新名字</text>
+
+  <path d="M360 146 V170" stroke="#495057" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="70" y="170" width="580" height="78" rx="6" fill="#eef5ff" stroke="#2b6cb0" stroke-width="2"/>
+  <text x="360" y="202" text-anchor="middle" class="label" fill="#1f2933">名字数据</text>
+  <text x="360" y="228" text-anchor="middle" class="detail" fill="#343a40">names.txt · 32033 行</text>
+
+  <path d="M360 248 V272" stroke="#495057" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="70" y="272" width="580" height="78" rx="6" fill="#eef5ff" stroke="#2b6cb0" stroke-width="2"/>
+  <text x="360" y="304" text-anchor="middle" class="label" fill="#1f2933">block_size=3 滑窗</text>
+  <text x="360" y="330" text-anchor="middle" class="detail" fill="#343a40">构造 X、Y · 约 228146 个样本</text>
+
+  <path d="M360 350 V374" stroke="#495057" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="70" y="374" width="580" height="78" rx="6" fill="#edf8f1" stroke="#2f855a" stroke-width="2"/>
+  <text x="360" y="406" text-anchor="middle" class="label" fill="#1f2933">C[X] Embedding 查表</text>
+  <text x="360" y="432" text-anchor="middle" class="detail" fill="#343a40">字符编号 → 10 维向量</text>
+
+  <path d="M360 452 V476" stroke="#495057" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="70" y="476" width="580" height="78" rx="6" fill="#edf8f1" stroke="#2f855a" stroke-width="2"/>
+  <text x="360" y="508" text-anchor="middle" class="label" fill="#1f2933">view 拼接</text>
+  <text x="360" y="534" text-anchor="middle" class="detail" fill="#343a40">(B, 3, 10) → (B, 30)</text>
+
+  <path d="M360 554 V578" stroke="#495057" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="70" y="578" width="580" height="78" rx="6" fill="#fff5e5" stroke="#d97706" stroke-width="2"/>
+  <text x="360" y="610" text-anchor="middle" class="label" fill="#1f2933">tanh MLP 隐藏层</text>
+  <text x="360" y="636" text-anchor="middle" class="detail" fill="#343a40">h = tanh(xW1 + b1) · 30 → 200</text>
+
+  <path d="M360 656 V680" stroke="#495057" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="70" y="680" width="580" height="78" rx="6" fill="#fff5e5" stroke="#d97706" stroke-width="2"/>
+  <text x="360" y="712" text-anchor="middle" class="label" fill="#1f2933">logits → softmax / 交叉熵</text>
+  <text x="360" y="738" text-anchor="middle" class="detail" fill="#343a40">27 个字符得分 → 训练损失</text>
+
+  <path d="M360 758 V782" stroke="#495057" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="70" y="782" width="580" height="78" rx="6" fill="#f3edff" stroke="#6b46c1" stroke-width="2"/>
+  <text x="360" y="814" text-anchor="middle" class="label" fill="#1f2933">小批量训练与验证</text>
+  <text x="360" y="840" text-anchor="middle" class="detail" fill="#343a40">batch=32 · 学习率扫描 · 过拟合检查</text>
+
+  <path d="M360 860 V884" stroke="#495057" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="70" y="884" width="580" height="78" rx="6" fill="#fff0f0" stroke="#b31b1b" stroke-width="2"/>
+  <text x="360" y="916" text-anchor="middle" class="label" fill="#1f2933">自回归采样</text>
+  <text x="360" y="942" text-anchor="middle" class="detail" fill="#343a40">滑动上下文 → multinomial → 生成新名字</text>
+
+  <text x="360" y="986" text-anchor="middle" class="detail" fill="#6c757d">论文的表示学习思想，在字符级 MLP 中完整落地</text>
+</svg>

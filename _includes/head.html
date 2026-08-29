@@ -44,37 +44,3 @@
 <script async src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous" onload="window.renderSiteMath && window.renderSiteMath()"></script>
 <script async src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous" onload="window.renderSiteMath && window.renderSiteMath()"></script>
 {% endif %}
-{% if page.mermaid %}
-<script>
-(function () {
-  var rendered = false;
-  function renderMermaid() {
-    if (rendered || !window.mermaid || !document.body) return false;
-    var blocks = document.querySelectorAll('.language-mermaid');
-    if (!blocks.length) return false;
-    blocks.forEach(function (block) {
-      var code = block.matches('code') ? block : block.querySelector('code');
-      if (!code) return;
-      var diagram = document.createElement('div');
-      diagram.className = 'mermaid';
-      diagram.textContent = code.textContent;
-      var wrapper = block.matches('code') ? code.closest('pre') : block;
-      (wrapper || block).replaceWith(diagram);
-    });
-    window.mermaid.initialize({ startOnLoad: false, securityLevel: 'strict', theme: 'neutral' });
-    rendered = true;
-    window.mermaid.run({ nodes: document.querySelectorAll('.mermaid') });
-    return true;
-  }
-  function waitForRenderer(attempts) {
-    if (!renderMermaid() && attempts > 0) {
-      window.setTimeout(function () { waitForRenderer(attempts - 1); }, 50);
-    }
-  }
-  window.renderSiteMermaid = function () { waitForRenderer(100); };
-  document.addEventListener('DOMContentLoaded', function () { waitForRenderer(100); }, { once: true });
-  window.addEventListener('load', function () { waitForRenderer(20); }, { once: true });
-})();
-</script>
-<script async src="https://cdn.jsdelivr.net/npm/mermaid@10.9.3/dist/mermaid.min.js" crossorigin="anonymous" onload="window.renderSiteMermaid && window.renderSiteMermaid()"></script>
-{% endif %}

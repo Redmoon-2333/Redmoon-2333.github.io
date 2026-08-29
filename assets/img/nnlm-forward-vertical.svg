@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 820" role="img" aria-labelledby="title desc">
+  <title id="title">Bengio NNLM 前向结构</title>
+  <desc id="desc">词编号经过 C 查表、拼接、tanh 隐藏层和输出层，最后得到 softmax 概率分布。</desc>
+  <defs>
+    <style>
+      .heading { font: 700 23px 'Noto Serif SC', serif; }
+      .label { font: 700 20px 'Noto Sans SC', sans-serif; }
+      .detail { font: 14px 'IBM Plex Mono', monospace; }
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#495057"/>
+    </marker>
+  </defs>
+  <rect width="720" height="820" fill="#fafaf7"/>
+  <rect x="60" y="24" width="600" height="68" rx="6" fill="#1f2933"/>
+  <text x="360" y="66" text-anchor="middle" class="heading" fill="#ffffff">Bengio NNLM 前向结构</text>
+
+  <path d="M360 122 V146" stroke="#495057" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="70" y="146" width="580" height="82" rx="6" fill="#eef5ff" stroke="#2b6cb0" stroke-width="2"/>
+  <text x="360" y="180" text-anchor="middle" class="label" fill="#1f2933">词编号</text>
+  <text x="360" y="208" text-anchor="middle" class="detail" fill="#343a40">cat、in · 上下文中的离散编号</text>
+
+  <path d="M360 228 V252" stroke="#495057" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="70" y="252" width="580" height="82" rx="6" fill="#edf8f1" stroke="#2f855a" stroke-width="2"/>
+  <text x="360" y="286" text-anchor="middle" class="label" fill="#1f2933">C 查表</text>
+  <text x="360" y="314" text-anchor="middle" class="detail" fill="#343a40">编号 → m 维向量 · 所有位置共享 C</text>
+
+  <path d="M360 334 V358" stroke="#495057" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="70" y="358" width="580" height="82" rx="6" fill="#edf8f1" stroke="#2f855a" stroke-width="2"/>
+  <text x="360" y="392" text-anchor="middle" class="label" fill="#1f2933">拼接 x</text>
+  <text x="360" y="420" text-anchor="middle" class="detail" fill="#343a40">x = [C(w1); C(w2)] · 本例为 4 维</text>
+
+  <path d="M360 440 V464" stroke="#495057" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="70" y="464" width="580" height="82" rx="6" fill="#fff5e5" stroke="#d97706" stroke-width="2"/>
+  <text x="360" y="498" text-anchor="middle" class="label" fill="#1f2933">隐藏层 h</text>
+  <text x="360" y="526" text-anchor="middle" class="detail" fill="#343a40">h = tanh(d + Hx) · 非线性变换</text>
+
+  <path d="M360 546 V570" stroke="#495057" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="70" y="570" width="580" height="82" rx="6" fill="#f3edff" stroke="#6b46c1" stroke-width="2"/>
+  <text x="360" y="604" text-anchor="middle" class="label" fill="#1f2933">输出 y</text>
+  <text x="360" y="632" text-anchor="middle" class="detail" fill="#343a40">y = b + Wx + Uh · 每个候选词一个分数</text>
+
+  <path d="M360 652 V676" stroke="#495057" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="70" y="676" width="580" height="82" rx="6" fill="#fff0f0" stroke="#b31b1b" stroke-width="2"/>
+  <text x="360" y="710" text-anchor="middle" class="label" fill="#1f2933">softmax 概率</text>
+  <text x="360" y="738" text-anchor="middle" class="detail" fill="#343a40">下一个词的概率分布</text>
+</svg>

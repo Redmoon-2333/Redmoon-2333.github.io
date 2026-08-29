@@ -6,19 +6,7 @@ categories: [技术实践]
 tags: [makemore, Bengio, MLP, Embedding, BatchNorm, PyTorch]
 excerpt: 追随Karpathy大佬的脚步
 math: true
-mermaid: true
 ---
-
-# A Neural Probabilistic Language Model 精读 + MLP 实战
-
-| 项目   | 内容                                                                                                                                                  |
-| ---- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 论文   | Bengio et al., *A Neural Probabilistic Language Model*, JMLR 2003（[jmlr.org/bengio03a](http://www.jmlr.org/papers/volume3/bengio03a/bengio03a.pdf)） |
-| 学习主题 | 从 n-gram 到 NNLM 再到字符级 MLP（makemore Part2）：嵌入查表、隐层与非线性、初始化、小批量与过拟合                                                                                   |
-| 对应代码 | [MLP.ipynb](../../07_MyProject/03_makemore/MLP.ipynb)                                              |
-| 数据集  | `names.txt` 32033 行，block_size=3 → 228k 样本                                                                                                          |
-| 执行环境 | PyTorch + `torch.Generator` 固定 seed                                                                                                                 |
-| 配图脚本 | [`assets/make_figures.py`](assets/make_figures.py)（本地 SVG 技术图 + Faro 概念示意）                                                                          |
 
 ## 前言
 
@@ -31,28 +19,7 @@ mermaid: true
 
 ## 0. 这篇论文讲了什么
 
-```mermaid
-flowchart TD
-    A["名字数据<br/>names.txt，32033 行"] --> B["block_size=3 滑窗构造 X、Y 样本<br/>共 228146 行"]
-    B --> C["C 查表：字符到 10 维向量<br/>Embedding 的雏形"]
-    C --> D["展平拼接：view(-1, 30)"]
-    D --> E["隐藏层：tanh(xW1 + b1)<br/>(B, 200)"]
-    E --> F["输出层：hW2 + b2<br/>27 个字符得分"]
-    F --> G["softmax<br/>交叉熵损失"]
-    G --> H["小批量梯度<br/>学习率扫描"]
-    H --> I["验证集评估<br/>过拟合"]
-    I --> J["自回归采样<br/>生成新名字"]
-    classDef data fill:#eef5ff,stroke:#2b6cb0,color:#1f2933;
-    classDef embedding fill:#edf8f1,stroke:#2f855a,color:#1f2933;
-    classDef model fill:#fff5e5,stroke:#d97706,color:#1f2933;
-    classDef train fill:#f3edff,stroke:#6b46c1,color:#1f2933;
-    classDef sample fill:#fff0f0,stroke:#b31b1b,color:#1f2933;
-    class A,B data;
-    class C embedding;
-    class D,E,F,G model;
-    class H,I train;
-    class J sample;
-```
+![字符级 MLP 从名字数据到新名字的完整流程](/assets/img/mlp-pipeline-overview.svg)
 
 一句话：**论文负责“为什么用向量”，MLP 负责“在字符上把这条链路亲手跑通”**。前半部分是 Bengio 精读（第 1-7 节），后半部分是 Karpathy 代码实战（第 8-17 节）。
 
@@ -90,22 +57,6 @@ flowchart TD
 ## 0.2 这篇论文解决了什么
 
 n-gram 靠“背诵短语”泛化，神经模型靠“词的相似性”泛化。
-
-```mermaid
-flowchart TD
-    subgraph N["n-gram（离散查表）"]
-        N1["训练集见过<br/>‘The cat is walking in the bedroom’"] --> N2["‘A dog was running in a room’<br/>算全新句子：概率直接归零或回退"]
-        N2 --> N3["泛化方式：把句子切成 1-3 词小块（trigram）<br/>用小块的计数硬拼"]
-    end
-    subgraph B["Bengio 2003（连续分布式）"]
-        B1["把 the/a、cat/dog、bedroom/room<br/>看成空间中相邻的点"] --> B2["见过第一句，就等于见过了它的<br/>‘语义邻居们’的指数级变体"]
-        B2 --> B3["泛化方式：词向量相近<br/>句子向量相近 → 概率自然相近（光滑函数）"]
-    end
-    classDef ngram fill:#fff5e5,stroke:#d97706,color:#1f2933;
-    classDef neural fill:#edf8f1,stroke:#2f855a,color:#1f2933;
-    class N1,N2,N3 ngram;
-    class B1,B2,B3 neural;
-```
 
 ![n-gram 靠拼接短块 vs 神经模型靠语义邻居的泛化对比](/assets/img/curse-vs-distributed.png)
 
@@ -173,26 +124,7 @@ $$
 
 输入 $w_{t-2}\ w_{t-1}\to w_t$，词表 $\lvert V\rvert=5$（a, cat, dog, in, bedroom）：
 
-```mermaid
-flowchart TD
-    A["词编号：cat 和 in"] --> B["C 查表<br/>每个词得到 m 维向量<br/>所有位置共享同一张表"]
-    B --> C["拼接 x<br/>n 减 1 个向量排成一列<br/>本例为 4 维"]
-    C --> D["隐藏层 h<br/>加权和后经过 tanh<br/>完成非线性变换"]
-    D --> E["输出 y<br/>偏置加直连项加隐藏层项<br/>每个候选词一个分数"]
-    E --> F["概率 p<br/>softmax 归一化<br/>得到下一个词的概率分布"]
-    classDef input fill:#eef5ff,stroke:#2b6cb0,color:#1f2933;
-    classDef memory fill:#edf8f1,stroke:#2f855a,color:#1f2933;
-    classDef hidden fill:#fff5e5,stroke:#d97706,color:#1f2933;
-    classDef output fill:#f3edff,stroke:#6b46c1,color:#1f2933;
-    classDef prob fill:#fff0f0,stroke:#b31b1b,color:#1f2933;
-    class A input;
-    class B memory;
-    class C,D hidden;
-    class E output;
-    class F prob;
-```
-
-![Bengio NNLM 前向结构：查表 C → 拼接 → tanh 隐藏层 → 仿射输出 → softmax](/assets/img/nnlm-forward.svg)
+![Bengio NNLM 前向结构：查表 C → 拼接 → tanh 隐藏层 → 仿射输出 → softmax](/assets/img/nnlm-forward-vertical.svg)
 
 **Day3 vs NNLM**：
 
@@ -404,4 +336,15 @@ $$
 不妨再附上一次重新训练过的话，虽然这五小只没有成功聚集到一起，但是还是有四只重新聚集到一起了QAQ：
 
 ![Embedding 2D 投影：重新训练后的聚类情况（较分散）](/assets/img/mlp-embedding-scatter-try2.png)
+
+---
+
+## 附 · 资料下载
+
+本篇配套的 Bengio 精读与 MLP 字符级实战代码、图示，可直接下载。
+
+### 完整实验代码与笔记
+
+- [MLP.ipynb](https://github.com/Redmoon-2333/Redmoon-2333.github.io/releases/download/day5-assets/MLP.ipynb)：注释版 MLP（在原始课程跟写版上新增 123 行中文注释）
+- [MLP_original.ipynb](https://github.com/Redmoon-2333/Redmoon-2333.github.io/releases/download/day5-assets/MLP_original.ipynb)：原版备份（无注释原版，含输出）
 
