@@ -1,9 +1,8 @@
 ---
 layout: post
 title: 浅尝 GPT-1 至 GPT-3：从预训练+微调到上下文学习的演进
-date: 2026-09-01 08:00:00 +0800
-categories:
-  - 技术实践
+date: 2026-08-31 17:00:00 +0800
+categories: [论文精读]
 tags:
   - GPT-1
   - GPT-2
