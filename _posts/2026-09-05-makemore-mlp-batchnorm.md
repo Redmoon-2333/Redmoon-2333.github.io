@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Day8：初始化、BatchNorm 与诊断工具箱——把 MLP 训稳的全套手艺
+title: Day8：MLP的一些收尾工作
 date: 2026-09-05 08:00:00 +0800
 categories:
   - 技术实践
