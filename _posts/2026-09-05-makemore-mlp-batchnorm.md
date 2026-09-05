@@ -73,21 +73,21 @@ $$
 
 ## 4. 药方一：Kaiming 初始化——缩放不是玄学
 
-"权重除个 $\sqrt{\text{fan\_in}}$"听起来像经验玄学，其实是一道方差算术。
+"权重除个 $\sqrt{\text{fan-in}}$"听起来像经验玄学，其实是一道方差算术。
 
 **公式：** 线性层输出的方差
 
 $$
-y_i=\sum_{k=1}^{fan\_in}w_kx_k,\qquad
-\text{Var}(y_i)=fan\_in\cdot\text{Var}(w)\cdot\text{Var}(x)
-\;\xrightarrow{\;\text{Var}(w)=1/fan\_in\;}\;\text{Var}(x)
+y_i=\sum_{k=1}^{fan\text{-}in}w_kx_k,\qquad
+\text{Var}(y_i)=fan\text{-}in\cdot\text{Var}(w)\cdot\text{Var}(x)
+\;\xrightarrow{\;\text{Var}(w)=1/fan\text{-}in\;}\;\text{Var}(x)
 $$
 
-每个 $w_k$ 都和 $x_k$ 独立、零均值，所以方差直接连乘——输入有 30 个，方差就膨胀 30 倍。把 `Var(w)` 压到 $1/fan\_in$，输出方差和输入一样大，信号就能一层层传下去不放大不缩小。
+每个 $w_k$ 都和 $x_k$ 独立、零均值，所以方差直接连乘——输入有 30 个，方差就膨胀 30 倍。把 `Var(w)` 压到 $1/fan\text{-}in$，输出方差和输入一样大，信号就能一层层传下去不放大不缩小。
 
 ![左：不缩放时输出方差爆炸；右：按 1/√fan_in 缩放后方差稳定](/assets/img/day8-fanin-scaling.svg)
 
-> **实现要点：** notebook 里做了两组对照（同分布输入，一组 `w` 缩放一组不缩放）：不缩放 `y.std()≈3.2`，缩放后 `y.std()≈1.0`。Kaiming 论文 (He et al., 2015) 给出的是针对 ReLU 的精确版（乘 $\sqrt{2/fan_{in}}$，因为 ReLU 砍掉一半信号），`5/3` 这个增益则是给 tanh 用的经验修正——但"除以 $\sqrt{\text{fan\_in}}$"这个骨架是同一件事：**方差守恒**。
+> **实现要点：** notebook 里做了两组对照（同分布输入，一组 `w` 缩放一组不缩放）：不缩放 `y.std()≈3.2`，缩放后 `y.std()≈1.0`。Kaiming 论文 (He et al., 2015) 给出的是针对 ReLU 的精确版（乘 $\sqrt{2/fan\text{-}in}$，因为 ReLU 砍掉一半信号），`5/3` 这个增益则是给 tanh 用的经验修正——但"除以 $\sqrt{\text{fan-in}}$"这个骨架是同一件事：**方差守恒**。
 
 ---
 
@@ -131,7 +131,11 @@ $\gamma$（初始全 1）和 $\beta$（初始全 0）是可学习参数：归一
 **公式：** 模块接口约定
 
 $$
-\texttt{Layer: }\;x\mapsto \texttt{\_\_call\_\_}(x),\qquad \theta\leftarrow \texttt{parameters}(),\qquad \texttt{out}\text{ 挂中间量供诊断}
+$$
+\$\$
+\\text{Layer: }x\\mapsto \\text{call}(x),\\qquad \\theta\\leftarrow \\text{parameters}(),\\qquad \\text{out 挂中间量供诊断}
+\$\$
+$$
 $$
 
 > **实现要点：** 三个设计点——① `Linear` 构造时就做 `randn/fan_in**0.5` 的缩放初始化（药方一内置化）；② `BatchNorm1d` 内部区分 `training` 标志并维护 running 缓冲；③ 每层把输出存到 `self.out`，训练循环里 `retain_grad()` 一挂，诊断数据就有了。最后层权重 `*= 0.1` 压低初始置信度（症状一的修法），其余 Linear 层 `*= 5/3`（tanh 增益补偿）。
@@ -214,7 +218,7 @@ $$
 
 1. **初始 loss 的 sanity check**：$N$ 类分类问题开局应接近 $\ln N$；显著偏高说明输出层初始化太"自信"（`W2*=0.01, b2*=0` ）。
 2. **tanh 饱和的因果链**：`fan_in` 累加方差 → `hpreact` 太宽 → tanh 两端饱和 → 局部梯度趋零。
-3. **方差守恒**：$\text{Var}(y)=fan\_in\cdot\text{Var}(w)\text{Var}(x)$，权重除 $\sqrt{fan\_in}$ 即守恒；Kaiming 的 $\sqrt{2/fan\_in}$ 是 ReLU 修正，`5/3` 是 tanh 增益。
+3. **方差守恒**：$\text{Var}(y)=fan\text{-}in\cdot\text{Var}(w)\text{Var}(x)$，权重除 $\sqrt{fan\text{-}in}$ 即守恒；Kaiming 的 $\sqrt{2/fan\text{-}in}$ 是 ReLU 修正，`5/3` 是 tanh 增益。
 4. **BN 四件套**：batch 统计归一化 → $\gamma,\beta$ 缩放平移 → running 统计滚动更新 → 推理用 running。
 5. **三诊断**：激活看饱和（要钟形）、中间梯度看消失（四层 std 应同量级）、更新比例看步长（贴着 $-3$ 参考线；100k 断层 = lr 衰减 10 倍在 log 坐标下的 $-1$）。
 
