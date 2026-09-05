@@ -217,6 +217,7 @@ $$
 3. **方差守恒**：$\text{Var}(y)=fan\_in\cdot\text{Var}(w)\text{Var}(x)$，权重除 $\sqrt{fan\_in}$ 即守恒；Kaiming 的 $\sqrt{2/fan\_in}$ 是 ReLU 修正，`5/3` 是 tanh 增益。
 4. **BN 四件套**：batch 统计归一化 → $\gamma,\beta$ 缩放平移 → running 统计滚动更新 → 推理用 running。
 5. **三诊断**：激活看饱和（要钟形）、中间梯度看消失（四层 std 应同量级）、更新比例看步长（贴着 $-3$ 参考线；100k 断层 = lr 衰减 10 倍在 log 坐标下的 $-1$）。
+
 ---
 
 ## 附 · 资料下载
