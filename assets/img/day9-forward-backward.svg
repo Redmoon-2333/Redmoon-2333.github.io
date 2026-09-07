@@ -1,0 +1,446 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1560" height="1960" viewBox="0 0 1560 1960" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">
+<defs>
+<marker id="aB" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#1d4ed8"/></marker>
+<marker id="aR" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#dc2626"/></marker>
+<marker id="aG" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#94a3b8"/></marker>
+</defs>
+<rect width="1560" height="1960" fill="#ffffff"/>
+<g id="panel-forward">
+<text x="780" y="42" font-size="21" fill="#0f172a" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">前向传播 Forward（数据流自左向右）</text>
+<text x="780" y="68" font-size="13" fill="#64748b" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">MLP · Backprop Ninja · 全变量计算图 · Day9</text>
+<rect x="40.0" y="91.0" width="100" height="54" rx="10" fill="#ffedd5" stroke="#c2410c" stroke-width="1.6"/>
+<text x="90" y="104" font-size="15" fill="#7c2d12" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">C</text>
+<text x="90" y="123" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(27,10)</text>
+<text x="90" y="142" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dC</text>
+<rect x="185.0" y="91.0" width="100" height="54" rx="10" fill="#ffedd5" stroke="#c2410c" stroke-width="1.6"/>
+<text x="235" y="113" font-size="15" fill="#7c2d12" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">Xb</text>
+<text x="235" y="132" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(32,3)</text>
+<rect x="418.0" y="91.0" width="104" height="54" rx="10" fill="#ffedd5" stroke="#c2410c" stroke-width="1.6"/>
+<text x="470" y="104" font-size="15" fill="#7c2d12" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">W1</text>
+<text x="470" y="123" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(30,64)</text>
+<text x="470" y="142" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dW1</text>
+<rect x="525.0" y="91.0" width="80" height="54" rx="10" fill="#ffedd5" stroke="#c2410c" stroke-width="1.6"/>
+<text x="565" y="104" font-size="15" fill="#7c2d12" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">b1</text>
+<text x="565" y="123" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(64,)</text>
+<text x="565" y="142" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">db1</text>
+<rect x="628.0" y="91.0" width="104" height="54" rx="10" fill="#ffedd5" stroke="#c2410c" stroke-width="1.6"/>
+<text x="680" y="104" font-size="15" fill="#7c2d12" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">bngain</text>
+<text x="680" y="123" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(1,64)</text>
+<text x="680" y="142" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dbngain</text>
+<rect x="751.0" y="91.0" width="88" height="54" rx="10" fill="#ffedd5" stroke="#c2410c" stroke-width="1.6"/>
+<text x="795" y="104" font-size="15" fill="#7c2d12" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">bnbias</text>
+<text x="795" y="123" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(1,64)</text>
+<text x="795" y="142" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dbnbias</text>
+<rect x="965.0" y="91.0" width="110" height="54" rx="10" fill="#ffedd5" stroke="#c2410c" stroke-width="1.6"/>
+<text x="1020" y="104" font-size="15" fill="#7c2d12" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">W2</text>
+<text x="1020" y="123" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(64,27)</text>
+<text x="1020" y="142" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dW2</text>
+<rect x="1090.0" y="91.0" width="80" height="54" rx="10" fill="#ffedd5" stroke="#c2410c" stroke-width="1.6"/>
+<text x="1130" y="104" font-size="15" fill="#7c2d12" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">b2</text>
+<text x="1130" y="123" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(27,)</text>
+<text x="1130" y="142" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">db2</text>
+<rect x="45.0" y="187.0" width="150" height="86" rx="10" fill="#dbeafe" stroke="#1e40af" stroke-width="1.6"/>
+<text x="120" y="216" font-size="15" fill="#1e3a8a" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">emb</text>
+<text x="120" y="235" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(32,3,10)</text>
+<text x="120" y="254" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">demb</text>
+<rect x="235.0" y="187.0" width="150" height="86" rx="10" fill="#dbeafe" stroke="#1e40af" stroke-width="1.6"/>
+<text x="310" y="216" font-size="15" fill="#1e3a8a" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">embcat</text>
+<text x="310" y="235" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(32,30)</text>
+<text x="310" y="254" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dembcat</text>
+<rect x="425.0" y="187.0" width="150" height="86" rx="10" fill="#dbeafe" stroke="#1e40af" stroke-width="1.6"/>
+<text x="500" y="216" font-size="15" fill="#1e3a8a" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">hprebn</text>
+<text x="500" y="235" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(32,64)</text>
+<text x="500" y="254" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dhprebn</text>
+<rect x="615.0" y="187.0" width="150" height="86" rx="10" fill="#dbeafe" stroke="#1e40af" stroke-width="1.6"/>
+<text x="690" y="216" font-size="15" fill="#1e3a8a" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">hpreact</text>
+<text x="690" y="235" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(32,64)</text>
+<text x="690" y="254" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dhpreact</text>
+<rect x="805.0" y="187.0" width="150" height="86" rx="10" fill="#dbeafe" stroke="#1e40af" stroke-width="1.6"/>
+<text x="880" y="216" font-size="15" fill="#1e3a8a" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">h</text>
+<text x="880" y="235" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(32,64)</text>
+<text x="880" y="254" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dh</text>
+<rect x="995.0" y="187.0" width="150" height="86" rx="10" fill="#dbeafe" stroke="#1e40af" stroke-width="1.6"/>
+<text x="1070" y="216" font-size="15" fill="#1e3a8a" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">logits</text>
+<text x="1070" y="235" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(32,27)</text>
+<text x="1070" y="254" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dlogits</text>
+<rect x="1185.0" y="187.0" width="150" height="86" rx="10" fill="#dbeafe" stroke="#1e40af" stroke-width="1.6"/>
+<text x="1260" y="216" font-size="15" fill="#1e3a8a" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">norm_logits</text>
+<text x="1260" y="235" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(32,27)</text>
+<text x="1260" y="254" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dnorm_logits</text>
+<rect x="1375.0" y="187.0" width="150" height="86" rx="10" fill="#dbeafe" stroke="#1e40af" stroke-width="1.6"/>
+<text x="1450" y="216" font-size="15" fill="#1e3a8a" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">counts</text>
+<text x="1450" y="235" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(32,27)</text>
+<text x="1450" y="254" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dcounts</text>
+<rect x="995.0" y="317.0" width="150" height="86" rx="10" fill="#dbeafe" stroke="#1e40af" stroke-width="1.6"/>
+<text x="1070" y="346" font-size="15" fill="#1e3a8a" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">logit_maxes</text>
+<text x="1070" y="365" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(32,1)</text>
+<text x="1070" y="384" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dlogit_maxes</text>
+<rect x="1375.0" y="317.0" width="150" height="86" rx="10" fill="#dbeafe" stroke="#1e40af" stroke-width="1.6"/>
+<text x="1450" y="346" font-size="15" fill="#1e3a8a" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">counts_sum</text>
+<text x="1450" y="365" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(32,1)</text>
+<text x="1450" y="384" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dcounts_sum</text>
+<rect x="1375.0" y="437.0" width="150" height="86" rx="10" fill="#dbeafe" stroke="#1e40af" stroke-width="1.6"/>
+<text x="1450" y="466" font-size="15" fill="#1e3a8a" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">counts_sum_inv</text>
+<text x="1450" y="485" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(32,1)</text>
+<text x="1450" y="504" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dcounts_sum_inv</text>
+<rect x="1155.0" y="557.0" width="150" height="86" rx="10" fill="#dbeafe" stroke="#1e40af" stroke-width="1.6"/>
+<text x="1230" y="586" font-size="15" fill="#1e3a8a" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">probs</text>
+<text x="1230" y="605" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(32,27)</text>
+<text x="1230" y="624" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dprobs</text>
+<rect x="935.0" y="557.0" width="150" height="86" rx="10" fill="#dbeafe" stroke="#1e40af" stroke-width="1.6"/>
+<text x="1010" y="586" font-size="15" fill="#1e3a8a" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">logprobs</text>
+<text x="1010" y="605" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(32,27)</text>
+<text x="1010" y="624" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dlogprobs</text>
+<rect x="45.0" y="697.0" width="150" height="86" rx="10" fill="#dbeafe" stroke="#1e40af" stroke-width="1.6"/>
+<text x="120" y="726" font-size="15" fill="#1e3a8a" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">bnmeani</text>
+<text x="120" y="745" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(1,64)</text>
+<text x="120" y="764" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dbnmeani</text>
+<rect x="225.0" y="697.0" width="150" height="86" rx="10" fill="#dbeafe" stroke="#1e40af" stroke-width="1.6"/>
+<text x="300" y="726" font-size="15" fill="#1e3a8a" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">bndiff</text>
+<text x="300" y="745" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(32,64)</text>
+<text x="300" y="764" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dbndiff</text>
+<rect x="405.0" y="697.0" width="150" height="86" rx="10" fill="#dbeafe" stroke="#1e40af" stroke-width="1.6"/>
+<text x="480" y="726" font-size="15" fill="#1e3a8a" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">bndiff2</text>
+<text x="480" y="745" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(32,64)</text>
+<text x="480" y="764" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dbndiff2</text>
+<rect x="585.0" y="697.0" width="150" height="86" rx="10" fill="#dbeafe" stroke="#1e40af" stroke-width="1.6"/>
+<text x="660" y="726" font-size="15" fill="#1e3a8a" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">bnvar</text>
+<text x="660" y="745" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(1,64)</text>
+<text x="660" y="764" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dbnvar</text>
+<rect x="765.0" y="697.0" width="150" height="86" rx="10" fill="#dbeafe" stroke="#1e40af" stroke-width="1.6"/>
+<text x="840" y="726" font-size="15" fill="#1e3a8a" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">bnvar_inv</text>
+<text x="840" y="745" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(1,64)</text>
+<text x="840" y="764" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dbnvar_inv</text>
+<rect x="945.0" y="697.0" width="150" height="86" rx="10" fill="#dbeafe" stroke="#1e40af" stroke-width="1.6"/>
+<text x="1020" y="726" font-size="15" fill="#1e3a8a" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">bnraw</text>
+<text x="1020" y="745" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(32,64)</text>
+<text x="1020" y="764" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dbnraw</text>
+<rect x="580.0" y="573.0" width="80" height="54" rx="10" fill="#f1f5f9" stroke="#64748b" stroke-width="1.6"/>
+<text x="620" y="586" font-size="15" fill="#7c2d12" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">Yb</text>
+<text x="620" y="605" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(32,)</text>
+<text x="620" y="624" font-size="11" fill="#94a3b8" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">（常量·无梯度）</text>
+<rect x="705.0" y="557.0" width="170" height="86" rx="10" fill="#fee2e2" stroke="#b91c1c" stroke-width="1.6"/>
+<text x="790" y="586" font-size="15" fill="#7c2d12" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">loss</text>
+<text x="790" y="605" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">标量</text>
+<text x="790" y="624" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dloss = 1</text>
+<text x="1260" y="289" font-size="11" fill="#64748b" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">norm = logits - maxes</text>
+<text x="1230" y="659" font-size="11" fill="#64748b" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">probs = counts × counts_sum_inv</text>
+<text x="1160" y="797" font-size="11" fill="#64748b" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">bnraw = bndiff × bnvar_inv</text>
+<line x1="195" y1="230" x2="235" y2="230" stroke="#1d4ed8" stroke-width="2"/>
+<polygon points="226.0,230.0 208.9,236.6 208.9,223.4" fill="#1d4ed8"/>
+<text x="215" y="168" font-size="11.5" fill="#1e40af" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">view</text>
+<line x1="385" y1="230" x2="425" y2="230" stroke="#1d4ed8" stroke-width="2"/>
+<polygon points="416.0,230.0 398.9,236.6 398.9,223.4" fill="#1d4ed8"/>
+<text x="405" y="168" font-size="11.5" fill="#1e40af" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">@ W1 + b1</text>
+<line x1="765" y1="230" x2="805" y2="230" stroke="#1d4ed8" stroke-width="2"/>
+<polygon points="796.0,230.0 779.0,236.6 779.0,223.4" fill="#1d4ed8"/>
+<text x="785" y="168" font-size="11.5" fill="#1e40af" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">tanh</text>
+<line x1="955" y1="230" x2="995" y2="230" stroke="#1d4ed8" stroke-width="2"/>
+<polygon points="986.0,230.0 969.0,236.6 969.0,223.4" fill="#1d4ed8"/>
+<text x="975" y="168" font-size="11.5" fill="#1e40af" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">@ W2 + b2</text>
+<line x1="1145" y1="230" x2="1185" y2="230" stroke="#1d4ed8" stroke-width="2"/>
+<polygon points="1176.0,230.0 1159.0,236.6 1159.0,223.4" fill="#1d4ed8"/>
+<text x="1165" y="168" font-size="11.5" fill="#1e40af" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">- logit_maxes</text>
+<line x1="1335" y1="230" x2="1375" y2="230" stroke="#1d4ed8" stroke-width="2"/>
+<polygon points="1366.0,230.0 1349.0,236.6 1349.0,223.4" fill="#1d4ed8"/>
+<text x="1355" y="168" font-size="11.5" fill="#1e40af" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">exp</text>
+<line x1="1070" y1="273" x2="1070" y2="317" stroke="#1d4ed8" stroke-width="2"/>
+<polygon points="1070.0,306.0 1063.4,288.9 1076.6,288.9" fill="#1d4ed8"/>
+<text x="1012" y="295" font-size="11.5" fill="#1e40af" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">max(1)</text>
+<line x1="1450" y1="273" x2="1450" y2="317" stroke="#1d4ed8" stroke-width="2"/>
+<polygon points="1450.0,306.0 1443.4,288.9 1456.6,288.9" fill="#1d4ed8"/>
+<text x="1392" y="295" font-size="11.5" fill="#1e40af" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">sum(1)</text>
+<line x1="1450" y1="403" x2="1450" y2="437" stroke="#1d4ed8" stroke-width="2"/>
+<polygon points="1450.0,431.0 1443.4,413.9 1456.6,413.9" fill="#1d4ed8"/>
+<text x="1392" y="420" font-size="11.5" fill="#1e40af" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">** -1</text>
+<line x1="455" y1="273" x2="155" y2="697" stroke="#1d4ed8" stroke-width="2" marker-end="url(#aB)"/>
+<polygon points="299.8,492.3 303.5,477.8 312.3,484.1" fill="#1d4ed8"/>
+<text x="120" y="686" font-size="11.5" fill="#1e40af" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">1/n·sum(0)</text>
+<line x1="470" y1="273" x2="345" y2="697" stroke="#1d4ed8" stroke-width="2" marker-end="url(#aB)"/>
+<polygon points="405.0,493.6 403.7,478.7 414.1,481.8" fill="#1d4ed8"/>
+<text x="300" y="686" font-size="11.5" fill="#1e40af" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">- bnmeani</text>
+<line x1="195" y1="740" x2="225" y2="740" stroke="#1d4ed8" stroke-width="2"/>
+<polygon points="221.0,740.0 203.9,746.6 203.9,733.4" fill="#1d4ed8"/>
+<line x1="375" y1="740" x2="405" y2="740" stroke="#1d4ed8" stroke-width="2"/>
+<polygon points="401.0,740.0 383.9,746.6 383.9,733.4" fill="#1d4ed8"/>
+<text x="390" y="690" font-size="11.5" fill="#1e40af" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">平方</text>
+<line x1="555" y1="740" x2="585" y2="740" stroke="#1d4ed8" stroke-width="2"/>
+<polygon points="581.0,740.0 564.0,746.6 564.0,733.4" fill="#1d4ed8"/>
+<text x="570" y="690" font-size="11.5" fill="#1e40af" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">1/(n-1)·sum(0)</text>
+<line x1="735" y1="740" x2="765" y2="740" stroke="#1d4ed8" stroke-width="2"/>
+<polygon points="761.0,740.0 744.0,746.6 744.0,733.4" fill="#1d4ed8"/>
+<text x="750" y="690" font-size="11.5" fill="#1e40af" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(x+1e-5)^(-1/2)</text>
+<line x1="915" y1="740" x2="945" y2="740" stroke="#1d4ed8" stroke-width="2"/>
+<polygon points="941.0,740.0 924.0,746.6 924.0,733.4" fill="#1d4ed8"/>
+<text x="930" y="690" font-size="11.5" fill="#1e40af" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">× bndiff</text>
+<polyline points="300,783 300,812 1020,812 1020,783" fill="none" stroke="#94a3b8" stroke-width="1.8" marker-end="url(#aG)" stroke-dasharray="5,4"/>
+<polygon points="669.0,812.0 655.0,817.4 655.0,806.6" fill="#94a3b8"/>
+<text x="660" y="828" font-size="11" fill="#64748b" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">（bndiff 作为另一操作数）</text>
+<line x1="985" y1="697" x2="725" y2="273" stroke="#1d4ed8" stroke-width="2" marker-end="url(#aB)"/>
+<polygon points="850.3,477.3 862.2,486.4 853.0,492.0" fill="#1d4ed8"/>
+<text x="890" y="430" font-size="11.5" fill="#1e40af" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">γ·bnraw + β</text>
+<line x1="1375" y1="255" x2="1195" y2="564" stroke="#1d4ed8" stroke-width="2" marker-end="url(#aB)"/>
+<polygon points="1280.5,417.3 1282.8,402.5 1292.2,407.9" fill="#1d4ed8"/>
+<text x="1258" y="330" font-size="11.5" fill="#1e40af" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">× inv（广播）</text>
+<line x1="1400" y1="516" x2="1300" y2="564" stroke="#1d4ed8" stroke-width="2"/>
+<polygon points="1340.1,544.8 1352.6,531.4 1358.3,543.3" fill="#1d4ed8"/>
+<text x="1420" y="545" font-size="11.5" fill="#1e40af" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">× counts</text>
+<line x1="1115" y1="317" x2="1218" y2="273" stroke="#1d4ed8" stroke-width="2"/>
+<polygon points="1176.6,290.7 1163.5,303.4 1158.3,291.3" fill="#1d4ed8"/>
+<line x1="1085" y1="600" x2="1125" y2="600" stroke="#1d4ed8" stroke-width="2"/>
+<polygon points="1116.0,600.0 1099.0,606.6 1099.0,593.4" fill="#1d4ed8"/>
+<text x="1120" y="622" font-size="11.5" fill="#1e40af" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">log</text>
+<line x1="935" y1="600" x2="905" y2="600" stroke="#1d4ed8" stroke-width="2"/>
+<polygon points="909.0,600.0 926.0,593.4 926.0,606.6" fill="#1d4ed8"/>
+<text x="880" y="548" font-size="11.5" fill="#1e40af" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">取 Yb 行 → mean</text>
+<line x1="660" y1="600" x2="705" y2="600" stroke="#1d4ed8" stroke-width="2"/>
+<polygon points="693.5,600.0 676.5,606.6 676.5,593.4" fill="#1d4ed8"/>
+<text x="618" y="566" font-size="11.5" fill="#1e40af" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">目标类索引</text>
+<line x1="115" y1="145" x2="105" y2="187" stroke="#1d4ed8" stroke-width="1.4"/>
+<polygon points="107.5,176.7 105.0,158.6 117.8,161.6" fill="#1d4ed8"/>
+<line x1="250" y1="145" x2="150" y2="187" stroke="#1d4ed8" stroke-width="1.4"/>
+<polygon points="189.9,170.3 203.0,157.6 208.1,169.7" fill="#1d4ed8"/>
+<line x1="490" y1="145" x2="475" y2="187" stroke="#1d4ed8" stroke-width="1.4"/>
+<polygon points="478.8,176.4 478.3,158.1 490.8,162.5" fill="#1d4ed8"/>
+<line x1="570" y1="145" x2="540" y2="187" stroke="#1d4ed8" stroke-width="1.4"/>
+<polygon points="548.6,175.0 553.1,157.2 563.9,164.9" fill="#1d4ed8"/>
+<line x1="695" y1="145" x2="670" y2="187" stroke="#1d4ed8" stroke-width="1.4"/>
+<polygon points="676.9,175.5 679.9,157.4 691.3,164.2" fill="#1d4ed8"/>
+<line x1="790" y1="145" x2="715" y2="187" stroke="#1d4ed8" stroke-width="1.4"/>
+<polygon points="742.9,171.4 754.6,157.3 761.0,168.8" fill="#1d4ed8"/>
+<line x1="1045" y1="145" x2="1040" y2="187" stroke="#1d4ed8" stroke-width="1.4"/>
+<polygon points="1041.2,176.9 1036.7,159.2 1049.8,160.8" fill="#1d4ed8"/>
+<line x1="1135" y1="145" x2="1095" y2="187" stroke="#1d4ed8" stroke-width="1.4"/>
+<polygon points="1107.4,174.0 1114.4,157.1 1124.0,166.2" fill="#1d4ed8"/>
+<text x="780" y="880" font-size="12.5" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">盒内三行：变量名（形状）/ 对应梯度 · 蓝色箭头=前向数据流（边标注运算） · 橙=参数  灰=数据  红=loss</text>
+</g>
+<line x1="60" y1="928" x2="1500" y2="928" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="780" y="952" font-size="14" fill="#334155" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">↓ 反向传播 = 沿同一张计算图反向走一遍：每条边应用局部梯度规则；凡广播、索引取行、多路分支处，梯度必须累加 ↓</text>
+<g id="panel-backward">
+<text x="780" y="1012" font-size="21" fill="#0f172a" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">反向传播 Backward（梯度流自右向左，与前向共用同一张图）</text>
+<text x="780" y="1038" font-size="13" fill="#64748b" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">MLP · Backprop Ninja · 全变量计算图 · Day9</text>
+<rect x="40.0" y="1061.0" width="100" height="54" rx="10" fill="#ffedd5" stroke="#c2410c" stroke-width="1.6"/>
+<text x="90" y="1074" font-size="15" fill="#b91c1c" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dC</text>
+<text x="90" y="1093" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(27,10)</text>
+<text x="90" y="1112" font-size="11.5" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">← C 的梯度</text>
+<rect x="185.0" y="1061.0" width="100" height="54" rx="10" fill="#ffedd5" stroke="#c2410c" stroke-width="1.6"/>
+<text x="235" y="1074" font-size="15" fill="#475569" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">Xb</text>
+<text x="235" y="1093" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(32,3)</text>
+<text x="235" y="1112" font-size="11" fill="#94a3b8" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">（常量·无梯度）</text>
+<rect x="418.0" y="1061.0" width="104" height="54" rx="10" fill="#ffedd5" stroke="#c2410c" stroke-width="1.6"/>
+<text x="470" y="1074" font-size="15" fill="#b91c1c" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dW1</text>
+<text x="470" y="1093" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(30,64)</text>
+<text x="470" y="1112" font-size="11.5" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">← W1 的梯度</text>
+<rect x="525.0" y="1061.0" width="80" height="54" rx="10" fill="#ffedd5" stroke="#c2410c" stroke-width="1.6"/>
+<text x="565" y="1074" font-size="15" fill="#b91c1c" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">db1</text>
+<text x="565" y="1093" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(64,)</text>
+<text x="565" y="1112" font-size="11.5" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">← b1 的梯度</text>
+<rect x="628.0" y="1061.0" width="104" height="54" rx="10" fill="#ffedd5" stroke="#c2410c" stroke-width="1.6"/>
+<text x="680" y="1074" font-size="15" fill="#b91c1c" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dbngain</text>
+<text x="680" y="1093" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(1,64)</text>
+<text x="680" y="1112" font-size="11.5" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">← bngain 的梯度</text>
+<rect x="751.0" y="1061.0" width="88" height="54" rx="10" fill="#ffedd5" stroke="#c2410c" stroke-width="1.6"/>
+<text x="795" y="1074" font-size="15" fill="#b91c1c" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dbnbias</text>
+<text x="795" y="1093" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(1,64)</text>
+<text x="795" y="1112" font-size="11.5" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">← bnbias 的梯度</text>
+<rect x="965.0" y="1061.0" width="110" height="54" rx="10" fill="#ffedd5" stroke="#c2410c" stroke-width="1.6"/>
+<text x="1020" y="1074" font-size="15" fill="#b91c1c" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dW2</text>
+<text x="1020" y="1093" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(64,27)</text>
+<text x="1020" y="1112" font-size="11.5" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">← W2 的梯度</text>
+<rect x="1090.0" y="1061.0" width="80" height="54" rx="10" fill="#ffedd5" stroke="#c2410c" stroke-width="1.6"/>
+<text x="1130" y="1074" font-size="15" fill="#b91c1c" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">db2</text>
+<text x="1130" y="1093" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(27,)</text>
+<text x="1130" y="1112" font-size="11.5" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">← b2 的梯度</text>
+<rect x="45.0" y="1157.0" width="150" height="86" rx="10" fill="#dbeafe" stroke="#1e40af" stroke-width="1.6"/>
+<text x="120" y="1186" font-size="15" fill="#b91c1c" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">demb</text>
+<text x="120" y="1205" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(32,3,10)</text>
+<text x="120" y="1224" font-size="11.5" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">← emb 的梯度</text>
+<rect x="235.0" y="1157.0" width="150" height="86" rx="10" fill="#dbeafe" stroke="#1e40af" stroke-width="1.6"/>
+<text x="310" y="1186" font-size="15" fill="#b91c1c" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dembcat</text>
+<text x="310" y="1205" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(32,30)</text>
+<text x="310" y="1224" font-size="11.5" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">← embcat 的梯度</text>
+<rect x="425.0" y="1157.0" width="150" height="86" rx="10" fill="#dbeafe" stroke="#1e40af" stroke-width="1.6"/>
+<text x="500" y="1186" font-size="15" fill="#b91c1c" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dhprebn</text>
+<text x="500" y="1205" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(32,64)</text>
+<text x="500" y="1224" font-size="11.5" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">← hprebn 的梯度</text>
+<rect x="615.0" y="1157.0" width="150" height="86" rx="10" fill="#dbeafe" stroke="#1e40af" stroke-width="1.6"/>
+<text x="690" y="1186" font-size="15" fill="#b91c1c" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dhpreact</text>
+<text x="690" y="1205" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(32,64)</text>
+<text x="690" y="1224" font-size="11.5" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">← hpreact 的梯度</text>
+<rect x="805.0" y="1157.0" width="150" height="86" rx="10" fill="#dbeafe" stroke="#1e40af" stroke-width="1.6"/>
+<text x="880" y="1186" font-size="15" fill="#b91c1c" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dh</text>
+<text x="880" y="1205" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(32,64)</text>
+<text x="880" y="1224" font-size="11.5" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">← h 的梯度</text>
+<rect x="995.0" y="1157.0" width="150" height="86" rx="10" fill="#dbeafe" stroke="#1e40af" stroke-width="1.6"/>
+<text x="1070" y="1186" font-size="15" fill="#b91c1c" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dlogits</text>
+<text x="1070" y="1205" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(32,27)</text>
+<text x="1070" y="1224" font-size="11.5" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">← logits 的梯度</text>
+<rect x="1185.0" y="1157.0" width="150" height="86" rx="10" fill="#dbeafe" stroke="#1e40af" stroke-width="1.6"/>
+<text x="1260" y="1186" font-size="15" fill="#b91c1c" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dnorm_logits</text>
+<text x="1260" y="1205" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(32,27)</text>
+<text x="1260" y="1224" font-size="11.5" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">← norm_logits 的梯度</text>
+<rect x="1375.0" y="1157.0" width="150" height="86" rx="10" fill="#dbeafe" stroke="#1e40af" stroke-width="1.6"/>
+<text x="1450" y="1186" font-size="15" fill="#b91c1c" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dcounts</text>
+<text x="1450" y="1205" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(32,27)</text>
+<text x="1450" y="1224" font-size="11.5" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">← counts 的梯度</text>
+<rect x="995.0" y="1287.0" width="150" height="86" rx="10" fill="#dbeafe" stroke="#1e40af" stroke-width="1.6"/>
+<text x="1070" y="1316" font-size="15" fill="#b91c1c" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dlogit_maxes</text>
+<text x="1070" y="1335" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(32,1)</text>
+<text x="1070" y="1354" font-size="11.5" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">← logit_maxes 的梯度</text>
+<rect x="1375.0" y="1287.0" width="150" height="86" rx="10" fill="#dbeafe" stroke="#1e40af" stroke-width="1.6"/>
+<text x="1450" y="1316" font-size="15" fill="#b91c1c" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dcounts_sum</text>
+<text x="1450" y="1335" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(32,1)</text>
+<text x="1450" y="1354" font-size="11.5" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">← counts_sum 的梯度</text>
+<rect x="1375.0" y="1407.0" width="150" height="86" rx="10" fill="#dbeafe" stroke="#1e40af" stroke-width="1.6"/>
+<text x="1450" y="1436" font-size="15" fill="#b91c1c" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dcounts_sum_inv</text>
+<text x="1450" y="1455" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(32,1)</text>
+<text x="1450" y="1474" font-size="11.5" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">← counts_sum_inv 的梯度</text>
+<rect x="1155.0" y="1527.0" width="150" height="86" rx="10" fill="#dbeafe" stroke="#1e40af" stroke-width="1.6"/>
+<text x="1230" y="1556" font-size="15" fill="#b91c1c" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dprobs</text>
+<text x="1230" y="1575" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(32,27)</text>
+<text x="1230" y="1594" font-size="11.5" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">← probs 的梯度</text>
+<rect x="935.0" y="1527.0" width="150" height="86" rx="10" fill="#dbeafe" stroke="#1e40af" stroke-width="1.6"/>
+<text x="1010" y="1556" font-size="15" fill="#b91c1c" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dlogprobs</text>
+<text x="1010" y="1575" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(32,27)</text>
+<text x="1010" y="1594" font-size="11.5" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">← logprobs 的梯度</text>
+<rect x="45.0" y="1667.0" width="150" height="86" rx="10" fill="#dbeafe" stroke="#1e40af" stroke-width="1.6"/>
+<text x="120" y="1696" font-size="15" fill="#b91c1c" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dbnmeani</text>
+<text x="120" y="1715" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(1,64)</text>
+<text x="120" y="1734" font-size="11.5" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">← bnmeani 的梯度</text>
+<rect x="225.0" y="1667.0" width="150" height="86" rx="10" fill="#dbeafe" stroke="#1e40af" stroke-width="1.6"/>
+<text x="300" y="1696" font-size="15" fill="#b91c1c" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dbndiff</text>
+<text x="300" y="1715" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(32,64)</text>
+<text x="300" y="1734" font-size="11.5" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">← bndiff 的梯度</text>
+<rect x="405.0" y="1667.0" width="150" height="86" rx="10" fill="#dbeafe" stroke="#1e40af" stroke-width="1.6"/>
+<text x="480" y="1696" font-size="15" fill="#b91c1c" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dbndiff2</text>
+<text x="480" y="1715" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(32,64)</text>
+<text x="480" y="1734" font-size="11.5" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">← bndiff2 的梯度</text>
+<rect x="585.0" y="1667.0" width="150" height="86" rx="10" fill="#dbeafe" stroke="#1e40af" stroke-width="1.6"/>
+<text x="660" y="1696" font-size="15" fill="#b91c1c" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dbnvar</text>
+<text x="660" y="1715" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(1,64)</text>
+<text x="660" y="1734" font-size="11.5" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">← bnvar 的梯度</text>
+<rect x="765.0" y="1667.0" width="150" height="86" rx="10" fill="#dbeafe" stroke="#1e40af" stroke-width="1.6"/>
+<text x="840" y="1696" font-size="15" fill="#b91c1c" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dbnvar_inv</text>
+<text x="840" y="1715" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(1,64)</text>
+<text x="840" y="1734" font-size="11.5" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">← bnvar_inv 的梯度</text>
+<rect x="945.0" y="1667.0" width="150" height="86" rx="10" fill="#dbeafe" stroke="#1e40af" stroke-width="1.6"/>
+<text x="1020" y="1696" font-size="15" fill="#b91c1c" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dbnraw</text>
+<text x="1020" y="1715" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(32,64)</text>
+<text x="1020" y="1734" font-size="11.5" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">← bnraw 的梯度</text>
+<rect x="580.0" y="1543.0" width="80" height="54" rx="10" fill="#f1f5f9" stroke="#64748b" stroke-width="1.6"/>
+<text x="620" y="1556" font-size="15" fill="#475569" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">Yb</text>
+<text x="620" y="1575" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(32,)</text>
+<text x="620" y="1594" font-size="11" fill="#94a3b8" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">（常量·无梯度）</text>
+<rect x="705.0" y="1527.0" width="170" height="86" rx="10" fill="#fee2e2" stroke="#b91c1c" stroke-width="1.6"/>
+<text x="790" y="1556" font-size="15" fill="#b91c1c" font-weight="bold" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dloss = 1</text>
+<text x="790" y="1575" font-size="12" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">标量</text>
+<text x="790" y="1594" font-size="11.5" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">← loss 的梯度</text>
+<text x="1260" y="1259" font-size="11" fill="#64748b" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">norm = logits - maxes</text>
+<text x="1230" y="1629" font-size="11" fill="#64748b" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">probs = counts × counts_sum_inv</text>
+<text x="1160" y="1767" font-size="11" fill="#64748b" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">bnraw = bndiff × bnvar_inv</text>
+<line x1="235" y1="1200" x2="195" y2="1200" stroke="#dc2626" stroke-width="2"/>
+<polygon points="204.0,1200.0 221.1,1193.4 221.1,1206.6" fill="#dc2626"/>
+<text x="215" y="1262" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">demb = dembcat</text>
+<text x="215" y="1277" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">.view(emb.shape)</text>
+<line x1="425" y1="1200" x2="385" y2="1200" stroke="#dc2626" stroke-width="2"/>
+<polygon points="394.0,1200.0 411.1,1193.4 411.1,1206.6" fill="#dc2626"/>
+<text x="405" y="1262" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dembcat = dhprebn</text>
+<text x="405" y="1277" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">@ W1^T</text>
+<line x1="805" y1="1200" x2="765" y2="1200" stroke="#dc2626" stroke-width="2"/>
+<polygon points="774.0,1200.0 791.0,1193.4 791.0,1206.6" fill="#dc2626"/>
+<text x="785" y="1262" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dhpreact =</text>
+<text x="785" y="1277" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(1-h^2)·dh</text>
+<line x1="995" y1="1200" x2="955" y2="1200" stroke="#dc2626" stroke-width="2"/>
+<polygon points="964.0,1200.0 981.0,1193.4 981.0,1206.6" fill="#dc2626"/>
+<text x="975" y="1130" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dh = dlogits</text>
+<text x="975" y="1145" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">@ W2^T</text>
+<line x1="1185" y1="1200" x2="1145" y2="1200" stroke="#dc2626" stroke-width="2"/>
+<polygon points="1154.0,1200.0 1171.0,1193.4 1171.0,1206.6" fill="#dc2626"/>
+<text x="1165" y="1262" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dlogits +=</text>
+<text x="1165" y="1277" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dnorm.clone()</text>
+<line x1="1375" y1="1200" x2="1335" y2="1200" stroke="#dc2626" stroke-width="2"/>
+<polygon points="1344.0,1200.0 1361.0,1193.4 1361.0,1206.6" fill="#dc2626"/>
+<text x="1355" y="1130" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dnorm = counts</text>
+<text x="1355" y="1145" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">× dcounts</text>
+<line x1="1070" y1="1287" x2="1070" y2="1243" stroke="#dc2626" stroke-width="2"/>
+<polygon points="1070.0,1254.0 1076.6,1271.0 1063.4,1271.0" fill="#dc2626"/>
+<text x="988" y="1258" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dlogit_maxes =</text>
+<text x="988" y="1273" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(-dnorm).sum(1)</text>
+<line x1="1450" y1="1287" x2="1450" y2="1243" stroke="#dc2626" stroke-width="2"/>
+<polygon points="1450.0,1254.0 1456.6,1271.0 1443.4,1271.0" fill="#dc2626"/>
+<text x="1368" y="1258" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dcounts_sum =</text>
+<text x="1368" y="1273" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">-inv^2 · dinv</text>
+<line x1="1450" y1="1407" x2="1450" y2="1373" stroke="#dc2626" stroke-width="2"/>
+<polygon points="1450.0,1379.0 1456.6,1396.0 1443.4,1396.0" fill="#dc2626"/>
+<text x="1368" y="1383" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dcounts += 1·</text>
+<text x="1368" y="1398" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dcounts_sum</text>
+<line x1="155" y1="1667" x2="455" y2="1243" stroke="#dc2626" stroke-width="2" marker-end="url(#aR)"/>
+<polygon points="310.2,1447.7 306.5,1462.2 297.7,1455.9" fill="#dc2626"/>
+<text x="170" y="1440" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dhprebn +=</text>
+<text x="170" y="1455" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(1/n)·dbnmeani</text>
+<line x1="345" y1="1667" x2="470" y2="1243" stroke="#dc2626" stroke-width="2" marker-end="url(#aR)"/>
+<polygon points="410.0,1446.4 411.3,1461.3 400.9,1458.2" fill="#dc2626"/>
+<text x="472" y="1525" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dhprebn +=</text>
+<text x="472" y="1540" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dbndiff</text>
+<line x1="225" y1="1710" x2="195" y2="1710" stroke="#dc2626" stroke-width="2"/>
+<polygon points="199.0,1710.0 216.1,1703.4 216.1,1716.6" fill="#dc2626"/>
+<text x="215" y="1782" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dbnmeani =</text>
+<text x="215" y="1797" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(-dbndiff).sum(0)</text>
+<line x1="405" y1="1710" x2="375" y2="1710" stroke="#dc2626" stroke-width="2"/>
+<polygon points="379.0,1710.0 396.1,1703.4 396.1,1716.6" fill="#dc2626"/>
+<text x="390" y="1632" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dbndiff += 2·bndiff</text>
+<text x="390" y="1647" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">·dbndiff2</text>
+<line x1="585" y1="1710" x2="555" y2="1710" stroke="#dc2626" stroke-width="2"/>
+<polygon points="559.0,1710.0 576.0,1703.4 576.0,1716.6" fill="#dc2626"/>
+<text x="570" y="1632" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dbndiff2 =</text>
+<text x="570" y="1647" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">1/(n-1)·dbnvar</text>
+<line x1="765" y1="1710" x2="735" y2="1710" stroke="#dc2626" stroke-width="2"/>
+<polygon points="739.0,1710.0 756.0,1703.4 756.0,1716.6" fill="#dc2626"/>
+<text x="750" y="1632" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dbnvar =</text>
+<text x="750" y="1647" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">-0.5(x+1e-5)^-1.5·dbnvar_inv</text>
+<line x1="945" y1="1710" x2="915" y2="1710" stroke="#dc2626" stroke-width="2"/>
+<polygon points="919.0,1710.0 936.0,1703.4 936.0,1716.6" fill="#dc2626"/>
+<text x="930" y="1632" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dbnvar_inv = (bndiff</text>
+<text x="930" y="1647" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">·dbnraw).sum(0)</text>
+<polyline points="1020,1753 1020,1782 300,1782 300,1753" fill="none" stroke="#dc2626" stroke-width="1.8" marker-end="url(#aR)" stroke-dasharray="5,4"/>
+<polygon points="651.0,1782.0 665.0,1776.6 665.0,1787.4" fill="#dc2626"/>
+<text x="660" y="1798" font-size="11" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dbndiff += bnvar_inv·dbnraw（另一操作数支路）</text>
+<line x1="725" y1="1243" x2="985" y2="1667" stroke="#dc2626" stroke-width="2" marker-end="url(#aR)"/>
+<polygon points="859.7,1462.7 847.8,1453.6 857.0,1448.0" fill="#dc2626"/>
+<text x="935" y="1440" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dbnraw = bngain</text>
+<text x="935" y="1455" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">·dhpreact</text>
+<line x1="1195" y1="1534" x2="1375" y2="1225" stroke="#dc2626" stroke-width="2" marker-end="url(#aR)"/>
+<polygon points="1289.5,1371.7 1287.2,1386.5 1277.8,1381.1" fill="#dc2626"/>
+<text x="1118" y="1400" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dcounts +=</text>
+<text x="1118" y="1415" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">inv·dprobs</text>
+<line x1="1300" y1="1534" x2="1400" y2="1486" stroke="#dc2626" stroke-width="2"/>
+<polygon points="1359.9,1505.2 1347.4,1518.6 1341.7,1506.7" fill="#dc2626"/>
+<text x="1462" y="1515" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dinv = (counts·dprobs)</text>
+<text x="1462" y="1530" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">.sum(1)</text>
+<line x1="1218" y1="1243" x2="1115" y2="1287" stroke="#dc2626" stroke-width="2"/>
+<polygon points="1156.4,1269.3 1169.5,1256.6 1174.7,1268.7" fill="#dc2626"/>
+<line x1="1125" y1="1570" x2="1085" y2="1570" stroke="#dc2626" stroke-width="2"/>
+<polygon points="1094.0,1570.0 1111.0,1563.4 1111.0,1576.6" fill="#dc2626"/>
+<text x="1120" y="1506" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dprobs =</text>
+<text x="1120" y="1521" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">(1/probs)·dlogprobs</text>
+<line x1="905" y1="1570" x2="935" y2="1570" stroke="#dc2626" stroke-width="2"/>
+<polygon points="931.0,1570.0 914.0,1576.6 914.0,1563.4" fill="#dc2626"/>
+<text x="898" y="1506" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">dlogprobs：</text>
+<text x="898" y="1521" font-size="11.5" fill="#b91c1c" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">Yb 位 -1/n</text>
+<line x1="480" y1="1157" x2="480" y2="1115" stroke="#dc2626" stroke-width="1.4"/>
+<polygon points="480.0,1125.0 486.6,1142.0 473.4,1142.0" fill="#dc2626"/>
+<line x1="540" y1="1157" x2="565" y2="1115" stroke="#dc2626" stroke-width="1.4"/>
+<polygon points="558.1,1126.5 555.1,1144.6 543.7,1137.8" fill="#dc2626"/>
+<line x1="670" y1="1157" x2="695" y2="1115" stroke="#dc2626" stroke-width="1.4"/>
+<polygon points="688.1,1126.5 685.1,1144.6 673.7,1137.8" fill="#dc2626"/>
+<line x1="715" y1="1157" x2="790" y2="1115" stroke="#dc2626" stroke-width="1.4"/>
+<polygon points="762.1,1130.6 750.4,1144.7 744.0,1133.2" fill="#dc2626"/>
+<line x1="1040" y1="1157" x2="1045" y2="1115" stroke="#dc2626" stroke-width="1.4"/>
+<polygon points="1043.8,1125.1 1048.3,1142.8 1035.2,1141.2" fill="#dc2626"/>
+<line x1="1095" y1="1157" x2="1135" y2="1115" stroke="#dc2626" stroke-width="1.4"/>
+<polygon points="1122.6,1128.0 1115.6,1144.9 1106.0,1135.8" fill="#dc2626"/>
+<text x="780" y="1850" font-size="12.5" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">盒内三行：梯度名（形状）/ 对应变量 · 红色箭头=梯度流向（与前向相反） · "+=" 表示多路分支处梯度累加</text>
+</g>
+<text x="780" y="1922" font-size="12" fill="#64748b" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">参数梯度：dW1 = embcat^T @ dhprebn · dW2 = h^T @ dlogits · db = d输出.sum(0) · dbngain = (bnraw·dhpreact).sum(0) · dbnbias = dhpreact.sum(0) · dC：按 Xb 索引 scatter-add</text>
+<text x="780" y="1946" font-size="12" fill="#94a3b8" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">Day9 · MLP Backprop Ninja · 26 个梯度全部 exact 对账通过（详见 08_MyNote/Day9）</text>
+</svg>
