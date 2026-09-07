@@ -11,7 +11,7 @@ tags:
   - 初始化
   - 梯度消失
   - PyTorch
-excerpt: 先给 MLP 做体检（初始 loss、tanh 饱和），再开两味药（Kaiming、BatchNorm）。
+excerpt: 追随Karpathy大佬的脚步
 math: true
 ---
 

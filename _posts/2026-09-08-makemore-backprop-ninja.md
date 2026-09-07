@@ -11,7 +11,7 @@ tags:
   - BatchNorm
   - softmax
   - PyTorch
-excerpt: 手拆 loss.backward()：手写 26 个梯度与 autograd 逐位对账，再把 softmax+交叉熵、BatchNorm 的反向各压缩成一行公式。
+excerpt: 追随Karpathy大佬的脚步
 math: true
 ---
 
