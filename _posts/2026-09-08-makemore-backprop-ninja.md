@@ -107,4 +107,3 @@ $$\frac{\partial L}{\partial\ hprebn} = \frac{\gamma \cdot bnvar\_inv}{n}\left(n
 ## 附 · 资料下载
 
 - [MLP的另外一项收尾——重写反向传播.ipynb](/assets/attach/day9/MLP%E7%9A%84%E5%8F%A6%E5%A4%96%E4%B8%80%E9%A1%B9%E6%94%B6%E5%B0%BE%E2%80%94%E2%80%94%E9%87%8D%E5%86%99%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD.ipynb)：本期 notebook——前 12 个 cell 为干净内核全量输出（Exercise 1 对账 26 个梯度全部 exact: True），Exercise 4 训练段代码已按 TODO 补全
-- [Day9.md](/assets/attach/day9/Day9.md)：本篇学习笔记源稿（含 make_svg.py / make_figures.py 配图脚本说明）
