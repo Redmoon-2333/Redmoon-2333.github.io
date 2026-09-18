@@ -31,6 +31,14 @@ author:
 show_excerpts: true
 encoding: utf-8
 
+defaults:
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: post
+      math: true
+
 exclude:
   - README.md
   - AGENTS.md
