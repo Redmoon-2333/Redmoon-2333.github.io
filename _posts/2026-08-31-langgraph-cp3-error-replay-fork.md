@@ -33,7 +33,7 @@ math: true
 
 ![五个 Notebook 的连续实验链（matplotlib 生成）](/assets/img/day6-chain-matplotlib.png)
 
-> 本图由 `matplotlib` 在 `08_MyNote/Day6/assets/img/make_figures.py` 中生成，替代原 Mermaid 流程图，确保 GitHub Pages 无需插件即可渲染。链路：`CP3-04 制造错误 -> 并行超步(成功/失败) -> CP3-05 定位 -> CP3-06 修复续跑 -> CP3-07 Replay -> CP3-08 Fork`。
+> 本图由 `matplotlib` 脚本生成，替代原 Mermaid 流程图，确保 GitHub Pages 无需插件即可渲染。链路：`CP3-04 制造错误 -> 并行超步(成功/失败) -> CP3-05 定位 -> CP3-06 修复续跑 -> CP3-07 Replay -> CP3-08 Fork`。
 
 ### 0.1 统一图结构
 

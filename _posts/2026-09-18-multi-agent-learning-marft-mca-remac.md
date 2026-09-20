@@ -335,7 +335,7 @@ $$
 
 ![MARFT 的 MATH500 正确率与 LLM-MCA 的 RWARE 团队回报，按各自论文表格独立重绘](/assets/img/day12/day12-reported-results.png)
 
-> **图 5 · 相似的柱状图，不同的科学问题。** 左图依据 [1] Table 2，衡量数学题正确率，误差线为原文报告的标准误；右图依据 [2] Table 1 的 RWARE Average 行，衡量平均团队回报，误差线沿用原表所报 95% 置信区间。两图不共用单位，不能比较左右柱子的高低。它们分别说明“在此工作流上训练有收益”和“在此环境中个体反馈能改善策略表现”。这不是本地复现实验。
+> **图 5 · 相似的柱状图，不同的科学问题。** 左图依据 [1] Table 2，衡量数学题正确率，误差线为原文报告的标准误；右图依据 [2] Table 1 的 RWARE Average 行，衡量平均团队回报，误差线沿用原表所报 95% 置信区间。两图不共用单位，不能比较左右柱子的高低。它们分别说明“在此工作流上训练有收益”和“在此环境中个体反馈能改善策略表现”。这不是我的复现实验，两张图都是按论文原表重绘的。
 
 这篇论文最值得带走的是一条可操作的思路：
 
@@ -396,7 +396,7 @@ move_reward = np.exp(-object_to_target_distance)
 
 但也容易看到一个隐患：如果“接近物体”的奖励过强，策略可能一直停在物体旁边，而不愿冒险抓起它。
 
-所以本文方法不是让 LLM 一次写完就结束，而是**看训练反馈，继续调整奖励结构、权重和计算方式**。
+所以 ReMAC 的方法不是让 LLM 一次写完就结束，而是**看训练反馈，继续调整奖励结构、权重和计算方式**。
 
 ### 4.4 两层循环：里面学动作，外面改奖励
 
@@ -436,7 +436,7 @@ ReMAC 的反思有三个层次：
 
 例如，成功率一直不变，但接近奖励已经很高，接下来需要看的就不是“再增加接近奖励”，而可能是抓取、转移、配合条件是否缺失。
 
-这是本文对方法的直观解释，不是额外运行得到的观察。对应的反思提示和规则见 [3] PDF pp.30–32。
+这是 ReMAC 论文对方法的直观解释，不是我自己额外运行得到的观察。对应的反思提示和规则见 [3] PDF pp.30–32。
 
 ### 4.7 实验结论：任务结构决定奖励设计的效果
 
@@ -521,13 +521,11 @@ ManiCraft 的 Table 1 列出 11 个任务定义，其中 Co-Sweep 有三档难�
 
 ## 参考与资料
 
-本文依据用户提供的本地 PDF，按 **MARFT → LLM-MCA → ReMAC** 的教学顺序组织；不将该顺序解释为发表先后关系。数字均来自这些阅读版本，未在本地重跑论文训练，也未根据网络上的其他版本替换实验结果。
-
 | 编号 | 本次阅读版本 | 重点回看位置 |
 | --- | --- | --- |
-| [1] | 匿名作者，*MARFT: Multi-Agent Reinforcement Fine-Tuning*。本地 PDF 标注 “Under review as a conference paper at ICLR 2026”，不据此认定最终录用状态 | PDF pp.4–6：依赖、优势分解、训练流程；p.8：Tables 2–3；p.18：超参数 |
-| [2] | K. Nagpal, D. Dong, J.-B. Bouvier, N. Mehr，*Leveraging Large Language Models for Effective and Explainable Multi-Agent Credit Assignment*。本地版本标注 AAMAS 2025，arXiv:2502.16863v1 | PDF pp.4–6：方法与 TACA；p.2：Figure 2；p.11：Table 1 |
-| [3] | P. Li, H. Tang, Y. Yuan, J. Hao，*ReMAC: Large Language Model-Driven Reward Design for Multi-Agent Manipulation Collaboration*。本地版本标注 NeurIPS 2025 | PDF pp.4–5：闭环；pp.7–9：实验与消融；pp.23–24：训练设置；pp.30–32：提示词 |
+| [1] | 匿名作者，*MARFT: Multi-Agent Reinforcement Fine-Tuning*。我读的这版 PDF 标注 “Under review as a conference paper at ICLR 2026”，不据此认定最终录用状态 | PDF pp.4–6：依赖、优势分解、训练流程；p.8：Tables 2–3；p.18：超参数 |
+| [2] | K. Nagpal, D. Dong, J.-B. Bouvier, N. Mehr，*Leveraging Large Language Models for Effective and Explainable Multi-Agent Credit Assignment*。我读的这版标注 AAMAS 2025，arXiv:2502.16863v1 | PDF pp.4–6：方法与 TACA；p.2：Figure 2；p.11：Table 1 |
+| [3] | P. Li, H. Tang, Y. Yuan, J. Hao，*ReMAC: Large Language Model-Driven Reward Design for Multi-Agent Manipulation Collaboration*。我读的这版标注 NeurIPS 2025 | PDF pp.4–5：闭环；pp.7–9：实验与消融；pp.23–24：训练设置；pp.30–32：提示词 |
 
 ### 附 · 资料下载
 

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """Day11 从 Bigram 到 GPT — matplotlib 技术示意图
 
-一键产出全部 6 张 SVG（从仓库根目录运行）：
-  KMP_DUPLICATE_LIB_OK=TRUE python 08_MyNote/Day11/assets/make_figures.py
-输出：08_MyNote/Day11/assets/img/*.svg
+一键产出全部 6 张 SVG（在本文件所在目录运行）：
+  KMP_DUPLICATE_LIB_OK=TRUE python make_figures.py
+输出：与本文件同级的 img/*.svg
 """
 from pathlib import Path
 
@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import FancyArrowPatch, FancyBboxPatch
 import numpy as np
 
-OUT = Path("08_MyNote/Day11/assets/img")
+OUT = Path(__file__).resolve().parent / "img"
 OUT.mkdir(parents=True, exist_ok=True)
 plt.rcParams["font.sans-serif"] = ["Microsoft YaHei", "SimHei", "Arial Unicode MS", "DejaVu Sans"]
 plt.rcParams["axes.unicode_minus"] = False

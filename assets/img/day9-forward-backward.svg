@@ -442,5 +442,5 @@
 <text x="780" y="1850" font-size="12.5" fill="#475569" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">盒内三行：梯度名（形状）/ 对应变量 · 红色箭头=梯度流向（与前向相反） · "+=" 表示多路分支处梯度累加</text>
 </g>
 <text x="780" y="1922" font-size="12" fill="#64748b" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">参数梯度：dW1 = embcat^T @ dhprebn · dW2 = h^T @ dlogits · db = d输出.sum(0) · dbngain = (bnraw·dhpreact).sum(0) · dbnbias = dhpreact.sum(0) · dC：按 Xb 索引 scatter-add</text>
-<text x="780" y="1946" font-size="12" fill="#94a3b8" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">Day9 · MLP Backprop Ninja · 26 个梯度全部 exact 对账通过（详见 08_MyNote/Day9）</text>
+<text x="780" y="1946" font-size="12" fill="#94a3b8" font-weight="normal" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif">Day9 · MLP Backprop Ninja · 26 个梯度全部 exact 对账通过</text>
 </svg>
