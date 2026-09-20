@@ -7,3 +7,5 @@ vendor/
 *.swp
 .DS_Store
 _shots/
+__pycache__/
+*.pyc
