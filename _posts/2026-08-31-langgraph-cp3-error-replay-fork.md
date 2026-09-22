@@ -34,7 +34,7 @@ math: true
 
 ![五个 Notebook 的连续实验链（matplotlib 生成）](/assets/img/day6-chain-matplotlib.png)
 
-> 我沿着这条执行顺序看检查点：`CP3-04 制造错误 -> 并行超步(成功/失败) -> CP3-05 定位 -> CP3-06 修复续跑 -> CP3-07 Replay -> CP3-08 Fork`。
+> 检查点示例的执行顺序：`CP3-04 制造错误 -> 并行超步(成功/失败) -> CP3-05 定位 -> CP3-06 修复续跑 -> CP3-07 Replay -> CP3-08 Fork`。
 
 ### 0.1 统一图结构
 

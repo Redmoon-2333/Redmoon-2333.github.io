@@ -143,7 +143,7 @@ def node_2(state: OverAllState) -> OverAllState:
 
 ### 1.4 多 Schema 架构（Multi-Schema）与视图隔离
 
-我不希望调用方必须知道图里所有中间字段。多 Schema 可以分别声明输入、内部状态和输出，下面这个例子正好把三者分开：
+多 Schema 可以分别声明输入、内部状态和输出，让调用方只接触所需字段。下面的例子将三者分开：
 
 ```python
 # 1. 外部调用输入接口：仅暴露必要入参
@@ -253,7 +253,7 @@ builder.add_edge("mapper_node", "reducer_node")  # 所有 Mapper 节点并行完
 
 ### 2.4 指令式控制流：`Command` 原生跳转
 
-`Command` 让我可以在节点的一次返回中同时更新状态和指定下一跳。`CP2/07_command.ipynb` 和 `CP2/11_loop.ipynb` 用的是 **`Command(goto=..., update=...)`**：
+`Command` 可以在节点的一次返回中同时更新状态和指定下一跳。`CP2/07_command.ipynb` 和 `CP2/11_loop.ipynb` 用的是 **`Command(goto=..., update=...)`**：
 
 ```python
 from langgraph.types import Command
@@ -418,7 +418,7 @@ with PostgresSaver.from_conn_string(DB_URL) as checkpointer:
 
 ### 4.2 核心数据结构深度拆解：`StateSnapshot`
 
-当我们在 `CP3/03_history_state.ipynb` 中调用 `graph.get_state_history(config)` 时，会返回一个由 `StateSnapshot` 构成的历史时间链列表。
+在 `CP3/03_history_state.ipynb` 中调用 `graph.get_state_history(config)`，可取得由 `StateSnapshot` 构成的历史时间链。
 
 下面结合真实执行输出，详细解析 `StateSnapshot` 的核心字段构成：
 
@@ -437,7 +437,7 @@ with PostgresSaver.from_conn_string(DB_URL) as checkpointer:
 
 ### 4.3 时间旅行（Time-Travel）与任意时刻回放
 
-有了完整的检查点链，我们不仅可以向后追加对话，更可以随时**将 Agent 的时间线回滚到任意历史步骤（Time-Travel）**，或者从某个历史分叉点重新尝试不同的执行路径：
+完整的检查点链既支持向后追加对话，也支持**从已保存的历史步骤恢复执行（Time-Travel）**，或从历史分叉点尝试不同的执行路径：
 
 ```python
 # 1. 获取某个历史检查点的 checkpoint_id
@@ -482,11 +482,11 @@ print("历史快照状态:", snapshot.values)
 
 ## 6. Day 4 收工小结
 
-这几节最容易混淆的是“节点返回了什么”和“图接下来执行什么”。我现在会先确定 State 的字段，再看每个字段是覆盖、追加还是按消息 ID 更新；合并规则确定后，才画条件边、`Send` 分发和 `Command` 跳转。
+“节点返回了什么”和“图接下来执行什么”属于两个层面。State 的字段及其覆盖、追加、按消息 ID 更新等合并规则决定状态如何变化；条件边、`Send` 分发和 `Command` 跳转决定执行路径。
 
 循环跑起来以后，还要分别处理步数、异常和重复计算：`RemainingSteps` 用来感知剩余步数，`RetryPolicy` 处理适合重试的异常，`CachePolicy` 复用结果。它们解决的问题不同。
 
-最后才是跨次执行的状态。`PostgresSaver` 保存检查点，`StateSnapshot` 展示现场，`checkpoint_id` 定位历史位置。下一步我想接着看：节点中途失败时，恢复到底从哪里开始。
+最后是跨次执行的状态。`PostgresSaver` 保存检查点，`StateSnapshot` 展示现场，`checkpoint_id` 定位历史位置。
 
 ---
 

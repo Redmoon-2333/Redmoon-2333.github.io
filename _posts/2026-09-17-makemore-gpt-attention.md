@@ -25,7 +25,7 @@ excerpt: 追随Karpathy大佬的脚步
 
 ## 1. 两份代码的分工
 
-先把两份文件的关系说清楚，方便以后复习时对号入座：
+两份代码对应不同的实现阶段：
 
 | | `gpt-dev.ipynb`（跟敲过程） | `v2.py`（完成版） |
 | --- | --- | --- |
@@ -132,9 +132,9 @@ wei = F.softmax(wei, dim=-1)                       # 每行归一化成权重
 
 | 角色 | 含义 | 代码 |
 | --- | --- | --- |
-| query | 我在找什么 | `q = query(x)` |
-| key | 我有什么 | `k = key(x)` |
-| value | 我实际携带的信息 | `v = value(x)` |
+| query | 当前的查询需求 | `q = query(x)` |
+| key | 用于匹配的特征 | `k = key(x)` |
+| value | 被加权汇总的信息 | `v = value(x)` |
 
 ```python
 wei = q @ k.transpose(-2,-1)                     # 相似度分数 (B,T,T)
@@ -193,7 +193,7 @@ x = x + self.ffwd(self.ln2(x))    # 计算支路 + 残差
 
 - **FFWD = 384 → 1536 → ReLU → 384**：先扩宽 4 倍再收回来。注意力负责「token 之间」的信息流动，FFN 负责「每个 token 自己」的深加工；
 - **残差**：`x + f(LN(x))`。主干道一路直通，支路只负责「增量」，梯度可以沿着 `+` 直接回流——这是深层网络能训起来的关键（和 Day9 手推反向传播时「分支处梯度相加」是同一件事）；
-- **Pre-LN**：归一化放在子层**之前**（`ln1(x)` 而不是 `ln(x + ...)`），训练更稳，是 GPT-2 之后的标准做法。对比 Day8 的 BatchNorm：这里用的是 `nn.LayerNorm`，沿特征维归一化、与 batch 无关，推理时也不需要 running 统计——正是我在 notebook 最后一个 cell 里对照的那个区别。
+- **Pre-LN**：归一化放在子层**之前**（`ln1(x)` 而不是 `ln(x + ...)`）。对比 Day8 的 BatchNorm：这里用的是 `nn.LayerNorm`，沿特征维归一化、与 batch 无关，推理时也不需要 running 统计；notebook 最后一个 cell 对照了这一差别。
 
 ![Transformer Block 教学海报](/assets/img/day11-block-poster.png)
 

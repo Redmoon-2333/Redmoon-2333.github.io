@@ -38,7 +38,7 @@ ok啊,上次说好的把MLP收个尾，结果还没收好，还有一个点值�
 
 ## 3. Exercise 1：26 个梯度
 
-我沿着数据流倒过来算，分成下面五组：
+沿数据流反向计算，可分成下面五组：
 
 **① softmax 链**：`dlogprobs` 是稀疏散布（只有 n=32 个目标位拿到 -1/n）；`log` 的导数是 1/p；广播乘法的反向是对广播维求和（压回 32×1）；x⁻¹ 的导数是 -x⁻²；`dcounts` 两路相加（直连路 + sum 的"全 1 广播"路）；`exp` 的导数还是 exp 本身；`logits - logit_maxes` 的反向把 -dlogit_maxes 广播给整行，而 `max` 只把值路由给 argmax 列（用 `F.one_hot` 掩码加回）。
 
@@ -56,7 +56,7 @@ $$\frac{\partial L}{\partial\ \mathrm{logits}} = \frac{1}{n}\left(\mathrm{softma
 
 **结果**：26 个变量全部 `exact: True, maxdiff: 0.0`——手写反向传播与 autograd **逐比特一致**。
 
-我最需要记住的是梯度的**累加**。广播、索引取行、多路分支都会遇到它。这里共五处 `+=`：`dcounts`（sum 支路）、`dlogits`（max 支路）、`dbndiff`（平方支路）、`dhprebn`（均值支路）、`dC`（索引重复）。对不上的时候，先查这些位置。
+梯度的**累加**贯穿广播、索引取行和多路分支。这里共五处 `+=`：`dcounts`（sum 支路）、`dlogits`（max 支路）、`dbndiff`（平方支路）、`dhprebn`（均值支路）、`dC`（索引重复）。漏掉任一支路都会使结果与 autograd 不一致。
 
 ## 4. 数值算例：3 个小例子走通 softmax 链
 取 logits=[2.0, 1.0, 0.5]、目标类 Y=0、n=1：softmax 后 p=[0.6285, 0.2312, 0.1402]，loss = -ln p0 = 0.4644。
@@ -85,7 +85,7 @@ $$\frac{\partial L}{\partial\ \mathrm{logits}} = \frac{1}{n}\left(\mathrm{softma
 
 $$\frac{\partial L}{\partial\ hprebn} = \frac{\gamma \cdot bnvar\_inv}{n}\left(n\cdot dhpreact - \sum_i dhpreact_i - \frac{n}{n-1}\cdot bnraw \sum_i (dhpreact_i \cdot bnraw_i)\right)$$
 
-括号内三项：**直通项**（γ·inv 缩放）、**均值项**（减 μ 的反向）、**方差项**（除 σ 的反向，系数 n/(n−1) 来自 Bessel 校正）。对照 Exercise 1 的 8 步长链，一行覆盖同样内容——面试能白板写出这一行，BatchNorm 反向就算拿下了。
+括号内三项：**直通项**（γ·inv 缩放）、**均值项**（减 μ 的反向）、**方差项**（除 σ 的反向，系数 n/(n−1) 来自 Bessel 校正）。这一行合并了 Exercise 1 中 8 步链式计算的结果。
 
 ## 7. Exercise 4：接进训练循环
 
@@ -95,7 +95,7 @@ $$\frac{\partial L}{\partial\ hprebn} = \frac{\gamma \cdot bnvar\_inv}{n}\left(n
 3. 更新行启用 `p.data += -lr * grad`（swole doge），旧 `p.grad` 写法留作注释对照；
 4. 删除 `if i >= 100: break` 早停，跑满 200000 步（10 万步后 lr 0.1 → 0.01）。
 
-接进 200k 步训练后，我保存的评估输出是 train **2.0718**、val **2.1089**。Notebook 文末注释里的 2.0719 / 2.1162 是另一组参考结果，和这次输出分开记录。
+接进 200k 步训练后，保存的评估输出为 train **2.0718**、val **2.1089**。Notebook 文末注释里的 2.0719 / 2.1162 是另一组参考结果，和这次输出分开记录。
 
 ![手写反向传播训练后的评估输出](/assets/img/day9-training-result.png)
 
