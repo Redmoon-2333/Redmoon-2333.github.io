@@ -1,5 +1,51 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<script>
+(function () {
+  'use strict';
+  if (window.siteTheme) return;
+  var key = 'redmoon-theme';
+  var root = document.documentElement;
+  var media = window.matchMedia('(prefers-color-scheme: dark)');
+  var preference = 'system';
+  var control;
+  function normalize(value) {
+    return value === 'light' || value === 'dark' ? value : 'system';
+  }
+  try { preference = normalize(window.localStorage.getItem(key)); } catch (error) {}
+  function apply() {
+    root.dataset.theme = preference === 'system' ? (media.matches ? 'dark' : 'light') : preference;
+    root.dataset.themePreference = preference;
+    if (control) control.value = preference;
+  }
+  function select(value) {
+    preference = normalize(value);
+    apply();
+    try { window.localStorage.setItem(key, preference); } catch (error) {}
+  }
+  window.siteTheme = { select: select };
+  apply();
+  function systemChanged() {
+    if (preference === 'system') apply();
+  }
+  if (media.addEventListener) media.addEventListener('change', systemChanged);
+  else media.addListener(systemChanged);
+  window.addEventListener('storage', function (event) {
+    if (event.key === key || event.key === null) {
+      preference = normalize(event.newValue);
+      apply();
+    }
+  });
+  document.addEventListener('DOMContentLoaded', function () {
+    control = document.getElementById('theme-select');
+    if (!control) return;
+    control.value = preference;
+    control.addEventListener('change', function () { select(control.value); });
+    control.closest('.theme-control').hidden = false;
+  }, { once: true });
+})();
+</script>
 {% seo %}
 <link rel="icon" type="image/svg+xml" href="{{ '/assets/img/favicon.svg' | relative_url }}">
 <link rel="alternate" type="application/atom+xml" title="{{ site.title }}" href="{{ '/feed.xml' | relative_url }}">

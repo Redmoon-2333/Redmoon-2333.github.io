@@ -3,6 +3,7 @@
    palette: paper / ink / arXiv-crimson   type: Newsreader × Noto Serif SC × Plex Mono
    ============================================================ */
 :root {
+  color-scheme: light;
   --paper: #FAFBFC;
   --surface: #FFFFFF;
   --ink: #191A1E;
@@ -12,6 +13,12 @@
   --accent-soft: rgba(179, 27, 27, .08);
   --code-bg: #F1F4F7;
   --code-border: #DFE3E8;
+  --syntax-keyword: #9E1A1A;
+  --syntax-string: #3D6B4F;
+  --syntax-comment: #656B75;
+  --syntax-number: #6B4FA0;
+  --syntax-function: #1D5FA8;
+  --syntax-builtin: #7A5C2E;
 
   --serif: "Newsreader", "Noto Serif SC", Georgia, "Songti SC", serif;
   --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
@@ -21,8 +28,28 @@
   --wrap: 49rem;
   --wrap-wide: 60rem;
 }
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --paper: #141518;
+  --surface: #1B1C21;
+  --ink: #E8E7E2;
+  --ink-2: #9AA0AB;
+  --line: #2A2C33;
+  --accent: #E4574F;
+  --accent-soft: rgba(228, 87, 79, .12);
+  --code-bg: #202127;
+  --code-border: #2A2C33;
+  --syntax-keyword: #E4837C;
+  --syntax-string: #8FC49E;
+  --syntax-comment: #9AA0AB;
+  --syntax-number: #B39AE0;
+  --syntax-function: #7FADE0;
+  --syntax-builtin: #CBA36B;
+}
+/* Without JavaScript, keep following the system preference. */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme]) {
+    color-scheme: dark;
     --paper: #141518;
     --surface: #1B1C21;
     --ink: #E8E7E2;
@@ -32,6 +59,12 @@
     --accent-soft: rgba(228, 87, 79, .12);
     --code-bg: #202127;
     --code-border: #2A2C33;
+    --syntax-keyword: #E4837C;
+    --syntax-string: #8FC49E;
+    --syntax-comment: #9AA0AB;
+    --syntax-number: #B39AE0;
+    --syntax-function: #7FADE0;
+    --syntax-builtin: #CBA36B;
   }
 }
 
@@ -67,14 +100,22 @@ img { max-width: 100%; height: auto; display: block; }
 .topbar { border-bottom: 1px solid var(--line); background: var(--paper); }
 .topbar-inner {
   max-width: var(--wrap-wide);
-  display: flex; align-items: baseline; justify-content: space-between;
+  display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: .6rem 1rem;
   padding-block: 1.05rem;
 }
 .brand { text-decoration: none; display: inline-flex; align-items: baseline; gap: .45rem; }
 .brand-mark { color: var(--accent); font-weight: 600; }
 .brand-name { font-family: var(--mono); font-weight: 500; letter-spacing: 0; }
 .brand-sub { color: var(--ink-2); font-family: var(--mono); font-size: .78rem; }
-.nav { display: flex; flex-wrap: wrap; gap: .6rem 1.35rem; }
+.nav { display: flex; flex-wrap: wrap; gap: .6rem 1.1rem; margin-left: auto; }
+.theme-control { display: flex; align-items: center; gap: .4rem; flex-shrink: 0; color: var(--ink-2); font-family: var(--mono); font-size: .78rem; }
+.theme-control[hidden] { display: none; }
+.theme-control select {
+  min-height: 2.75rem; max-width: 100%; padding: .35rem .4rem;
+  border: 1px solid var(--line); border-radius: 4px;
+  background: var(--surface); color: var(--ink); font: inherit; cursor: pointer;
+}
+.theme-control select:hover { border-color: var(--accent); }
 .nav a {
   font-family: var(--mono); font-size: .82rem; letter-spacing: 0;
   text-decoration: none; color: var(--ink-2); padding-bottom: 2px;
@@ -292,22 +333,14 @@ img { max-width: 100%; height: auto; display: block; }
 .post-toc a:hover { color: var(--accent); }
 .post-toc a[aria-current="location"] { color: var(--accent); border-left-color: var(--accent); background: var(--accent-soft); }
 
-/* 代码高亮（Rouge） */
-.highlight .k, .highlight .kv, .highlight .kn, .highlight .kr { color: #9E1A1A; }
-.highlight .s, .highlight .s1, .highlight .s2, .highlight .sa { color: #3D6B4F; }
-.highlight .c1, .highlight .cm, .highlight .c { color: #8A8F98; font-style: italic; }
-.highlight .mi, .highlight .mf, .highlight .no { color: #6B4FA0; }
-.highlight .nf, .highlight .fm { color: #1D5FA8; }
-.highlight .nb { color: #7A5C2E; }
+/* 代码高亮（Rouge）：与正文使用同一主题，不受系统偏好覆盖。 */
+.highlight .k, .highlight .kv, .highlight .kn, .highlight .kr { color: var(--syntax-keyword); }
+.highlight .s, .highlight .s1, .highlight .s2, .highlight .sa { color: var(--syntax-string); }
+.highlight .c1, .highlight .cm, .highlight .c { color: var(--syntax-comment); font-style: italic; }
+.highlight .mi, .highlight .mf, .highlight .no { color: var(--syntax-number); }
+.highlight .nf, .highlight .fm { color: var(--syntax-function); }
+.highlight .nb { color: var(--syntax-builtin); }
 .highlight .o, .highlight .p { color: var(--ink-2); }
-@media (prefers-color-scheme: dark) {
-  .highlight .k, .highlight .kv, .highlight .kn, .highlight .kr { color: #E4837C; }
-  .highlight .s, .highlight .s1, .highlight .s2, .highlight .sa { color: #8FC49E; }
-  .highlight .c1, .highlight .cm, .highlight .c { color: #7C8290; }
-  .highlight .mi, .highlight .mf, .highlight .no { color: #B39AE0; }
-  .highlight .nf, .highlight .fm { color: #7FADE0; }
-  .highlight .nb { color: #CBA36B; }
-}
 
 .post-foot { padding: 2.2rem 0 3.5rem; }
 .back { color: var(--ink-2); text-decoration: none; }
@@ -379,8 +412,11 @@ img { max-width: 100%; height: auto; display: block; }
   body { font-size: 16px; }
   .hero-title { font-size: 2rem; }
   .page-title { font-size: 1.8rem; }
-  .topbar-inner { flex-direction: column; gap: .55rem; align-items: flex-start; padding-block: .9rem 1rem; }
-  .nav { gap: .5rem 1rem; }
+  .topbar-inner { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .7rem .5rem; align-items: center; padding-block: .9rem 1rem; }
+  .brand { flex-wrap: wrap; gap: .15rem .4rem; }
+  .brand-sub { flex-basis: 100%; }
+  .nav { grid-column: 1 / -1; grid-row: 2; margin-left: 0; gap: .5rem 1rem; }
+  .theme-control { grid-column: 2; grid-row: 1; }
   .colophon-inner { flex-direction: column; }
   .eyebrow { flex-wrap: wrap; overflow-wrap: anywhere; }
   .post-header .eyebrow { row-gap: .25rem; }
