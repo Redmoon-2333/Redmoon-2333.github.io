@@ -7,10 +7,10 @@
       <span class="brand-sub">/ 训练日志</span>
     </a>
     <nav class="nav" aria-label="主导航">
-      <a href="{{ '/papers/' | relative_url }}" {% if page.url == '/papers/' %}class="active" aria-current="page"{% endif %}>论文</a>
-      <a href="{{ '/practice/' | relative_url }}" {% if page.url == '/practice/' %}class="active" aria-current="page"{% endif %}>实践</a>
-      <a href="{{ '/courses/' | relative_url }}" {% if page.url == '/courses/' %}class="active" aria-current="page"{% endif %}>课堂</a>
-      <a href="{{ '/notes/' | relative_url }}" {% if page.url == '/notes/' %}class="active" aria-current="page"{% endif %}>见闻</a>
+      {% assign nav_topic = site.data.topics.items | where: 'id', page.topic | first %}
+      {% for nav_section in site.data.topics.sections %}
+      <a href="{{ nav_section.url | relative_url }}" {% if page.cat == nav_section.category or nav_topic.section == nav_section.id %}class="active" {% if page.url == nav_section.url %}aria-current="page"{% else %}aria-current="true"{% endif %}{% endif %}>{{ nav_section.title }}</a>
+      {% endfor %}
       <a href="{{ '/archive/' | relative_url }}" {% if page.url == '/archive/' %}class="active" aria-current="page"{% endif %}>全部</a>
       <a href="{{ '/about/' | relative_url }}" {% if page.url == '/about/' %}class="active" aria-current="page"{% endif %}>关于</a>
       {% if site.github_username and site.github_username != 'YOUR_GITHUB_USERNAME' %}

@@ -1,0 +1,27 @@
+---
+layout: default
+---
+{% assign topic = site.data.topics.items | where: 'id', page.topic | first %}
+{% assign section = site.data.topics.sections | where: 'id', topic.section | first %}
+{% assign posts = site.posts | where: 'topic', topic.id | sort: 'date' | reverse %}
+<nav class="breadcrumbs mono" aria-label="面包屑">
+  <a href="{{ section.url | relative_url }}">{{ section.title }}</a><span aria-hidden="true">/</span><span aria-current="page">{{ topic.title }}</span>
+</nav>
+<h1 class="page-title rise">{{ topic.title }}</h1>
+<p class="mono dim">{{ posts.size }} 篇</p>
+{% if posts.size > 0 %}
+<ol class="post-list">
+  {% for post in posts %}
+  <li class="post-item reveal-on-scroll">
+    <a href="{{ post.url | relative_url }}">
+      <p class="eyebrow mono"><time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: '%Y-%m-%d' }}</time>{% if post.lesson_day %}<span>Day {{ post.lesson_day }}</span>{% endif %}</p>
+      <h2 class="post-item-title">{{ post.title }}</h2>
+      {% if post.excerpt %}<p class="excerpt">{{ post.excerpt | strip_html | truncate: 96 }}</p>{% endif %}
+    </a>
+  </li>
+  {% endfor %}
+</ol>
+{% else %}
+<p class="empty mono">暂无文章。</p>
+{% endif %}
+<p class="post-foot"><a class="back mono" href="{{ section.url | relative_url }}">返回{{ section.title }}</a></p>

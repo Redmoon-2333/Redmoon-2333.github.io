@@ -1,4 +1,5 @@
 ---
+topic: karpathy
 layout: post
 title: Day9：MLP的另外一项收尾——重写反向传播
 date: 2026-09-08 02:00:00 +0800

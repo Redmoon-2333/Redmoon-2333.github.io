@@ -1,0 +1,2 @@
+{% assign item_topic = site.data.topics.items | where: 'id', include.post.topic | first %}
+{% if item_topic %}<span class="topic-label">{{ item_topic.title }}</span>{% endif %}

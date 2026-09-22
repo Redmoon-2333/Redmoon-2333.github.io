@@ -1,4 +1,5 @@
 ---
+topic: karpathy
 layout: post
 title: Day8：MLP的一些收尾工作
 date: 2026-09-05 08:00:00 +0800

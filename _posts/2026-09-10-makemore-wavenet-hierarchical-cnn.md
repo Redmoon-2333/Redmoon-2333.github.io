@@ -1,4 +1,5 @@
 ---
+topic: karpathy
 layout: post
 title: Day10：不用 Conv1d，手拼一台层级 CNN——感受野 1→2→4→8
 date: 2026-09-10 08:00:00 +0800

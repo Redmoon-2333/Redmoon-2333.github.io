@@ -27,7 +27,7 @@ git push -u origin main
 
 ### 栏目体系
 
-站内预设四个栏目（导航栏可见），写文章时在 front matter 里选一个 `categories` 即自动归入：
+站内使用“大板块 → 独立小专题页 → 文章”。每篇必须选择一个 `categories` 和一个标量 `topic`，二者须匹配 `_data/topics.yml`；标签只表达交叉知识点。
 
 | 栏目 | categories 值 | 页面 | 收什么 |
 |---|---|---|---|
@@ -44,8 +44,10 @@ git push -u origin main
 ---
 title: "我的第一篇：8GB 显存训 LLM"
 date: 2026-09-01 10:00:00 +0800
-categories: [技术实践]     # 四选一，见上表；可省略（只出现在"全部"页）
-tags: [miniGPT, LoRA]      # 自由标签，副级分类
+categories: [技术实践]     # 必选一个，不可省略
+topic: karpathy            # 必选单值，必须属于所选大板块
+# lesson_day: 1           # 课堂文章必填正整数
+tags: [miniGPT, LoRA]      # 交叉知识点，不替代专题
 excerpt: 一句话摘要，会显示在首页列表里。
 math: true                 # 只有需要公式的文章才加这行
 ---
@@ -54,23 +56,32 @@ math: true                 # 只有需要公式的文章才加这行
 ```
 
 - 文件名里的日期决定文章 URL：`:year/:month/:day/:title`
-- 首页自动显示最新 8 篇（带栏目徽标）；各栏目页按类过滤；`/archive/` 按年份归档全部文章并生成标签索引
+- 首页显示最新 8 篇及专题；大板块展示专题和文章数，小专题按日期倒序列文，课堂同时显示 Day；归档显示专题，文章含面包屑和返回专题入口。
 - RSS 已内置：`/feed.xml`
 
-### 新增一个栏目（3 步）
+### 新增专题（一级栏目保持不变）
 
-1. 新建 `mysection.md`：
+1. 在 `_data/topics.yml` 的 `items` 中增加唯一英文 `id`、中文 `title`、所属 `section` 与稳定 `url`；然后建立 `<section>/<slug>/index.html`：
    ```markdown
    ---
-   layout: section
-   title: 我的栏目
-   cat: 我的栏目          # 与文章 front matter 的 categories 值完全一致
-   desc: 一句话说明这个栏目收什么。
-   permalink: /my/
+   layout: topic
+   title: 新专题
+   topic: new-topic
+   permalink: /practice/new-topic/
    ---
    ```
-2. 在 `_includes/header.html` 导航里照抄一行 `<a href="{{ '/my/' | relative_url }}">我的</a>`
-3. 完成——之后 `categories: [我的栏目]` 的文章都会自动归进去
+2. 文章写对应 `topic` 与唯一大板块。主导航与专题目录自动读取配置，不增加自定义生成插件。
+3. 验证归属、日期排序、数量、空状态和链接；课程标题包含课程名及 Day 序号。
+
+首批专题：课堂为人工智能导论、智能计算系统、人机交互技术、算法设计与分析；实践为 Karpathy 从零构建大模型、LangGraph；论文为大模型基础与经典论文、多智能体强化学习；见闻为模型动态、工具与生态、行业观察。
+
+### 课程资料与审核
+
+清点并读取当天全部转写、摘要、PPTX、DOCX、PDF、代码和图片；提取正文、备注、表格、公式，图像需目检。正文列明已使用、未使用和无法读取资料。原始课件与转写用于判断覆盖，摘要和旧稿用于辅助，不把误听或课堂类比当科学事实；冲突要注明，区分课堂讲授、课件延伸和个人补充。
+
+每门课独立成文，不再跨课合篇。原课程 `DayN-阅读笔记.md` 与 `08_MyNote/课堂记录/<课程名>/YYYY-MM-DD-DayN.md` 保持知识正文一致；博客仅作公开排版和隐私处理。旧合篇 URL 保留静态分流页，不进入文章集合、首页、RSS 或计数。
+
+先本地构建、浏览器验证和审核。只有用户明确要求发布后才 commit、push，只暂存本次文件并核对 staged diff，禁止 `git add -A`。整理不代表完成学习。
 
 ## 三、传图片
 
@@ -79,7 +90,7 @@ math: true                 # 只有需要公式的文章才加这行
 
 > 提示：也可以用图床外链，但自托管更稳、面试演示时不依赖第三方。
 
-## 四、本地预览（三选一）
+## 四、本地预览
 
 - **WSL2（推荐）**：
   ```bash
@@ -87,8 +98,8 @@ math: true                 # 只有需要公式的文章才加这行
   bundle install          # 首次运行
   bundle exec jekyll serve --livereload
   ```
-- **Docker**：`docker run --rm -p 4000:4000 -v "$PWD":/site jekyll/jekyll jekyll serve`
-- **零安装**：直接 push，去 GitHub Pages 地址看效果（慢一点但省事）
+- **Docker**：启动 Docker Desktop，将站点复制到仓库外的隔离构建目录，按当前 Gemfile 执行 `bundle install`、`bundle exec jekyll build`，保留完整日志；静态产物可用本地 HTTP 服务预览。不要替换或提交无关依赖文件。
+- 不允许用 push 代替本地预览。桌面和手机、明暗模式、键盘导航、长标题、表格与公式均需检查。
 
 预览地址：<http://localhost:4000>
 

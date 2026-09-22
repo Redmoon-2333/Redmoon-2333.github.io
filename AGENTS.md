@@ -24,7 +24,7 @@ index.html           首页：hero + 打字日志条 + 最近 8 篇
 archive.html         全部文章（按年分组 + 标签索引）。⚠️ 是 .html 不是 .md，原因见「坑」
 about.md             关于页（纯 Markdown，外层 div 带 markdown="1"）
 papers.md            栏目页×4：papers/practice/courses/notes（只有 front matter，
-practice.md          列表逻辑在 _layouts/section.html 里，按 page.cat 过滤 site.categories）
+practice.md          专题目录在 _layouts/section.html，文章列表在 _layouts/topic.html）
 courses.md
 notes.md
 404.html
@@ -34,9 +34,9 @@ assets/css/main.css  全部样式。设计令牌集中在顶部 :root，改肤�
 assets/js/main.js    打字日志条文案在 LINES 数组；滚动显现；年份填充
 assets/img/          文章图片都放这里，文中用 /assets/img/xxx.png 绝对路径引用
 _posts/              文章，命名强制 年-月-日-标题.md
-Gemfile.prod         生产依赖（github-pages gem），仅文档用途
-Gemfile              ⚠️ 平时被替换为本地测试用轻量版（jekyll+jekyll-feed+jekyll-seo-tag），
-                     见「构建验证」。若发现 Gemfile 与 Gemfile.prod 内容互换，以 Gemfile.prod 为准恢复
+Gemfile              实际依赖入口；构建前读取，不替换依赖文件
+_data/topics.yml     四个板块与单值专题的统一配置
+*/<topic>/index.html 显式专题页面，兼容 GitHub Pages，无自定义生成插件
 ```
 
 ## 发文规范
@@ -48,13 +48,15 @@ Gemfile              ⚠️ 平时被替换为本地测试用轻量版（jekyll+
 title: "标题"
 date: 2026-09-01 10:00:00 +0800
 categories: [论文精读]      # 四选一：论文精读/技术实践/课堂笔记/前沿见闻
+topic: llm-foundations       # 必选单值，与大板块对应
+# lesson_day: 1             # 课堂文章必填，正整数
 tags: [自由标签]
 excerpt: 一句话摘要（首页列表展示）
 math: true                  # 仅需公式时加，加载 KaTeX
 ---
 ```
 
-新增栏目的步骤在 README.md「新增一个栏目（3 步）」。
+新增专题按 README.md 的专题流程；四个一级 categories 保持不变。
 
 ## 设计系统（勿破坏）
 
@@ -75,13 +77,9 @@ math: true                  # 仅需公式时加，加载 KaTeX
 
 ## 构建验证（改动后必做）
 
-```bash
-# 用 Docker 真实构建（Gemfile 已是轻量版，直接可用）
-docker run --rm -v "//d/大学相关/03_个人成长与记录/LLM学习体系/02_博客站点/personal-site://site" -w //site \
-  jekyll/jekyll:4 bash -lc "bundle install --quiet && bundle exec jekyll build"
-# 检查产物：_site/ 下对应页面无裸标签、Liquid 配对
-# 测完恢复：rm -rf _site .jekyll-cache .bundle Gemfile.lock；若 Gemfile 被换过则 mv Gemfile.prod Gemfile
-```
+使用 Docker 在隔离副本中按当前 Gemfile 执行 `bundle install` 与 `bundle exec jekyll build`，保留完整日志。不要替换 Gemfile、恢复用户删除的锁文件或提交构建产生的依赖文件。构建目录和缓存放在仓库之外。
+
+构建后验证专题归属、计数、旧网址分流、RSS 和内部链接；Playwright 检查桌面与手机、明暗模式、键盘导航、公式、表格和长标题，并截图目检。
 
 快速静态检查：Python 统计 `{% if %}/{% endif %}`、`{% for %}/{% endfor %}` 数量配对。
 
@@ -90,3 +88,12 @@ docker run --rm -v "//d/大学相关/03_个人成长与记录/LLM学习体系/02
 - Conventional Commits（feat/fix/chore/docs），中文描述
 - push 即上线，所以**每个 commit 都应是可发布状态**
 - 本机 git 凭据管理器已存 GitHub 令牌（Redmoon-2333），push 无需交互
+
+## 课程与专题硬规则（2026-09-22）
+
+- 生成任何学习笔记前，清点并实际读取当天全部转写、摘要、PPTX、DOCX、PDF、代码、图片等；提取正文、备注、表格、公式，图像需目检。列明已使用、未使用、无法读取资料，不只依赖自动摘要。
+- 转写和原始课件用于核对课堂覆盖，摘要与旧稿用于辅助；材料冲突需说明，不把误听、简化或类比当作科学事实，分清课堂讲授、课件延伸与个人补充。
+- 每门课每次课独立成文，不合篇。原课程 `DayN-阅读笔记.md` 与学习体系 `08_MyNote/课堂记录/<课程名>/YYYY-MM-DD-DayN.md`、博客三处知识一致，博客只做公开排版与隐私处理。
+- 每篇必选唯一 categories 和标量 topic，二者必须匹配 `_data/topics.yml`；课程增加正整数 lesson_day，标题包含课程名与 Day。普通文章保留原日期、正文及 URL。
+- 已拆合篇退出 `_posts`，旧 URL 由静态分流页保留，不自动跳转，不进入首页、RSS 或文章计数。
+- 用户审核且明确要求发布后才允许 commit、push；只 `git add <本次文件>`，禁止 git add -A。先核对 staged diff，不夹带其他工作区变更；整理不等于完成学习。

@@ -1,4 +1,5 @@
 ﻿---
+topic: langgraph
 title: "Day4：Langgraph的一次小回顾"
 date: 2026-08-28 02:00:00 +0800
 categories:

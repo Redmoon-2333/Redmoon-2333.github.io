@@ -1,4 +1,5 @@
 ---
+topic: karpathy
 title: "Day3：从 bigram 统计到可训练的字符语言模型（活字乱刷术）"
 date: 2026-08-27 08:00:00 +0800
 categories: [技术实践]

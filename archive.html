@@ -5,12 +5,9 @@ permalink: /archive/
 ---
 <h1 class="page-title rise">{{ page.title }}</h1>
 
-{% assign all_tags = site.posts | map: 'tags' | join: ',' | split: ',' | uniq | sort %}
-{% if all_tags != empty %}
-<nav class="tag-row mono rise" style="--d:.05s" aria-label="标签筛选">
-  {% for t in all_tags %}<a href="#tag-{{ t | slugify }}">#{{ t }}</a>{% endfor %}
+<nav class="archive-topics mono rise" style="--d:.05s" aria-label="专题目录">
+  {% for topic in site.data.topics.items %}<a href="{{ topic.url | relative_url }}">{{ topic.title }}</a>{% endfor %}
 </nav>
-{% endif %}
 
 {% assign year_prev = "" %}
 {% for post in site.posts %}
@@ -25,6 +22,7 @@ permalink: /archive/
   <a href="{{ post.url | relative_url }}">
     <p class="eyebrow mono"><time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y-%m-%d" }}</time>{% if post.tags != empty %} · {% for t in post.tags %}<span>#{{ t }}</span> {% endfor %}{% endif %}</p>
     <h3 class="post-item-title">{{ post.title }}</h3>
+    <p class="mono dim">{% include topic-label.html post=post %}</p>
   </a>
 </li>
 {% else %}

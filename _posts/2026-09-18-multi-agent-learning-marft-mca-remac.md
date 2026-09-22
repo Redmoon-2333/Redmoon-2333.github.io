@@ -1,4 +1,5 @@
 ---
+topic: multi-agent-rl
 layout: post
 title: "Day12：多个智能体，怎样才算学会了合作？"
 date: 2026-09-18 20:00:00 +0800

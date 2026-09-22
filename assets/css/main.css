@@ -314,6 +314,16 @@ img { max-width: 100%; height: auto; display: block; }
 .back:hover { color: var(--accent); }
 
 /* ---------- 404 ---------- */
+.breadcrumbs { display: flex; flex-wrap: wrap; gap: .35rem .65rem; color: var(--ink-2); margin: 1.5rem 0; line-height: 1.7; overflow-wrap: anywhere; }
+.breadcrumbs a { color: var(--accent); text-underline-offset: 3px; }
+.breadcrumbs [aria-current] { min-width: 0; }
+.post-header .breadcrumbs { margin-top: 0; }
+.post-foot { display: flex; flex-wrap: wrap; gap: 1rem 2rem; }
+.topic-label { text-transform: none; }
+.archive-topics { display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; margin-bottom: 1.6rem; }
+.archive-topics a { color: var(--ink-2); text-underline-offset: 4px; }
+.archive-topics a:hover { color: var(--accent); }
+
 .hero-404 { padding-block: 22vh; }
 .btn {
   display: inline-block; color: var(--accent); text-decoration: none;

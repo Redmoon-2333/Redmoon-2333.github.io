@@ -1,4 +1,5 @@
 ---
+topic: karpathy
 layout: post
 title: "Day5：字符级 MLP 实战——把 Bengio 的图跑通在名字上"
 date: 2026-08-28 08:01:00 +0800

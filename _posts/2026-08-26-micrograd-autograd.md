@@ -1,4 +1,5 @@
 ---
+topic: karpathy
 title: "Day1：从零手写 autograd：micrograd 全记录"
 date: 2026-08-26 05:00:00 +0800
 categories: [技术实践]

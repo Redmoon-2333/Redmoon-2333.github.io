@@ -1,4 +1,5 @@
 ---
+topic: langgraph
 layout: post
 title: "Day6：图驱动 Agent 的错误恢复、Replay 与 Fork"
 date: 2026-08-31 08:00:00 +0800

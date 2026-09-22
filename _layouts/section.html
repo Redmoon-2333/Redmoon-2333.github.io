@@ -1,21 +1,24 @@
 ---
 layout: default
 ---
-{% assign posts = site.categories[page.cat] %}
+{% assign section = site.data.topics.sections | where: 'category', page.cat | first %}
+{% assign topics = site.data.topics.items | where: 'section', section.id %}
+{% assign total = 0 %}
 <h1 class="page-title rise">{{ page.title }}</h1>
 {% if page.desc %}<p class="lede rise" style="--d:.05s">{{ page.desc }}</p>{% endif %}
 
 <ol class="post-list">
-  {% for post in posts %}
+  {% for topic in topics %}
+  {% assign posts = site.posts | where: 'topic', topic.id %}
+  {% assign total = total | plus: posts.size %}
   <li class="post-item reveal-on-scroll">
-    <a href="{{ post.url | relative_url }}">
-      <p class="eyebrow mono"><time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: '%Y-%m-%d' }}</time>{% if post.tags != empty %} · {% for t in post.tags limit:3 %}<span>#{{ t }}</span> {% endfor %}{% endif %}</p>
-      <h3 class="post-item-title">{{ post.title }}</h3>
-      {% if post.excerpt and post.excerpt != '' %}<p class="excerpt">{{ post.excerpt | strip_html | truncate: 96 }}</p>{% endif %}
+    <a href="{{ topic.url | relative_url }}">
+      <p class="eyebrow mono">{{ posts.size }} 篇{% if posts.size == 0 %} · 暂无文章{% endif %}</p>
+      <h2 class="post-item-title">{{ topic.title }}</h2>
     </a>
   </li>
   {% else %}
   <p class="empty mono">这个栏目还没有文章。</p>
   {% endfor %}
 </ol>
-<p class="count mono dim rise" style="--d:.08s;margin-top:2rem">{{ posts.size }} 篇</p>
+<p class="count mono dim rise" style="--d:.08s;margin-top:2rem">{{ topics.size }} 个专题 · {{ total }} 篇</p>

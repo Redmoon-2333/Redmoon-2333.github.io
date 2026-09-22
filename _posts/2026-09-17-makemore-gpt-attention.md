@@ -1,4 +1,5 @@
 ---
+topic: karpathy
 layout: post
 title: Day11：从 Bigram 到自注意力——把 GPT 一块块拼起来
 date: 2026-09-17 08:00:00 +0800

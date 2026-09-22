@@ -1,4 +1,5 @@
 ---
+topic: llm-foundations
 title: "Day2：Attention is All You Need——传世经典"
 date: 2026-08-26 18:00:00 +0800
 categories: [论文精读]
