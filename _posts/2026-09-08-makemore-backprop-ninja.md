@@ -18,7 +18,7 @@ math: true
 
 ## 前言
 （居然过了这么多节课还不能进入下一步吗？）
-ok啊,上次说好的把MLP收个尾，结果还没收好，还有一个点值得细细推敲——`loss.backward()` 。我们都知道直接用这个函数就能对模型进行反向传播，可它**到底怎么算出来的**？本期的核心主题呢，就是手拆这个“黑箱”：手写全部 26 个梯度、与 autograd 逐位对账，再把两段最长的链（softmax+交叉熵、BatchNorm）压缩成一行公式，最后把成果接进训练循环。
+ok啊,上次说好的把MLP收个尾，结果还没收好，还有一个点值得细细推敲——`loss.backward()`。调用它就能得到梯度，可它**到底怎么算出来的**？这次我把 26 个梯度逐个写出来，与 autograd 对照。softmax 加交叉熵、BatchNorm 这两段尤其长，展开算一遍后，再看融合公式就有来路了。
 
 ![Day9 前向+反向传播全变量计算图](/assets/img/day9-forward-backward.svg)
 
@@ -38,7 +38,7 @@ ok啊,上次说好的把MLP收个尾，结果还没收好，还有一个点值�
 
 ## 3. Exercise 1：26 个梯度
 
-按数据流倒序分五组，每条 = 局部规则 + 一句人话：
+我沿着数据流倒过来算，分成下面五组：
 
 **① softmax 链**：`dlogprobs` 是稀疏散布（只有 n=32 个目标位拿到 -1/n）；`log` 的导数是 1/p；广播乘法的反向是对广播维求和（压回 32×1）；x⁻¹ 的导数是 -x⁻²；`dcounts` 两路相加（直连路 + sum 的"全 1 广播"路）；`exp` 的导数还是 exp 本身；`logits - logit_maxes` 的反向把 -dlogit_maxes 广播给整行，而 `max` 只把值路由给 argmax 列（用 `F.one_hot` 掩码加回）。
 
@@ -56,7 +56,7 @@ $$\frac{\partial L}{\partial\ \mathrm{logits}} = \frac{1}{n}\left(\mathrm{softma
 
 **结果**：26 个变量全部 `exact: True, maxdiff: 0.0`——手写反向传播与 autograd **逐比特一致**。
 
-**实现要点（本期最值钱的一条）**：凡广播、索引取行、多路分支，梯度必须**累加**。全 notebook 共五处 `+=`：`dcounts`（sum 支路）、`dlogits`（max 支路）、`dbndiff`（平方支路）、`dhprebn`（均值支路）、`dC`（索引重复）。漏掉任何一处，对账表立刻翻红。
+我最需要记住的是梯度的**累加**。广播、索引取行、多路分支都会遇到它。这里共五处 `+=`：`dcounts`（sum 支路）、`dlogits`（max 支路）、`dbndiff`（平方支路）、`dhprebn`（均值支路）、`dC`（索引重复）。对不上的时候，先查这些位置。
 
 ## 4. 数值算例：3 个小例子走通 softmax 链
 取 logits=[2.0, 1.0, 0.5]、目标类 Y=0、n=1：softmax 后 p=[0.6285, 0.2312, 0.1402]，loss = -ln p0 = 0.4644。
@@ -87,7 +87,7 @@ $$\frac{\partial L}{\partial\ hprebn} = \frac{\gamma \cdot bnvar\_inv}{n}\left(n
 
 括号内三项：**直通项**（γ·inv 缩放）、**均值项**（减 μ 的反向）、**方差项**（除 σ 的反向，系数 n/(n−1) 来自 Bessel 校正）。对照 Exercise 1 的 8 步长链，一行覆盖同样内容——面试能白板写出这一行，BatchNorm 反向就算拿下了。
 
-## 7. Exercise 4：接进训练循环（代码就绪，训练暂缓）
+## 7. Exercise 4：接进训练循环
 
 按代码注释里的 TODO 补全四件事：
 1. `# YOUR CODE HERE :)` 填入手写反向（与 Exercise 1-3 同一套公式，逐 batch 重算）；
@@ -95,8 +95,9 @@ $$\frac{\partial L}{\partial\ hprebn} = \frac{\gamma \cdot bnvar\_inv}{n}\left(n
 3. 更新行启用 `p.data += -lr * grad`（swole doge），旧 `p.grad` 写法留作注释对照；
 4. 删除 `if i >= 100: break` 早停，跑满 200000 步（10 万步后 lr 0.1 → 0.01）。
 
-**执行说明**：前 12 个 cell 已在干净内核全程跑通；**200k 步训练已执行**，运行训练 cell 与校准/评估两个 cell 即完成全流程，预期 train 2.0719 / val 2.1162（notebook 文末 "I achieved" 注释）。实际情况如下：
-![[Pasted image 20260908024437.png]]
+接进 200k 步训练后，我保存的评估输出是 train **2.0718**、val **2.1089**。Notebook 文末注释里的 2.0719 / 2.1162 是另一组参考结果，和这次输出分开记录。
+
+![手写反向传播训练后的评估输出](/assets/img/day9-training-result.png)
 
 ## 8. 收工小结
 

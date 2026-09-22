@@ -14,7 +14,7 @@ excerpt: 精读 GPT-1/2/3 原文三篇（12+24+75页），以意识流初稿为�
 math: true
 ---
 
-![Day7 封面：GPT 三代演进侧视图](assets/img/day7-cover-matplotlib.png)
+![Day7 封面：GPT 三代演进侧视图](/assets/img/day7-cover-matplotlib.png)
 
 # 浅尝 GPT-1 至 GPT-3
 
@@ -31,7 +31,7 @@ math: true
 | GPT-2 | *Language Models are Unsupervised Multitask Learners* (2019.02)         | 语言模型**本身**就是多任务学习器 | 每个任务都要有监督数据、换头换结构 → 能否让自然语言**本身**描述任务，模型零样本去做？ |
 | GPT-3 | *Language Models are Few-Shot Learners* (2020.05)                       | 少样本就能学             | 微调仍要上千样本、梯度与部署成本高 → 能否**不改权重**，只靠上下文里的几个例子就学会？ |
 
-![三代演进总览](assets/img/day7-evolution-overview.svg)
+![三代演进总览](/assets/img/day7-evolution-overview.svg)
 
 ---
 
@@ -73,24 +73,24 @@ $$P(u) = \text{softmax}(h_n W_e^{T})$$
 
 ### 1.4 任务感知的输入转化
 
-![GPT-1 输入转化：Transformer 架构与任务感知的输入拼接（论文 Figure 1 裁切）](assets/img/paper-gpt1-fig1-transformer-input.png)
+![GPT-1 输入转化：Transformer 架构与任务感知的输入拼接（论文 Figure 1 裁切）](/assets/img/paper-gpt1-fig1-transformer-input.png)
 
 > **原图解读**（对应论文 Figure 1 右半）：GPT-1 的精髓不是“换头”，而是**把一切结构化输入拼回一个连续 token 流**——分类直接接 `[CLS]`，蕴含用 `[SEP]` 拼 premise+hypothesis，相似度双向各拼一遍再逐元素相加，问答/常识推理把 `文档 [SEP] 问题 [SEP] 答案候选` 逐个候选拼一条流，用 softmax 在候选间归一。我在笔记里写“实验规模 Bert base 和 Gpt 对标”，对照原文确实如此：BERT-base 也是 110M 量级，但 GPT-1 用**生成式解码器**对齐效果，9/12 任务超越 SOTA（`Stories Cloze +8.9%`、`RACE +5.7%`）。
 
 - **数据集**：预训练 **BooksCorpus**（7000+ 未出版小说，跨体裁，长连续段落，保留长依赖）；微调覆盖 **12 任务**：NLI（SNLI/MultiNLI/QNLI/RTE/SciTail）、QA/常识（RACE/Story Cloze）、相似度（MRPC/QQP/STS-B）、分类（SST-2/CoLA）。
-- **优化**：Adam，峰值 lr $2.5\times10^{-4}$，线性 warmup 200 词表后余弦衰减，batch 64，100 epoch，非偏置权重加 $L_2=0.01$。
+- **优化**：Adam，峰值 lr $2.5\times10^{-4}$，前 2000 次更新线性 warmup，之后余弦衰减；batch 64，100 epoch，非偏置与非增益权重的正则化系数为 0.01（论文 §4.1）。
 
 ---
 
 ## 2. GPT-2：把模型做更大，让任务自己从文本里长出来
 
-> “依旧采用解码器，把模型做更大”“Zero-shot 作为新卖点”以及“不要一条路走到黑”的研究启示。
+读到 GPT-2，我开始把注意力放到任务的表达方式上：能不能直接用文本告诉模型要做什么？
 
-### 2.1 为什么说“不要一条路走到黑”
+### 2.1 把任务写进输入
 
 GPT-1 的**任务转化**仍需为每类任务设计拼装逻辑与微调轮次（主要是怕到GPT2发现模型规模上来了还比不过BERT）；GPT-2 的新视角是：**语言建模的全局最优也是所有条件任务的最优子集**——若 $p(x)=\prod p(s_i\mid s_{<i})$ 足够强，则 $p(\text{answer}\mid \text{document, question})$ 自然已在 $p(x)$ 中，无需显式监督“哪个符号是要预测的输出”。问题从“设计什么监督头”变为“能否用文本**条件化**把任务本身表述出来”。
 
-![Prompt 自然表述的来源](assets/img/image-20260901014204826.png)
+![Prompt 自然表述的来源](/assets/img/image-20260901014204826.png)
 
 > 这个图是 prompt 的来源——论文 Figure 2/Figure 3 即展示了将 QA/翻译/摘要写成自然语句序列的思路，这正是后来 **prompt** 的雏形。
 
@@ -105,7 +105,7 @@ GPT-1 的**任务转化**仍需为每类任务设计拼装逻辑与微调轮次�
 | 残差初始化 | 常规               | **缩放 $1/\sqrt{N}$**（$N$ 为残差层数，训深模型更稳）                    |
 | 适配    | 微调               | **零样本，零梯度，零新参数**                                         |
 
-![GPT-2 零样本随规模提升](assets/img/paper-gpt2-fig1-zero-shot-scaling.png)
+![GPT-2 零样本随规模提升](/assets/img/paper-gpt2-fig1-zero-shot-scaling.png)
 
 > **原图解读**：论文 Figure 1 显示，随着体积从 117M→1.5B，CoQA/WMT-14/Summarization/Natural Questions 的零样本性能近似**对数线性**抬升——这张图是 GPT-2 最有说服力的证据。
 
@@ -118,15 +118,15 @@ GPT-1 的**任务转化**仍需为每类任务设计拼装逻辑与微调轮次�
 
 ### 2.4 实验结论
 
-- 零样本下 GPT-2 117M 已可达 **LAMBADA 63%**、**WikiText2 18.3 ppl**，1.5B 版在 **7/8 语言模型基准**上达零样本 SOTA；
+- Table 3 中，**1542M** 模型的 LAMBADA 正确率为 **63.24%**、WikiText2 困惑度为 **18.34**；117M 模型对应 **45.99%** 和 **29.41**。最大模型在 **7/8 语言模型基准**上达到论文报告的零样本 SOTA；
 - **CoQA 55 F1**（不看 12.7 万训练样本）持平 3/4 有监督基线；
-- 翻译/摘要仍弱于监督 SOTA，但趋势线显示**规模即能力**。
+- 翻译和摘要的零样本结果低于当时有监督方法；同一模型族随规模扩大的趋势，让我更想看后面 GPT-3 怎样测试少样本适配。
 
 ---
 
-## 3. GPT-3：少样本上下文学习，让“不改权重”成为卖点
+## 3. GPT-3：把示例放进上下文
 
-> “用少数样本提高性能；不是投稿文章，更像技术报告；大模型不更新不微调，因为参数太大了。” 这正是论文开篇的动机。
+到了 GPT-3，我最关心的是：参数保持不变，只给几条示例，模型能在多大程度上适应新任务？
 
 ### 3.1 核心问题（逐句精读）
 
@@ -137,26 +137,26 @@ GPT-1 的**任务转化**仍需为每类任务设计拼装逻辑与微调轮次�
 ③ 人类凭**几句说明+少数示例**就能掌握新任务，机器也应具备类似的**任务无关适配力**。
 GPT-3 的回答是：**scale 本身就是归纳偏置**，配合恰当的上下文形式，**in-context learning** 随规模平滑涌现。
 
-![少样本学习的定义](assets/img/image-20260901020447955.png)
+![少样本学习的定义](/assets/img/image-20260901020447955.png)
 
 
 
-> **原图解读**：论文 Figure 2.1 区分 `Fine-tuning`（改权重）与 `Zero/One/Few-shot`（只给上下文）。我初稿里标注的“学习仅限于上下文”是精准的——这是 GPT-3 的**最重要方法论分界线**。
+> **原图解读**：Figure 2.1 把 `Fine-tuning`（改权重）与 `Zero/One/Few-shot`（只给上下文）分开。我用这个区别记上下文学习：改变的是模型当下接收的输入，权重不在任务示例上更新。
 
 ### 3.2 架构：与 GPT-2 的异同
 
-![GPT-3 模型族](assets/img/image-20260901021132635.png)
+![GPT-3 模型族](/assets/img/image-20260901021132635.png)
 
 > 原图即论文 Table 2.1 的 **8 模型族**（125M~175B，层数 12~96，$d_{model}$ 768~12288），下面是两条规律：
 >
 > - **Sparse Transformer 式交替稀疏注意力**（dense + locally banded sparse），为撑大上下文到 **2048** 且控制计算；
 > - **$d_{ff}=4d_{model}$、头维 128 封顶**、批量↑则学习率↓的训练铁律。
 
-![三代架构对比](assets/img/day7-architecture-compare.svg)
+![三代架构对比](/assets/img/day7-architecture-compare.svg)
 
 ### 3.3 训练数据：从三词到四步管线
 
-![GPT-3 数据管线](assets/img/day7-data-pipeline.svg)
+![GPT-3 数据管线](/assets/img/day7-data-pipeline.svg)
 
 | 占比 | 数据集 | 规模 | 训练期感知 | 作用 |
 | --- | --- | --- | --- | --- |
@@ -179,23 +179,19 @@ GPT-3 的回答是：**scale 本身就是归纳偏置**，配合恰当的上下�
 
 ### 3.5 关键结果：四类曲线解读
 
-![趋势：上下文学习随规模更陡峭（论文 Figure 1.2 裁切）](assets/img/paper-gpt3-fig1-2-incontext-curves.png)
+![趋势：上下文学习随规模更陡峭（论文 Figure 1.2 裁切）](/assets/img/paper-gpt3-fig1-2-incontext-curves.png)
 
 > **解读 1 · 论文 Figure 1.2 词内符号去除**：模型越大，**上下文学习曲线越陡**——大模型更会“看例子学”，小模型即便给示例也提升有限。
 
-![GPT-3 性能随算力平滑缩放（论文 Figure 3.1 裁切）](assets/img/paper-gpt3-fig3-1-scaling-loss.png)
+![GPT-3 性能随算力平滑缩放（论文 Figure 3.1 裁切）](/assets/img/paper-gpt3-fig3-1-scaling-loss.png)
 
-> **解读 2 · 论文 Figure 3.1 损失缩放**：**固定数据与模型时，线性降低损失需要指数级数据**——数据而非仅参数是当前瓶颈。
+> **解读 2 · 论文 Figure 3.1 损失缩放**：横轴是训练计算量，纵轴是验证交叉熵损失。论文报告的是损失随计算量变化的幂律趋势。我会连同各模型的参数规模一起看这张图，而不是把它读成固定模型下只增加数据的实验。
 
-![GPT-3 训练算力：8 模型 300B tokens 的计算量（论文 Figure 2.2 裁切）](assets/img/paper-gpt3-fig2-2-training-compute.png)
+![GPT-3 训练算力：8 模型 300B tokens 的计算量（论文 Figure 2.2 裁切）](/assets/img/paper-gpt3-fig2-2-training-compute.png)
 
-> **解读 3 · 论文 Figure 2.2 训练算力**：8 模型合计 **300B tokens** 训练，175B 耗时与算力断层领先；结合 Figure 1.3（42 任务聚合：**零样本稳步、少样本陡升**），规模红利在 few-shot 上最显著。
+> **解读 3 · 论文 Figure 2.2 训练算力**：8 种模型**各训练 300B tokens**（Table 2.1），175B 模型需要的计算量最高。结合 Figure 1.3 看，模型扩大时，聚合评测中的 few-shot 表现也随之提高。
 
-![固定模型，线性降损需指数级数据](assets/img/day7-scaling-law.svg)
-
-> **自绘对照 1 · 固定模型的数据墙**：将 Figure 3.1 的幂律思想提炼为“线性降损 ↔ 指数数据”的直观示意，便于与训练算力图联读。
-
-![四种范式对比：微调 vs 零/单/少样本](assets/img/day7-paradigms-compare.svg)
+![四种范式对比：微调 vs 零/单/少样本](/assets/img/day7-paradigms-compare.svg)
 
 > **自绘对照 2 · 范式对比**：对应论文 Figure 2.1 的`微调（改权重）` vs `零/单/少样本（不改权重、只给上下文）`四格，是第 1 条解读的方法论底色。
 
@@ -203,7 +199,7 @@ GPT-3 的回答是：**scale 本身就是归纳偏置**，配合恰当的上下�
 
 > (1) 文本生成弱 (2) 不能双向 (3) 词均匀加权 (4) 无物理接地 (5) 是否真正学会存疑 (6) 训练贵 (7) 不可解释。
 
-| 我初稿的表述 | 原文精确含义 | 补充 |
+| 我关心的问题 | 论文中的表现 | 补充 |
 | --- | --- | --- |
 | 文本生成还是比较弱 | 长文易**重复/自相矛盾/离题** | 采样与束搜索已用，仍难稳态 |
 | 不能反向看（解码器） | **自回归单向**，无双向注意力 | 比较/回读/抽取式任务天然吃亏 |
@@ -227,7 +223,7 @@ GPT-3 的回答是：**scale 本身就是归纳偏置**，配合恰当的上下�
 | **代表成绩**   | 9/12 SOTA                   | 7/8 LM 零样本 SOTA                           | 少样本逼近/超越微调 SOTA（LAMBADA、QA 等）        |
 | **遗留问题**   | 仍需标注与微调                     | 预训练未充分，弱于监督                               | 贵、不可解释、长文弱、污染、未对齐                    |
 
-> **研究启示**“不要一条路走到黑，尝试从新角度看问题”：当“半监督+微调”趋于饱和，GPT 的**新角度**是把“任务”本身**写回自然语言**，让语言模型在生成中顺带学会任务。
+串起来以后，我更容易记住的是任务怎样进入模型：GPT-1 在预训练后微调，GPT-2 用文本条件描述任务，GPT-3 再把示例放进上下文。参数规模在变，使用模型的方法也在变。
 
 ---
 

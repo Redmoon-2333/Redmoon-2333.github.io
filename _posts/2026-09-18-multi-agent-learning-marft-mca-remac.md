@@ -11,16 +11,6 @@ math: true
 
 > MARFT × LLM-MCA × ReMAC：从训练队员，到分配贡献，再到设计奖励。
 
-| 项目 | 内容 |
-| --- | --- |
-| 阅读主题 | 大语言模型与多智能体强化学习：策略优化、信用分配、奖励设计 |
-| 三篇论文 | *MARFT: Multi-Agent Reinforcement Fine-Tuning*；*Leveraging Large Language Models for Effective and Explainable Multi-Agent Credit Assignment*；*ReMAC: Large Language Model-Driven Reward Design for Multi-Agent Manipulation Collaboration* |
-| 知识衔接 | Day11 的自回归 GPT；之前 LangGraph 的节点、状态与工作流 |
-| 阅读方式 | 从一个共同问题出发，分别理解三种解法，再把方法与实验放回同一张知识地图 |
-| 配图 | 3 张论文原图裁切 + 4 张 Matplotlib 教学图和结果重绘，每张图下附阅读说明 |
-| 资料 | 文末附本次阅读版本的 PDF；页码均指 PDF 物理页码 |
-| 整理 | RedMoon |
-
 ## 前言：把几个模型拉进群，就能组成一个好团队吗？
 
 博士生导师给我推了几份论文让我读读，好像是关于多智能体强化学习的。
@@ -45,7 +35,7 @@ math: true
 - **LLM-MCA：改进分数的分配。** 让 LLM 读团队经历，给不同成员更具体的训练反馈。
 - **ReMAC：设计打分的规则。** 让 LLM 编写并迭代奖励函数，教策略网络学会协作。
 
-它们不是同一算法的三个版本，也不构成“后一篇取代前一篇”的关系。把它们放在一起读，价值在于看清：**LLM 究竟参与了学习闭环中的哪一环。**
+我把它们放在一起看，是想弄清楚：**LLM 究竟参与了学习闭环中的哪一环。** 三篇的任务和训练对象不同，先找准这个位置，后面的公式才不容易混。
 
 ---
 
@@ -261,7 +251,7 @@ $$
 
 CodeForces 的 DUO 也从 27.45 提升到 31.50。但未微调 TRIO 为 26.58，并没有随着成员数量增加而自动超过 DUO。因此，**“成员多”与“配合好”是两件事**。[1] PDF p.8，Tables 2–3。
 
-> **读数口径：** 本文采用 Table 2 的结果。同页正文另写出的 49.4% 和 83.0% 与表格不一致，未用于本笔记。代码任务沿用 Table 3 的评测分数表述，不把它擅自转换为数学题正确率。
+> 我采用 Table 2 的数值；同页正文中的 49.4% 和 83.0% 与表格有出入。代码任务的分数来自 Table 3，和数学题正确率分开看。
 
 ## 3. LLM-MCA：让 LLM 做一个能讲理由的训练教练
 
@@ -336,13 +326,13 @@ $$
 
 ![MARFT 的 MATH500 正确率与 LLM-MCA 的 RWARE 团队回报，按各自论文表格独立重绘](/assets/img/day12/day12-reported-results.png)
 
-> **图 5 · 相似的柱状图，不同的科学问题。** 左图依据 [1] Table 2，衡量数学题正确率，误差线为原文报告的标准误；右图依据 [2] Table 1 的 RWARE Average 行，衡量平均团队回报，误差线沿用原表所报 95% 置信区间。两图不共用单位，不能比较左右柱子的高低。它们分别说明“在此工作流上训练有收益”和“在此环境中个体反馈能改善策略表现”。这不是我的复现实验，两张图都是按论文原表重绘的。
+> **图 5 · 数学题正确率与仓库任务回报。** 我分别按 [1] Table 2 和 [2] Table 1 的 RWARE Average 行重绘。左图误差线为原表的标准误，右图为原表的 95% 置信区间。两边单位不同，分别在各自任务内比较。
 
 这篇论文最值得带走的是一条可操作的思路：
 
 **让 LLM 对轨迹的理解落到结构化反馈上，才能真正接进数值学习过程。**
 
-同时要区分三件事：团队分数提高、模型给出可读解释、解释对应真实因果贡献。论文直接展示了前两类证据；第三类还需要额外的反事实或干预检验。这个区分帮助我们准确理解“可解释”一词，而不是否定方法的实际训练价值。
+我会把团队分数、解释是否可读、解释是否对应真实贡献分开看。论文展示了前两类证据；要进一步判断因果贡献，还需要反事实或干预检验。
 
 ## 4. ReMAC：让 LLM 编写“怎样才算做得好”
 
@@ -437,15 +427,15 @@ ReMAC 的反思有三个层次：
 
 例如，成功率一直不变，但接近奖励已经很高，接下来需要看的就不是“再增加接近奖励”，而可能是抓取、转移、配合条件是否缺失。
 
-这是 ReMAC 论文对方法的直观解释，不是我自己额外运行得到的观察。对应的反思提示和规则见 [3] PDF pp.30–32。
+论文给出的反思提示和规则见 [3] PDF pp.30–32。
 
 ### 4.7 实验结论：任务结构决定奖励设计的效果
 
-ManiCraft 的 Table 1 列出 11 个任务定义，其中 Co-Sweep 有三档难度；主结果 Figure 3 展示 9 个任务标签。下面按 **Figure 3 的标签与柱上数值**重绘，不猜测未单列的难度聚合方式。
+ManiCraft 的 Table 1 列出 11 个任务定义，其中 Co-Sweep 有三档难度；主结果 Figure 3 展示 9 个任务标签。我按 **Figure 3 的标签与柱上均值**重绘如下。
 
 ![ReMAC 与人工奖励在九个任务上的成功率对比，保留全部任务而非仅展示优势项](/assets/img/day12/day12-remac-results.png)
 
-> **图 7 · 同一任务内比较奖励方案。** 来源：[3] PDF p.7，Figure 3。圆点为 ReMAC，方点为人工奖励；右侧依次列出两者均值。Co-Trans 为 1.00 对 0.35，显示自动奖励在该协作任务中的收益；Co-Grasp、Co-Push、Co-Close 达到相同均值；Co-StackOn 为 0.57 对 0.87，提示更复杂的协作过程需要相匹配的奖励设计。图中不伪造误差线，均值来自原图标注，没有重跑训练。
+> **图 7 · 同一任务内比较奖励方案。** 按 [3] PDF p.7，Figure 3 标注的均值重绘。圆点为 ReMAC，方点为人工奖励。Co-Trans 为 1.00 对 0.35，Co-Grasp、Co-Push、Co-Close 的均值相同，Co-StackOn 为 0.57 对 0.87。奖励方案的表现随任务变化，值得结合各任务的协作要求来看。
 
 消融实验还回答了“哪些设计值得保留”：
 
@@ -481,7 +471,7 @@ ManiCraft 的 Table 1 列出 11 个任务定义，其中 Co-Sweep 有三档难�
 | 核心检查点 | 角色依赖、优势估计、策略更新 | 轨迹表达、输出解析、反馈尺度 | 奖励接口、分量设计、成功率反馈 |
 | 主要成本位置 | 模型采样、梯度更新、环境验证 | 批量轨迹的 LLM 评价 | 奖励候选搜索与多团队训练 |
 
-这是依据三篇方法整理的工程理解，不是额外做出的运行时性能比较。
+我读到这里更关心调用发生在哪里：每步生成动作、批量评价轨迹和搜索奖励候选，对运行成本的要求会很不一样。
 
 ### 5.3 能不能把三者组合？
 
@@ -524,7 +514,7 @@ ManiCraft 的 Table 1 列出 11 个任务定义，其中 Co-Sweep 有三档难�
 
 | 编号 | 本次阅读版本 | 重点回看位置 |
 | --- | --- | --- |
-| [1] | 匿名作者，*MARFT: Multi-Agent Reinforcement Fine-Tuning*。我读的这版 PDF 标注 “Under review as a conference paper at ICLR 2026”，不据此认定最终录用状态 | PDF pp.4–6：依赖、优势分解、训练流程；p.8：Tables 2–3；p.18：超参数 |
+| [1] | 匿名作者，*MARFT: Multi-Agent Reinforcement Fine-Tuning*，ICLR 2026 匿名评审稿（PDF 标注 “Under review as a conference paper at ICLR 2026”） | PDF pp.4–6：依赖、优势分解、训练流程；p.8：Tables 2–3；p.18：超参数 |
 | [2] | K. Nagpal, D. Dong, J.-B. Bouvier, N. Mehr，*Leveraging Large Language Models for Effective and Explainable Multi-Agent Credit Assignment*。我读的这版标注 AAMAS 2025，arXiv:2502.16863v1 | PDF pp.4–6：方法与 TACA；p.2：Figure 2；p.11：Table 1 |
 | [3] | P. Li, H. Tang, Y. Yuan, J. Hao，*ReMAC: Large Language Model-Driven Reward Design for Multi-Agent Manipulation Collaboration*。我读的这版标注 NeurIPS 2025 | PDF pp.4–5：闭环；pp.7–9：实验与消融；pp.23–24：训练设置；pp.30–32：提示词 |
 

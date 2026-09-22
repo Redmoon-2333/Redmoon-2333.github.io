@@ -34,7 +34,7 @@ math: true
 
 ![五个 Notebook 的连续实验链（matplotlib 生成）](/assets/img/day6-chain-matplotlib.png)
 
-> 本图由 `matplotlib` 脚本生成，替代原 Mermaid 流程图，确保 GitHub Pages 无需插件即可渲染。链路：`CP3-04 制造错误 -> 并行超步(成功/失败) -> CP3-05 定位 -> CP3-06 修复续跑 -> CP3-07 Replay -> CP3-08 Fork`。
+> 我沿着这条执行顺序看检查点：`CP3-04 制造错误 -> 并行超步(成功/失败) -> CP3-05 定位 -> CP3-06 修复续跑 -> CP3-07 Replay -> CP3-08 Fork`。
 
 ### 0.1 统一图结构
 
@@ -406,13 +406,10 @@ graph.invoke(None, config=skip_router_config)  # -> "无法处理的任务类型
 
 ---
 
-## 7. 代码约定与可复现性
+## 7. 恢复时容易看漏的两个细节
 
-- `state['topic']` 的引号已按 Python `f-string` 规范处理，保证可直接 `ast.parse` 与执行。
-- Notebook 将说明性文字置于首尾 `Markdown` 单元，代码单元保持可直接运行；关键位置（不可达 `raise`、`get_state_history`、`invoke(None)`、`next` 匹配、`update_state`）配有行内注释。
 - `checkpoint.next == ('node_poem','node_joke')` 的元组匹配在并行调度不稳定时可改为 `set` 比较。
 - `08_fork.ipynb` 中 `mode="笑话"` 的中文取值会命中 `node_default`，如需命中 `node_joke` 请使用 `mode="joke"`。
-- 统一使用 `Python 3.11` 内核元数据。
 
 ---
 
@@ -466,7 +463,7 @@ jupyter lab
 
 ## 附 · 项目仓库
 
-本篇对应的 5 个 Notebook（CP3/04_error ~ 08_fork，含 3 张 matplotlib 流程图与 2 张 faro 概念图）已按文中输出同步至 GitHub，开箱可复现全部案例：
+错误注入、检查点定位、续跑、Replay 和 Fork 分别放在下面 5 个 Notebook 中。运行前需要配置模型服务和 PostgreSQL；`08_fork` 使用内存检查点。
 
 - [Redmoon-2333/Langgraph — CP3 错误恢复、Replay 与 Fork](https://github.com/Redmoon-2333/Langgraph) — 含 `CP3/04_error.ipynb` ~ `08_fork.ipynb`（带可复现输出）与 `assets/img/` 原图，依 `04 → 05 → 06 → 07 → 08` 顺序执行即可复现。
 

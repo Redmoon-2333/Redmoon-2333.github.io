@@ -1,4 +1,4 @@
-﻿---
+---
 topic: langgraph
 title: "Day4：Langgraph的一次小回顾"
 date: 2026-08-28 02:00:00 +0800
@@ -143,7 +143,7 @@ def node_2(state: OverAllState) -> OverAllState:
 
 ### 1.4 多 Schema 架构（Multi-Schema）与视图隔离
 
-生产级复杂 Agent 中，图的**输入参数**、**内部流转状态**与**对外暴露结果**往往不应共享同一个大杂烩结构。`CP1/07_multi_schema.ipynb` 演示了多 Schema 的优雅设计：
+我不希望调用方必须知道图里所有中间字段。多 Schema 可以分别声明输入、内部状态和输出，下面这个例子正好把三者分开：
 
 ```python
 # 1. 外部调用输入接口：仅暴露必要入参
@@ -253,7 +253,7 @@ builder.add_edge("mapper_node", "reducer_node")  # 所有 Mapper 节点并行完
 
 ### 2.4 指令式控制流：`Command` 原生跳转
 
-在 LangGraph 0.2+ 中，引入了极具颠覆性的 `Command` 类型（`CP2/07_command.ipynb` 和 `CP2/11_loop.ipynb`）。传统的“在节点中修改 State + 在图外部用条件边路由”的方式被进一步融合为**节点内部直接返回 `Command(goto=..., update=...)`**：
+`Command` 让我可以在节点的一次返回中同时更新状态和指定下一跳。`CP2/07_command.ipynb` 和 `CP2/11_loop.ipynb` 用的是 **`Command(goto=..., update=...)`**：
 
 ```python
 from langgraph.types import Command
@@ -273,7 +273,7 @@ def llm_node(state: OverAllState) -> Command[Literal["tool_node", "output_node"]
 
 **Command 的核心优势**：
 - 节点兼具“计算”与“动态流转决策”能力，大幅精简图中复杂的条件边声明；
-- 完美契合 ReAct Agent 模式，工具调用与终止判断一气呵成。
+- 工具调用后，可以根据结果决定继续执行还是结束。
 
 ---
 
@@ -482,11 +482,11 @@ print("历史快照状态:", snapshot.values)
 
 ## 6. Day 4 收工小结
 
-1. **图驱动状态机是构建高阶 Agent 的必然范式**：相较于传统线性链，LangGraph 将状态持久化与图调度解耦，支持任意复杂的拓扑分支、循环与回溯。
-2. **State 与 Reducer 是数据核心**：采用 `TypedDict` 声明结构，通过 `Annotated + add / add_messages` 显式控制并发归约与消息去重，利用 `Overwrite` 支持历史截断。
-3. **控制流双轮驱动**：既有声明式的静态边与条件边（`add_conditional_edges` + `path_map`），又有指令式的动态分发（`Send` 实现动态 MapReduce）与内部直跳（`Command` 原生 goto）。
-4. **系统级高可用三件套**：`RemainingSteps` 优雅退避防爆步，`RetryPolicy` 弹性重试抗网络抖动，`CachePolicy` 精准缓存降本增效。
-5. **Checkpointer 赋予 Agent 真正的“记忆”与“后悔药”**：借助 `PostgresSaver` 实现生产级落盘，配合 `StateSnapshot` 和 `checkpoint_id` 实现多轮对话恢复与时间旅行回放。
+这几节最容易混淆的是“节点返回了什么”和“图接下来执行什么”。我现在会先确定 State 的字段，再看每个字段是覆盖、追加还是按消息 ID 更新；合并规则确定后，才画条件边、`Send` 分发和 `Command` 跳转。
+
+循环跑起来以后，还要分别处理步数、异常和重复计算：`RemainingSteps` 用来感知剩余步数，`RetryPolicy` 处理适合重试的异常，`CachePolicy` 复用结果。它们解决的问题不同。
+
+最后才是跨次执行的状态。`PostgresSaver` 保存检查点，`StateSnapshot` 展示现场，`checkpoint_id` 定位历史位置。下一步我想接着看：节点中途失败时，恢复到底从哪里开始。
 
 ---
 
@@ -495,6 +495,3 @@ print("历史快照状态:", snapshot.values)
 本篇对应的完整实战代码（CP1 / CP2 / CP3 共 26 个 Notebooks）与 8 张架构图已整理至 GitHub，开箱可复现博客全部案例：
 
 - [Redmoon-2333/Langgraph — GuiGU 课程实战（CP1-CP3）](https://github.com/Redmoon-2333/Langgraph) — 含精析长文 Day4.md、CP1/ CP2/ CP3/ 全量 notebooks 与 assets/img/ 原图，依 CP1 → CP2 → CP3 顺序执行即可复现。
-
-> 说明：前两篇采用 /assets/attach/dayX/ 附件直链便于离线下载；本篇起代码体量较大（26 notebooks + 8 图），改以仓库链接形式维护，后续更新亦在该仓库持续同步。
-
