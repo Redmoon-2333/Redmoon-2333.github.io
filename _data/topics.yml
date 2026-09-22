@@ -36,6 +36,10 @@ items:
     title: Karpathy 从零构建大模型
     section: practice
     url: /practice/karpathy/
+  - id: cs336
+    title: CS336 从零构建大语言模型
+    section: practice
+    url: /practice/cs336/
   - id: langgraph
     title: LangGraph
     section: practice
