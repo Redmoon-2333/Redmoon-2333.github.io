@@ -8,7 +8,7 @@
 1. 在 GitHub 新建**空**仓库，二选一：
    - **用户主站（推荐）**：仓库名 `你的用户名.github.io` → 访问地址 `https://你的用户名.github.io`
    - **项目仓库**：任意名字（如 `blog`）→ 访问地址 `https://你的用户名.github.io/blog/`
-2. 把本目录推上去：
+2. 按下文发布验证规则完成相关轻量静态检查，由代理判断可发布，并取得用户明确发布/推送授权；仅暂存本次明确文件，检查 staged diff 后提交，再推送（现有站点无需重复初始化远程）：
 
 ```bash
 cd /d/大学相关/03_个人成长与记录/LLM学习体系/02_博客站点/personal-site
@@ -21,7 +21,7 @@ git push -u origin main
    - 用户主站：Build and deployment → Source 选 `Deploy from a branch` → Branch 选 `main` / `(root)` → Save
 4. 改 `_config.yml` 里所有 `YOUR_GITHUB_USERNAME`。
    若用了项目仓库模式，还需设置：`url: "https://你的用户名.github.io"`、`baseurl: "/仓库名"`
-5. 等 1-2 分钟，GitHub Actions 会自动构建部署（Jekyll 是 Pages 原生支持，无需写任何 workflow）。
+5. 等待本次提交对应的 GitHub Pages 自动构建部署成功（不能仅等待固定时长或看到旧页面 200 就视为成功；Jekyll 是 Pages 原生支持，不添加任何 workflow）。随后抓取本次受影响线上页面，核对 HTTP 状态与预期内容，并用真实浏览器截图目检；相关时覆盖桌面与手机。失败及时修复或只回滚本次发布，不涉及他人变更。
 
 ## 二、写文章（含分类）
 
@@ -85,7 +85,7 @@ math: true                 # 只有需要公式的文章才加这行
 
 每门课独立成文，不再跨课合篇。原课程 `DayN-阅读笔记.md` 与 `08_MyNote/课堂记录/<课程名>/YYYY-MM-DD-DayN.md` 保持知识正文一致；博客仅作公开排版和隐私处理。旧合篇 URL 保留静态分流页，不进入文章集合、首页、RSS 或计数。
 
-先本地构建、浏览器验证和审核。只有用户明确要求发布后才 commit、push，只暂存本次文件并核对 staged diff，禁止 `git add -A`。整理不代表完成学习。
+发布前做与本次改动相关的 diff、front matter、模板、链接与资源路径等轻量静态检查，由代理判断可发布；不强制本地 Docker、`bundle install` 或 `jekyll build`。只有用户审核且明确要求“发布/推送”后才 commit、push，只暂存本次明确文件并核对 staged diff，禁止 `git add -A`，不夹带他人或已有暂存变更。推送后等待本次 GitHub Pages 部署成功，抓取受影响线上页面核对 HTTP 状态与预期内容，再用真实浏览器截图目检（涉及响应式布局时覆盖桌面与手机）。失败及时修复或只回滚本次发布，不涉及他人变更。整理不代表完成学习。
 
 ## 三、传图片
 
@@ -94,18 +94,20 @@ math: true                 # 只有需要公式的文章才加这行
 
 > 提示：也可以用图床外链，但自托管更稳、面试演示时不依赖第三方。
 
-## 四、本地预览
+## 四、可选本地排错（不阻塞常规发布）
 
-- **WSL2（推荐）**：
+本地 RubyGems 依赖安装与 Jekyll 构建不是发布门槛；Docker 仅供疑难排错时可选使用。常规发布按前述轻量静态检查、明确授权和部署后线上验收执行。
+
+- **WSL2（可选排错）**：
   ```bash
   sudo apt update && sudo apt install ruby-full build-essential zlib1g-dev
   bundle install          # 首次运行
   bundle exec jekyll serve --livereload
   ```
 - **Docker**：启动 Docker Desktop，将站点复制到仓库外的隔离构建目录，按当前 Gemfile 执行 `bundle install`、`bundle exec jekyll build`，保留完整日志；静态产物可用本地 HTTP 服务预览。不要替换或提交无关依赖文件。
-- 不允许用 push 代替本地预览。桌面和手机、明暗模式、键盘导航、长标题、表格与公式均需检查。
+- 不要求先本地预览再发布；代理完成相关轻量静态检查并判断可发布、且取得用户明确授权后，可直接推送。部署成功后必须在真实浏览器中对受影响线上页面截图目检；桌面/手机、明暗模式、键盘导航、长标题、表格与公式按改动关联检查。
 
-预览地址：<http://localhost:4000>
+WSL2 可选预览地址：<http://localhost:4000>
 
 ## 五、想改设计
 

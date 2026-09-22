@@ -73,15 +73,19 @@ math: true                  # 仅需公式时加，加载 KaTeX
    要么容器加 `markdown="1"`（kramdown 专属，about.md 在用）。
 3. **GitHub Pages 白名单插件有限**：jekyll-feed/jekyll-seo-tag/paginate 可用；
    `jekyll-archives` 不可用——所以栏目页是手写 Liquid 过滤，别引入 archives。
-4. Windows 本机 Ruby 缺 MSYS2 装不上 jekyll，别尝试 `gem install jekyll`，用 Docker。
+4. Windows 本机 Ruby 缺 MSYS2 装不上 jekyll，别为常规发布尝试 `gem install jekyll`；常规发布无需本地构建，Docker 仅在疑难排错时可选。
 
-## 构建验证（改动后必做）
+## 发布验证（轻量检查 + 部署后线上验收）
 
-使用 Docker 在隔离副本中按当前 Gemfile 执行 `bundle install` 与 `bundle exec jekyll build`，保留完整日志。不要替换 Gemfile、恢复用户删除的锁文件或提交构建产生的依赖文件。构建目录和缓存放在仓库之外。
+1. 发布前检查本次 diff，并按改动范围核对 front matter、专题归属、Liquid/HTML 模板结构、链接和资源路径；涉及计数、旧网址分流或 RSS 时一并静态检查。由代理据此判断可发布，不强制本地 Docker、`bundle install` 或 `jekyll build`。
+2. 只有用户审核且明确要求“发布/推送”后才提交与推送；仅 `git add <本次明确文件>`，检查 staged diff，禁止 `git add -A`，不夹带他人或已有暂存变更。
+3. 推送后等待本次提交的 GitHub Pages 部署成功，再抓取本次受影响线上页面，核对 HTTP 状态和预期内容；不能以旧页面返回 200 代替本次部署成功。
+4. 用真实浏览器打开受影响线上页面，截图并目检；涉及响应式布局时覆盖桌面与手机，明暗模式、键盘导航、公式、表格和长标题按改动关联检查。
+5. 部署或线上验证失败时及时修复，或只回滚本次发布；不覆盖、撤销他人变更。
 
-构建后验证专题归属、计数、旧网址分流、RSS 和内部链接；Playwright 检查桌面与手机、明暗模式、键盘导航、公式、表格和长标题，并截图目检。
+快速静态检查可辅助统计 `{% if %}/{% endif %}`、`{% for %}/{% endfor %}` 配对，但数量一致不等于模板语法正确，仍需检查结构。
 
-快速静态检查：Python 统计 `{% if %}/{% endif %}`、`{% for %}/{% endfor %}` 数量配对。
+Docker 仅作疑难排错的可选工具，不阻塞常规发布。需要时在仓库外隔离副本中按当前 Gemfile 执行 `bundle install` 与 `bundle exec jekyll build`，保留日志；不要替换 Gemfile、恢复用户删除的锁文件或提交构建产生的依赖文件，构建目录和缓存放在仓库之外。
 
 ## Git 约定
 
