@@ -7,7 +7,10 @@
       <span class="brand-sub">/ 训练日志</span>
     </a>
     <nav class="nav" aria-label="主导航">
+      {% assign nav_topic = nil %}
+      {% if page.topic and page.topic != empty %}
       {% assign nav_topic = site.data.topics.items | where: 'id', page.topic | first %}
+      {% endif %}
       {% for nav_section in site.data.topics.sections %}
       <a href="{{ nav_section.url | relative_url }}" {% if page.cat == nav_section.category or nav_topic.section == nav_section.id %}class="active" {% if page.url == nav_section.url %}aria-current="page"{% else %}aria-current="true"{% endif %}{% endif %}>{{ nav_section.title }}</a>
       {% endfor %}
