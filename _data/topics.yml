@@ -56,3 +56,7 @@ items:
     title: 碎碎念
     section: notes
     url: /notes/ramblings/
+  - id: ai-frontiers
+    title: AI 前沿
+    section: notes
+    url: /notes/ai-frontiers/
