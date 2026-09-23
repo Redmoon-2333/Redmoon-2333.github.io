@@ -52,15 +52,7 @@ items:
     title: 多智能体强化学习
     section: papers
     url: /papers/multi-agent-rl/
-  - id: model-updates
-    title: 模型动态
+  - id: ramblings
+    title: 碎碎念
     section: notes
-    url: /notes/model-updates/
-  - id: tools-ecosystem
-    title: 工具与生态
-    section: notes
-    url: /notes/tools-ecosystem/
-  - id: industry
-    title: 行业观察
-    section: notes
-    url: /notes/industry/
+    url: /notes/ramblings/
