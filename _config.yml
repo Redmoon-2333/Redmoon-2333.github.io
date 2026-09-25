@@ -5,7 +5,7 @@ description: >-
   我走过的漫漫长路。
   记录 LLM 原理、后训练、推理优化与 Agent 开发的学习与实践。
 
-# ★ 二选一（见 README）：
+# ★ 二选一（见 CLAUDE.md「站点初始化」）：
 #  A) 用户主站点仓库 <username>.github.io → url 如下，baseurl 保持 ""
 url: "https://redmoon-2333.github.io"
 baseurl: ""
@@ -40,7 +40,6 @@ defaults:
       math: true
 
 exclude:
-  - README.md
   - AGENTS.md
   - CLAUDE.md
   - Gemfile

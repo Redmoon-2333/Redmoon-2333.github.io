@@ -9,3 +9,7 @@ vendor/
 _shots/
 __pycache__/
 *.pyc
+# 规则文件仅存本地，禁止上传（规则唯一事实源是本地 CLAUDE.md/AGENTS.md）
+CLAUDE.md
+AGENTS.md
+README.md
