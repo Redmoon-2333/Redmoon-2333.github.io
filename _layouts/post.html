@@ -19,6 +19,23 @@ layout: default
     {{ content }}
   </div>
   <footer class="post-foot rise" style="--d:.12s">
+    {% if topic.order_by == 'series_order' %}
+    {% assign series_posts = site.posts | where: 'topic', topic.id | sort: 'series_order' %}
+    {% for sp in series_posts %}
+      {% if sp.url == page.url %}
+        {% unless forloop.first %}
+          {% assign prev_i = forloop.index0 | minus: 1 %}
+          {% assign prev_post = series_posts[prev_i] %}
+        {% endunless %}
+        {% unless forloop.last %}
+          {% assign next_i = forloop.index0 | plus: 1 %}
+          {% assign next_post = series_posts[next_i] %}
+        {% endunless %}
+      {% endif %}
+    {% endfor %}
+    {% if prev_post %}<a class="back mono" href="{{ prev_post.url | relative_url }}">← 第 {{ prev_post.series_order }} 章 · {{ prev_post.title }}</a>{% endif %}
+    {% if next_post %}<a class="back mono" href="{{ next_post.url | relative_url }}">第 {{ next_post.series_order }} 章 · {{ next_post.title }} →</a>{% endif %}
+    {% endif %}
     <a class="back mono" href="{{ topic.url | relative_url }}">返回{{ topic.title }}</a>
     <a class="back mono" href="{{ '/archive/' | relative_url }}">← 返回全部文章</a>
   </footer>

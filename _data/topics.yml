@@ -44,6 +44,11 @@ items:
     title: LangGraph
     section: practice
     url: /practice/langgraph/
+  - id: reinforcement-learning
+    title: 强化学习
+    section: practice
+    url: /practice/reinforcement-learning/
+    order_by: series_order
   - id: llm-foundations
     title: 大模型基础与经典论文
     section: papers
