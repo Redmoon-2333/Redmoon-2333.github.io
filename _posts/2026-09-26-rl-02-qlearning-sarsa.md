@@ -128,13 +128,6 @@ Sutton & Barto 的标准 CliffWalking 是回合任务：掉崖扣分并回到起
 3. **单种子不足以谈提升。** 本章全部数字为 5 种子均值 ± SD，且 SD 是误差带不是显著性检验；SARSA greedy 的 SD 高达 2.057，均值不足以代表每个种子的表现。
 4. **平均回报更高 ≠ 更安全。** 同为 stochastic 模式，Q-learning 的 return 0.448 高于 SARSA 的 −0.026，但掉崖率是 15.0% 对 9.0%——回报和风险是两个维度，“更会赚分”不等于“更少掉崖”，两者要分别报告。
 
-## 复习问题
-
-1. 分别写出 Q-learning 与 SARSA 的 TD 目标（含 terminated 分支），并说明哪一个是 off-policy、为什么。
-2. 训练中 $\varepsilon=0.1$ 不变，为什么 SARSA 学出的路线离崖一步、Q-learning 学出的路线贴着崖？
-3. SARSA 贪心评估出现 20% 截断率，为什么不能直接归因于 on-policy 或评估口径？还需要查看哪些逐种子证据？
-4. 两个算法在 100,000 环境步预算下总回合数为何不同？画训练曲线时横轴该用什么，理由是什么。
-
 ## 参考文献
 
 1. Sutton R S, Barto A G. *Reinforcement Learning: An Introduction* (2nd ed.). MIT Press, 2018.（Chapter 6: Temporal-Difference Learning）

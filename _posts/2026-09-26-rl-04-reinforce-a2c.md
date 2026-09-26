@@ -157,13 +157,6 @@ A2C 走过一轮配置修正：初版（rollout 5、lr $3\times10^{-4}$、`ent_c
 3. **忽略小批量归一化的统计波动**。`normalize_adv` 使用批内均值与标准差，小批量时这两个统计量可能不稳定。当前 A2C v2 每批 32 步，旧版才是 5 步；默认 `normalize_adv=False`。是否归一化应结合批量与消融结果判断，不能断言它对所有小批量都有害、对所有大批量都有益。
 4. **熵系数不是越大越好**。`ent_coef` 过大时策略被熵项主导、长期停留在接近均匀的随机分布，探索变成不收敛的原因；它只是温和正则（本项目 0.001），需要与策略梯度项的量级相称，而非单调调大。
 
-## 4.10 复习问题
-
-1. 为什么 $\nabla\pi$ 可以写成 $\pi\,\nabla\log\pi$？这一步在采样实现中换来了什么——它如何让“只用采到的动作”成为可能？
-2. 在给定状态与采样前历史后，说明与当前动作独立且 stop-gradient 的 $b$ 为什么不改变未按随机轨迹长度加权的策略梯度期望；既然如此，baseline 改变的是什么？“先用后更新”的滑动均值 baseline 为什么仍满足“与动作无关”？
-3. terminated 与 truncated 在 GAE 中有哪两处不同处理（bootstrap 与 λ 链）？为什么必须逐记录 `next_vals`，而不能直接用 `values[t+1]`？
-4. REINFORCE 与 A2C 的更新时机差在哪里？各自的代价（方差 / 每次更新的样本量）是什么？
-
 ## 参考文献
 
 1. Sutton, R. S., & Barto, A. G. (2018). *Reinforcement Learning: An Introduction* (2nd ed.). MIT Press. https://incompleteideas.net/book/the-book-2nd.html

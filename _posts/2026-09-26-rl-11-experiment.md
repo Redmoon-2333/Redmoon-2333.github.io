@@ -79,6 +79,8 @@ cliff 上 Q-learning 与 SARSA 的预算均为**每训练种子 100,000 环境�
 
 此表列的是配置预算。COMA 与 MADDPG/IDDPG 已按修正实现重训，重训数字有效；修复前的旧日志不构成有效算法对照，只作追溯。预算还要与日志核对——这里出过一个真实缺口：PPO 历史 `episodes.csv` 的逐种子局长和为 95073、95836、95481、95646、95736，比每种子 100000 少 4164–4927 步。现已定位到确切原因：历史运行的源码指纹为 `a723f68e…`，与当前包的 `a18a278a…` 不同；逐行核对显示每种子 185–192 个失配行，每个失配行都恰有一个 512（rollout 长度）的倍数落在其中，缺口恰等于「上一行末步到该边界」的距离（如 508→521 缺 4 步 = 512−508）——历史代码在每个 rollout 边界把进行中回合的 `ep_ret/ep_len` 清零且不落盘。`episode` 编号连续、末行 `env_steps=100000`，说明 env 预算走满，丢的只是长度/回报记账字段，不是训练步数；正文引用的最终数字来自 `evals.csv` 与独立复评协议，不受影响。缺口只出现在 PPO（A2C 与其余 14 组闭合差均为 0）。当前 `pg.py` 已跨 rollout 累计，`tests/test_episode_accounting.py` 与 `scripts/check_episode_accounting.py` 把闭合性锁进回归——「预算跑没跑满」不能只看日志字段，要有核对工具。
 
+![历史 PPO 记账取证：累计环境步走满 100000，累计局长和止于 95073，缺口在 rollout 边界处累积（seed0）](/assets/img/rl-practice/09_ppo_budget_gap.png)
+
 ## 三、种子与不确定性
 
 RL 训练的随机性来自三处：参数初始化、环境交互采样、探索噪声（ε、采样动作）。本系列统一**训练种子 0–4（5 个）**，报告方式是：**逐种子曲线 + mean ± 跨种子样本 SD**：
@@ -188,12 +190,34 @@ CartPole 四行均为**一次性复评**（配置冻结后在从未用于调参�
 
 消融组与对照组共用同一套 `manifest` 字段与同一批绘图脚本，任何一组缺种子，绘图直接报 `CollectError` 而不是悄悄少画一条线。
 
-## 复习问题
+## 代码实现
 
-1. cliff 的 67,979/40,757 个 episodes 汇总了几个训练种子、多少环境步？如何算出训练平均局长，为什么不能用 greedy test 的 7.0/28.8 步解释训练局数？
-2. SD、SEM、95% CI 三者各回答什么问题？把误差带从 SD 换成 SEM 会带来什么误导？
-3. 贪心评估与带探索评估各回答什么问题？用第 2 章 Q-learning 的 0% vs 15% 掉崖率说明。
-4. 发现自己的调参过程看过测试集之后，正确的处置链是什么？为什么“换一组数但不说明”比污染本身更糟？
+对应复现包 `scripts/run_formal.py`（编排器核心）：
+
+```python
+# 需要指定实现修订的算法：修复前的 completed 运行不算完成，必须重跑
+REVISION = {
+    "coma": "policy-audit-v2",
+    "maddpg": "policy-audit-v2",
+    "iddpg": "policy-audit-v2",
+}
+
+def needs_run(prev, algo: str, budget: int) -> bool:
+    """prev=(budget, implementation_revision) 或 None；决定该种子是否（重新）运行。"""
+    if prev is None:
+        return True
+    prev_budget, prev_rev = prev
+    if prev_budget != budget:
+        return True
+    want_rev = REVISION.get(algo)
+    return want_rev is not None and prev_rev != want_rev
+
+# 每进程限制线程数，避免 3 个 worker × 32 逻辑核超订
+env_vars = dict(os.environ)
+env_vars.update(OMP_NUM_THREADS="3", MKL_NUM_THREADS="3", OPENBLAS_NUM_THREADS="3")
+```
+
+这段裁剪说明两条纪律的落地方式：其一，跳过判断同时核对**预算与实现修订**——若只按 `budget` 判断，修复前的 COMA/MADDPG/IDDPG `completed` 运行会被当成已完成，重训被静默跳过（该规则由 `tests/test_run_formal_plan.py` 锁定）；其二，每 worker 限 3 线程，3 并发共占 9/32 逻辑核，跑满 15 组 × 5 种子也不超订。与之配套的核对入口是 `scripts/check_episode_accounting.py`（逐运行验证 `sum(length) == env_steps`）与 `scripts/verify_retrain.py`（预算、修订标记、checkpoint 参数逐项验收）。
 
 ## 参考文献
 

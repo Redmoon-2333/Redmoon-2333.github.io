@@ -122,12 +122,28 @@ $$y = r + \gamma (1-d) \sum_i \max_{a_i'} Q_i^-(o_i', a_i'), \qquad L = \mathrm{
 
 **四、跨环境比较回报。** $2.4$、$-5.1$、$9.9$ 都是谜题奖励结构下的数字，与走廊的 $+10$、导航的缩放奖励没有可比性。跨环境不排名；本谜题内的所有比较必须同预算、同种子、同评估协议。
 
-## 九 · 复习问题
+## 代码实现
 
-1. 为什么“任何只依赖本地观测的方法”在开关谜题上的成功率上限是 50%？请指出智能体 1 的观测中哪个维度零信息，以及为什么增加网络深度不能突破它。
-2. 分别算出“第一步就作答”与“25 步不作答”的期望回报，说明为什么前者更优；再解释这两个数与 50% 上限是什么关系。
-3. `commnet_nomsg` 与源实现的 `comm_rounds=0` 消融差在哪里？为什么后者测出的差值无法归因到通信？三个测试分别固定了消融的哪条性质？
-4. 同步轮次要求第 $k$ 轮使用队友**上一轮**的广播，如果改成同一轮内实时值会发生什么？“CommNet 式通信 + VDN 值学习”这个命名里，哪一半对应 CommNet、哪一半对应 VDN，各自的依据是什么？
+对应复现包 `rlpractice/algos/marl/comm.py`：
+
+```python
+def forward(self, obs, messages=None):
+    """obs: (B, n, obs_dim)；messages: 可选 (B, n, hidden) 直接注入的聚合消息。"""
+    h = self.enc(obs)                                   # (B, n, h)
+    for cell in self.cells:
+        if not self.use_message:
+            c = th.zeros_like(h)                        # 消融：消息恒 0，深度不变
+        elif messages is not None:
+            c = messages
+        else:
+            b = self.bcast(h)                           # 同步轮次：都用上一轮隐状态
+            total = b.sum(dim=1, keepdim=True)
+            c = (total - b) / (self.n_agents - 1)       # 队友均值（去掉自己）
+        h = h + cell(th.cat([h, c], dim=-1))            # 残差更新
+    return self.head(h)                                 # (B, n, A)
+```
+
+这段代码同时解释了第六节的边界：`use_message=False` 时只把聚合消息 `c` 置零，`enc`、`bcast`、`cells`、`head` 模块全部保留，所以名义参数量与通信版相同（29443）；但零消息分支根本不执行 `bcast` 投影，其权重不参与前向、也得不到梯度——等名义参数不等于等有效容量。`(total - b) / (n-1)` 的“去掉自己、取队友均值”对应同步轮次的更新要求。
 
 ## 参考文献
 
