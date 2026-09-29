@@ -60,7 +60,7 @@ Day2 的网络输出的是 $Q(s,a)$：先估计动作价值，再由价值导出
 | `action_tensor = distribution.sample()` | `(1,)` | 训练期按概率采样 |
 | `log_prob` | `()` | **本次实际抽中**动作的对数概率（`squeeze(0)` 后是标量） |
 | `td_target` | `()` | $r+\gamma(1-d)V(s')$，$d=1$ 时只剩 $r$ |
-| `advantage` | `()` | $\delta=\text{td\_target}-V(s)$ |
+| `advantage` | `()` | $\delta=\text{TD target}-V(s)$ |
 | `actor_loss` | `()` | $-\log\pi_\theta(a\mid s)\cdot\delta_{\text{detach}}$ |
 | `critic_loss` | `()` | $\big(V(s)-y\big)^2$ |
 
@@ -78,7 +78,7 @@ Day2 的网络输出的是 $Q(s,a)$：先估计动作价值，再由价值导出
 
 1. `terminated=False` 时执行 `state = next_state`，下一步才能在新状态做决定；
 2. 只有 `terminated=True` 才 `break`；
-3. 终止时 $\text{td\_target}=r$，不能把当前奖励再乘一次 $\gamma$——折扣只作用于**未来**价值。
+3. 终止时 $\text{TD target}=r$，不能把当前奖励再乘一次 $\gamma$——折扣只作用于**未来**价值。
 
 ## 3. 手算一个具体数值
 
@@ -104,7 +104,7 @@ td_target = 1 + 0.9 × V(s') × 0 = 1.0
 
 这里容易写成 $1+0.9\times 0=0.9$。当前奖励不打折，折扣只作用于未来价值。
 
-**advantage 的方向。** 设 $\text{td\_target}=1.8$、$V(s)=0.5$：
+**advantage 的方向。** 设 $\text{TD target}=1.8$、$V(s)=0.5$：
 
 $$
 \delta = 1.8-0.5 = 1.3>0
