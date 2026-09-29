@@ -5,4 +5,4 @@ topic: reinforcement-learning
 permalink: /practice/reinforcement-learning/
 ---
 
-从交互、价值与策略梯度出发，走到多智能体机制、实验方法与当前研究版图。每章都配有可运行实验：结论来自本地实测日志与可复现图表，而不是转述现成数字；教学小环境上的结果只作为机制演示，不用于宣称算法优劣。
+强化学习入门的三篇学习笔记：Day1 从奖励与回报讲到 Q-learning、SARSA 和悬崖行走；Day2 拆解 DQN 的一次更新；Day3 通过两条路线理解 Actor–Critic。结合手算、关键代码和运行结果，逐步对照公式与实现。
