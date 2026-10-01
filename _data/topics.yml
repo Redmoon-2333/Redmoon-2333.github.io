@@ -32,6 +32,10 @@ items:
     title: 算法设计与分析
     section: courses
     url: /courses/algorithms/
+  - id: llm-principles
+    title: 大模型语言原理
+    section: courses
+    url: /courses/llm-principles/
   - id: karpathy
     title: Karpathy 从零构建大模型
     section: practice
