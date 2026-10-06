@@ -6,7 +6,7 @@ topic: reinforcement-learning
 series_order: 4
 math: true
 layout: post
-date: 2026-10-07 00:00:00 +0800
+date: 2026-10-06 00:00:00 +0800
 tags:
 - 强化学习
 - REINFORCE
