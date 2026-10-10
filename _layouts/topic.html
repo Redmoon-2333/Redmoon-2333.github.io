@@ -22,7 +22,7 @@ layout: default
   <li class="post-item reveal-on-scroll">
     <a href="{{ post.url | relative_url }}">
       <p class="eyebrow mono">
-        {% if topic.order_by == 'series_order' %}<span>第 {{ post.series_order }} 章</span>{% else %}<time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: '%Y-%m-%d' }}</time>{% if post.lesson_day %}<span>Day {{ post.lesson_day }}</span>{% endif %}{% endif %}
+        {% if topic.order_by == 'series_order' %}<span>{% if post.series_label %}{{ post.series_label }}{% else %}第 {{ post.series_order }} 章{% endif %}</span>{% else %}<time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: '%Y-%m-%d' }}</time>{% if post.lesson_day %}<span>Day {{ post.lesson_day }}</span>{% endif %}{% endif %}
       </p>
       <h2 class="post-item-title">{{ post.title }}</h2>
       {% if post.excerpt %}<p class="excerpt">{{ post.excerpt | strip_html | truncate: 96 }}</p>{% endif %}
