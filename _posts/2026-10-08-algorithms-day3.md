@@ -5,6 +5,8 @@ categories:
 - 课堂笔记
 topic: algorithms
 lesson_day: 3
+series_order: 3
+series_label: 第3章
 tags:
 - 算法设计与分析
 - 分治法

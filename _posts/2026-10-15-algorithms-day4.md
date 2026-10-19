@@ -5,6 +5,8 @@ categories:
 - 课堂笔记
 topic: algorithms
 lesson_day: 4
+series_order: 4
+series_label: 第4章
 tags:
 - 算法设计与分析
 - 随机快速排序

@@ -5,6 +5,8 @@ categories:
 - 课堂笔记
 topic: algorithms
 lesson_day: 2
+series_order: 2
+series_label: 第2章
 tags:
 - 算法设计与分析
 - 插入排序

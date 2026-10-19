@@ -5,6 +5,8 @@ categories:
 - 课堂笔记
 topic: algorithms
 lesson_day: 1
+series_order: 1
+series_label: 第1章
 tags:
 - 算法设计与分析
 excerpt: 从问题定义到正确性与效率

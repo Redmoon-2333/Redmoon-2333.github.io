@@ -32,6 +32,7 @@ items:
     title: 算法设计与分析
     section: courses
     url: /courses/algorithms/
+    order_by: series_order
   - id: llm-principles
     title: 大模型语言原理
     section: courses
