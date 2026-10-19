@@ -14,7 +14,7 @@ math: true
 
 原题取自 Day2–Day4 课件末尾的 Homework，共九组；Day1 末尾的趣味挑战不计入作业。各题依次给出答案、关键推导和可复用的解题方法。
 
-[14 页 A4 精讲复习页（含前置知识）](/assets/attach/algorithms-review-1-4/review-a4.pdf) · [完整复习讲义（Markdown）](/assets/attach/algorithms-review-1-4/review-chapter.md) · [闭卷题册](/assets/attach/algorithms-review-1-4/review-questions.md) · [配套 Python 算法](/assets/attach/algorithms-review-1-4/review-algorithms.py)
+[14 页 A4 精讲复习页（含前置知识）](/assets/attach/algorithms-review-1-4/review-a4.pdf) · [作业详解 PDF（含第 13-24 组逐步比较）](/assets/attach/algorithms-review-1-4/review-guide.pdf) · [完整复习讲义（Markdown）](/assets/attach/algorithms-review-1-4/review-chapter.md) · [闭卷题册](/assets/attach/algorithms-review-1-4/review-questions.md) · [配套 Python 算法](/assets/attach/algorithms-review-1-4/review-algorithms.py)
 
 数组下标统一从 0 开始，区间包含左右端点，最大子数组要求非空。时间分析把一次比较、数组访问和机器字范围内的算术运算按常数成本计。
 
@@ -304,6 +304,402 @@ $$
 **迭代对数。** $\lg^\ast n$ 是反复取二进制对数，直到值不超过 1 所需的次数；$\lg^k n=(\lg n)^k$ 是普通幂。对足够大的 $n$，$\lg^\ast (\lg n)=\lg^\ast n-1$。$2^{\lg^\ast n}$ 比迭代次数增长快，却远慢于 $\ln\ln n$。
 
 **解题方法。** 统一对数底数；化成已知形式；把相等或同阶项先合并；先排大类，再比较相邻疑难项；最后逐项数清 30 个原式是否全部出现，并检查题目要求的排序方向。
+
+### 第 13-24 组逐步比较
+
+以下沿用原表组号，统一 $\lg n=\log_2n$，并在 $n\to\infty$ 时比较。记 $f\succ g$ 表示 $f/g\to\infty$，即 $f=\omega(g)$；同一组内只要求互为 $\Theta$，数值可以相差固定倍数。
+
+**比较的依据是比值。** 对最终为正的 $f,g$：
+
+$$
+\frac fg\to\infty\Rightarrow f\succ g,\qquad
+\frac fg\to c\in(0,\infty)\Rightarrow f=\Theta(g).
+$$
+
+当两项都能写成底数 2 的幂时，先计算指数差：
+
+$$
+\frac{2^{u(n)}}{2^{v(n)}}=2^{u(n)-v(n)}.
+$$
+
+因此，只要指数差趋于正无穷，比值就趋于无穷。把两个函数分别取对数后“看起来同阶”，还不足以把原函数合为一组。例如 $\lg n$ 与 $\lg(n^2)=2\lg n$ 同阶，而 $n^2/n=n\to\infty$。
+
+#### 1 先化简组内函数
+
+**第 13 组：为什么 $\lg(n!)$ 与 $n\lg n$ 同阶？**
+
+$n!=1\cdot2\cdots n$。所有因子都不超过 $n$，所以 $n!\le n^n$；后半段至少有 $n/2$ 个因子不小于 $n/2$，所以：
+
+$$
+\left(\frac n2\right)^{n/2}\le n!\le n^n.
+$$
+
+取二进制对数：
+
+$$
+\frac n2(\lg n-1)\le\lg(n!)\le n\lg n.
+$$
+
+当 $n\ge4$ 时，$\lg n-1\ge\frac12\lg n$，因此：
+
+$$
+\frac14n\lg n\le\lg(n!)\le n\lg n.
+$$
+
+两边是 $n\lg n$ 的固定正常数倍，故 $\lg(n!)=\Theta(n\lg n)$。这里证明的是同阶；$\lg(n!)$ 并不恒等于 $n\lg n$。
+
+**第 14 组：$2^{\lg n}=n$。** 对数是指数的反运算，底数一致时直接还原。例如 $2^{\lg16}=2^4=16$。
+
+**第 15 组：把根号底数改写成 2 的幂。**
+
+$$
+(\sqrt2)^{\lg n}
+=(2^{1/2})^{\lg n}
+=2^{(\lg n)/2}
+=(2^{\lg n})^{1/2}
+=\sqrt n.
+$$
+
+这里用的是 $(a^b)^c=a^{bc}$，所以第 15 组就是平方根级。
+
+**第 18 组：把自然对数换成二进制对数。**
+
+$$
+\ln n=\frac{\lg n}{\lg e}=(\ln2)\lg n.
+$$
+
+$\ln2$ 是固定正常数，因此 $\ln n=\Theta(\lg n)$。换底不会把对数级变成其他增长级别。
+
+**第 24 组：$n^{1/\lg n}$ 为什么是常数？**
+
+先写 $n=2^{\lg n}$，再把两个指数相乘：
+
+$$
+n^{1/\lg n}
+=(2^{\lg n})^{1/\lg n}
+=2^{(\lg n)(1/\lg n)}
+=2.
+$$
+
+例如 $16^{1/\lg16}=16^{1/4}=2$。所以它与 1 同阶，放在同一组；两者的数值分别是 2 和 1。
+
+#### 2 第 13-19 组：逐对计算比值
+
+**第 13 组比第 14 组快。** 选各组的代表 $n\lg n$ 与 $n$，约去共同因子 $n$：
+
+$$
+\frac{n\lg n}{n}=\lg n\to\infty.
+$$
+
+因此 $n\lg n\succ n$。第 13 组另一个函数 $\lg(n!)$ 只差有界倍数，放在相同位置。
+
+**第 14 组比第 15 组快。**
+
+$$
+\frac n{\sqrt n}=n^{1-1/2}=\sqrt n\to\infty.
+$$
+
+因此 $n\succ(\sqrt2)^{\lg n}$。
+
+**第 15 组比第 16 组快：统一成底数 2。**
+
+令 $x=\lg n$，则 $x\to\infty$，两项分别变成：
+
+$$
+\sqrt n=2^{x/2},\qquad
+2^{\sqrt{2\lg n}}=2^{\sqrt{2x}}.
+$$
+
+计算比值，指数相减：
+
+$$
+\frac{\sqrt n}{2^{\sqrt{2\lg n}}}
+=2^{x/2-\sqrt{2x}}.
+$$
+
+把指数中的 $x$ 提出来：
+
+$$
+\frac x2-\sqrt{2x}
+=x\left(\frac12-\sqrt{\frac2x}\right).
+$$
+
+括号趋于 $1/2$。更具体地，当 $x\ge32$ 时，$\sqrt{2/x}\le1/4$，故指数至少为 $x/4\to\infty$，原比值趋于无穷。因此：
+
+$$
+\sqrt n\succ2^{\sqrt{2\lg n}}.
+$$
+
+**第 16 组比第 17 组快：把对数幂也改写成指数。**
+
+仍令 $x=\lg n$，则 $(\lg n)^2=x^2=2^{2\lg x}$。于是：
+
+$$
+\frac{2^{\sqrt{2\lg n}}}{(\lg n)^2}
+=2^{\sqrt{2x}-2\lg x}.
+$$
+
+观察指数差：
+
+$$
+\sqrt{2x}-2\lg x
+=\sqrt x\left(\sqrt2-\frac{2\lg x}{\sqrt x}\right).
+$$
+
+这里 $\lg x/\sqrt x\to0$。可再令 $u=\ln x$，将这个比值化成：
+
+$$
+\frac{\lg x}{\sqrt x}
+=\frac{u}{(\ln2)e^{u/2}}\to0.
+$$
+
+分子是一次方，分母是固定底数指数。因此括号趋于 $\sqrt2$，整个指数差趋于无穷，得到：
+
+$$
+2^{\sqrt{2\lg n}}\succ(\lg n)^2.
+$$
+
+这一步说明第 16 组为何夹在平方根级与对数平方之间。更一般地，对任意固定 $\varepsilon\gt 0,c\gt 0$：
+
+$$
+(\lg n)^c=o\!\left(2^{\sqrt{2\lg n}}\right),
+\qquad
+2^{\sqrt{2\lg n}}=o(n^\varepsilon).
+$$
+
+证明仍是比较指数差：$\sqrt{2x}-c\lg x\to\infty$，$\varepsilon x-\sqrt{2x}\to\infty$。
+
+**第 17 组比第 18 组快：先换底，再约分。**
+
+$$
+\frac{(\lg n)^2}{\ln n}
+=\frac{(\lg n)^2}{(\ln2)\lg n}
+=\frac{\lg n}{\ln2}\to\infty.
+$$
+
+因此 $(\lg n)^2\succ\ln n$。
+
+**第 18 组比第 19 组快。**
+
+$$
+\frac{\ln n}{\sqrt{\lg n}}
+=\frac{(\ln2)\lg n}{(\lg n)^{1/2}}
+=(\ln2)\sqrt{\lg n}\to\infty.
+$$
+
+因此 $\ln n\succ\sqrt{\lg n}$。
+
+#### 3 第 19-20 组：再换一次变量
+
+第 19 组是 $\sqrt{\lg n}$，第 20 组是 $\ln\ln n$。令 $x=\lg n$，先把后者写成关于 $x$ 的函数：
+
+$$
+\ln\ln n=\ln\bigl((\ln2)x\bigr)
+=\ln x+\ln(\ln2).
+$$
+
+$\ln(\ln2)$ 虽然为负数，但它是固定常数。比较较慢项与较快项：
+
+$$
+\frac{\ln\ln n}{\sqrt{\lg n}}
+=\frac{\ln x}{\sqrt x}
++\frac{\ln(\ln2)}{\sqrt x}\to0.
+$$
+
+第一项是对数除以正次幂，第二项是常数除以趋于无穷的量，两项都趋于 0。因此：
+
+$$
+\sqrt{\lg n}\succ\ln\ln n.
+$$
+
+这里的 $\ln\ln n$ 是连续取两次自然对数；$\sqrt{\lg n}$ 是先取二进制对数，再开平方。
+
+#### 4 先读懂星号：迭代对数在数次数
+
+$\lg^\ast n$ 表示反复取二进制对数，直到结果不超过 1 所需的次数。它与 $(\lg n)^k$ 这种普通幂不同。例如：
+
+$$
+16\to4\to2\to1.
+$$
+
+一共三次，所以 $\lg^\ast 16=3$。沿用这个定义：
+
+| $n$ | 取对数的过程 | $\lg^\ast n$ |
+|---|---|---|
+| $2$ | $2\to1$ | $1$ |
+| $4$ | $4\to2\to1$ | $2$ |
+| $16$ | $16\to4\to2\to1$ | $3$ |
+| $65536=2^{16}$ | $65536\to16\to4\to2\to1$ | $4$ |
+| $2^{65536}$ | 先变成 $65536$，再做上述四次 | $5$ |
+
+它是阶梯状函数，但 $n\to\infty$ 时，次数也会趋于无穷。先取一次对数，就少剩一次需要计数的操作，因此对 $n\gt 1$：
+
+$$
+\lg^\ast (\lg n)=\lg^\ast n-1.
+$$
+
+而 $\lg(\lg^\ast n)$ 是先算次数、再对次数取对数。例如 $n=16$ 时，前者为 $\lg^\ast 4=2$，后者为 $\lg3$。
+
+#### 5 第 20-21 组：为什么双对数仍快于迭代次数的指数
+
+要比较 $\ln\ln n$ 与 $2^{\lg^\ast n}$，不能只看“外面有没有指数”。指数的指数值是迭代次数，增长非常慢。
+
+令 $y=\lg\lg n$。一方面：
+
+$$
+\ln\ln n=(\ln2)y+\ln(\ln2)=\Theta(y).
+$$
+
+另一方面，前两次对数把 $n$ 变成 $y$，所以对足够大的 $n$：
+
+$$
+\lg^\ast n=2+\lg^\ast y.
+$$
+
+下面给出一个可用于严格比较的上界。对 $z\ge2$：
+
+$$
+\lg^\ast z\le\lceil\lg z\rceil.
+$$
+
+理由是：当当前值大于 4 时，取一次对数后的值至多是原值的一半；降到不超过 4 后，至多再取两次。令 $h=\lceil\lg z\rceil$，$z\le2^h$，所以至多先做 $h-2$ 次减半，再做两次，就能结束；$2\le z\le4$ 的情况直接检查即可。
+
+将这个上界用在 $\lg y$ 上，得到：
+
+$$
+\begin{aligned}
+\lg^\ast y
+&=1+\lg^\ast (\lg y)\\
+&\le1+\lceil\lg\lg y\rceil\\
+&\le2+\lg\lg y.
+\end{aligned}
+$$
+
+因此：
+
+$$
+\begin{aligned}
+2^{\lg^\ast n}
+&=4\cdot2^{\lg^\ast y}\\
+&\le4\cdot2^{2+\lg\lg y}\\
+&=16\lg y.
+\end{aligned}
+$$
+
+现在较慢项被上界为 $16\lg y$，较快项与 $y$ 同阶。计算比值：
+
+$$
+0\le
+\frac{2^{\lg^\ast n}}{\ln\ln n}
+\le
+\frac{16\lg y}{(\ln2)y+\ln(\ln2)}
+\to0.
+$$
+
+所以：
+
+$$
+\ln\ln n\succ2^{\lg^\ast n}.
+$$
+
+这个结论看 $n$ 足够大时的增长关系，小规模数值的先后可以不同。例如 $n=16$ 时，$\ln\ln16\approx1.02$，而 $2^{\lg^\ast 16}=8$；这一例不会推翻渐进结论。
+
+#### 6 第 21-24 组：把迭代次数整体换元
+
+令 $t=\lg^\ast n$。虽然 $t$ 增长很慢，但 $n\to\infty$ 时仍有 $t\to\infty$。最后四组变成：
+
+| 组号 | 原函数 | 换元后 |
+|---|---|---|
+| 21 | $2^{\lg^\ast n}$ | $2^t$ |
+| 22 | $\lg^\ast n,\ \lg^\ast (\lg n)$ | $t,\ t-1$ |
+| 23 | $\lg(\lg^\ast n)$ | $\lg t$ |
+| 24 | $1,\ n^{1/\lg n}$ | $1,\ 2$ |
+
+**第 21 组比第 22 组快。** 指数与一次方比较：
+
+$$
+\frac{2^t}{t}\to\infty.
+$$
+
+**第 22 组的两项同阶。** 次数减 1 不改变增长阶：
+
+$$
+\frac{t-1}{t}=1-\frac1t\to1.
+$$
+
+**第 22 组比第 23 组快。** 一次方与对数比较：
+
+$$
+\frac t{\lg t}\to\infty.
+$$
+
+**第 23 组比第 24 组快。** 取对数后的次数仍趋于无穷：
+
+$$
+\frac{\lg t}{1}=\lg t\to\infty.
+$$
+
+第 24 组内部的比值为 $2/1=2$，所以两项同阶。
+
+#### 7 完整顺序与自测
+
+每个花括号代表一个 $\Theta$ 等价类，以下按从快到慢排列：
+
+$$
+\begin{aligned}
+\{n\lg n,\lg(n!)\}
+&\succ\{2^{\lg n},n\}\\
+&\succ\{(\sqrt2)^{\lg n}\}\\
+&\succ\{2^{\sqrt{2\lg n}}\}\\
+&\succ\{(\lg n)^2\}\\
+&\succ\{\ln n\}\\
+&\succ\{\sqrt{\lg n}\}\\
+&\succ\{\ln\ln n\}\\
+&\succ\{2^{\lg^\ast n}\}\\
+&\succ\{\lg^\ast n,\lg^\ast (\lg n)\}\\
+&\succ\{\lg(\lg^\ast n)\}\\
+&\succ\{1,n^{1/\lg n}\}.
+\end{aligned}
+$$
+
+**解题时的换元选择。** 多项式和“底数为 2 的复杂指数”相遇，令 $x=\lg n$；出现 $\lg^\ast n$ 的指数、一次方和对数，令 $t=\lg^\ast n$。比较 $2^u$ 与 $2^v$ 时，写出 $u-v$ 的极限；比较同阶项时，给出比值或固定常数夹逼。
+
+**自测一。** 化简 $4^{\lg n}$、$n^{3/\lg n}$、$(\sqrt8)^{\lg n}$。
+
+**答案与步骤。**
+
+$$
+4^{\lg n}=2^{2\lg n}=n^2,
+$$
+
+$$
+n^{3/\lg n}=(2^{\lg n})^{3/\lg n}=2^3=8,
+$$
+
+$$
+(\sqrt8)^{\lg n}=(2^{3/2})^{\lg n}=n^{3/2}.
+$$
+
+**自测二。** 比较 $2^{\sqrt{\lg n}}$ 与 $(\lg n)^{10}$。
+
+**答案与步骤。** 令 $x=\lg n$，两者比值为 $2^{\sqrt x-10\lg x}$。由于 $\lg x/\sqrt x\to0$，指数差趋于无穷，所以前者严格增长更快。
+
+**自测三。** $\lg^\ast (\lg n)$ 与 $\lg(\lg^\ast n)$ 是否同阶？
+
+**答案与步骤。** 令 $t=\lg^\ast n$，两者为 $t-1$ 与 $\lg t$；$(t-1)/\lg t\to\infty$，因此前者严格增长更快。
+
+**自测四。** 比较 $2^{2\lg^\ast n}$ 与 $\ln\ln n$。
+
+**答案与步骤。** 令 $y=\lg\lg n$，沿用上面的界 $2^{\lg^\ast n}\le16\lg y$，可得：
+
+$$
+\frac{2^{2\lg^\ast n}}{\ln\ln n}
+\le
+\frac{256(\lg y)^2}{(\ln2)y+\ln(\ln2)}
+\to0.
+$$
+
+所以即使把迭代次数乘以固定常数 2 后再作为指数，仍慢于 $\ln\ln n$。
 
 ## 三 1-3 证明与反例
 
@@ -1461,6 +1857,7 @@ A4 文件每页已有完整复习内容、关键步骤与一道带答案的变�
 | 13–14 | 混合排序、逆序对、期望界与阈值选择 |
 
 - [14 页 A4 精讲复习页：公式、图解、技巧与带解析变式](/assets/attach/algorithms-review-1-4/review-a4.pdf)
+- [作业详解 PDF：第二章补齐第 13-24 组化简、相邻比较与自测](/assets/attach/algorithms-review-1-4/review-guide.pdf)
 - [完整复习讲义：前置知识、九组作业、分层练习和两套模拟卷答案（Markdown）](/assets/attach/algorithms-review-1-4/review-chapter.md)
 - [闭卷自测题册：30 道分层练习与两套模拟卷](/assets/attach/algorithms-review-1-4/review-questions.md)
 - [配套算法：选择排序、归并排序、两数之和、最大子数组、堆归并与混合排序](/assets/attach/algorithms-review-1-4/review-algorithms.py)
