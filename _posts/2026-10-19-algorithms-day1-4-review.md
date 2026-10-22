@@ -16,7 +16,7 @@ math: true
 
 [14 页 A4 精讲复习页（含前置知识）](/assets/attach/algorithms-review-1-4/review-a4.pdf) · [作业详解 PDF（含第 13-24 组逐步比较）](/assets/attach/algorithms-review-1-4/review-guide.pdf) · [完整复习讲义（Markdown）](/assets/attach/algorithms-review-1-4/review-chapter.md) · [闭卷题册](/assets/attach/algorithms-review-1-4/review-questions.md) · [配套 Python 算法](/assets/attach/algorithms-review-1-4/review-algorithms.py)
 
-本次月考四题训练材料： [月考试卷](/assets/attach/algorithms-review-1-4/月考试卷.pdf) · [月考试卷答案与讲评](/assets/attach/algorithms-review-1-4/月考试卷-答案.pdf) · [试卷 Markdown](/assets/attach/algorithms-review-1-4/月考试卷.md) · [答案 Markdown](/assets/attach/algorithms-review-1-4/月考试卷-答案.md)。四题分别覆盖合并重叠区间、旋转数组二分查找、课件 4-1 七个递推式、截断快速排序与全数组插入排序混合算法。
+月考已单独整理为下一章：[前四课月考：四道综合题与命题思路](/2026/10/22/algorithms-midterm/)。
 
 数组下标统一从 0 开始，区间包含左右端点，最大子数组要求非空。时间分析把一次比较、数组访问和机器字范围内的算术运算按常数成本计。
 
