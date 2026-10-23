@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600" role="img" aria-labelledby="title desc">
+  <title id="title">大模型训练与推理优化地图</title>
+  <desc id="desc">展示从预训练到部署的阶段，以及数据并行、张量并行、流水线并行和推理优化的作用位置。</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#8b1e24"/>
+    </marker>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="5" stdDeviation="7" flood-color="#351d22" flood-opacity=".14"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="600" fill="#fafaf7"/>
+  <text x="64" y="58" font-family="Noto Sans SC, Microsoft YaHei, sans-serif" font-size="30" font-weight="700" fill="#201b1c">训练不是单次计算，而是一条持续受约束的系统链路</text>
+  <text x="64" y="92" font-family="Noto Sans SC, Microsoft YaHei, sans-serif" font-size="17" fill="#6e6061">并行策略解决“算不动”，稳定性技巧解决“训不稳”，推理优化解决“用不起”。</text>
+
+  <g filter="url(#shadow)">
+    <rect x="64" y="145" width="320" height="180" rx="14" fill="#fff" stroke="#d9c7c8" stroke-width="2"/>
+    <rect x="440" y="145" width="320" height="180" rx="14" fill="#fff8f7" stroke="#b31b1b" stroke-width="2"/>
+    <rect x="816" y="145" width="320" height="180" rx="14" fill="#fff" stroke="#d9c7c8" stroke-width="2"/>
+  </g>
+  <g font-family="Noto Sans SC, Microsoft YaHei, sans-serif" text-anchor="middle">
+    <text x="224" y="185" font-size="21" font-weight="700" fill="#8b1e24">训练阶段</text>
+    <text x="224" y="225" font-size="17" fill="#3f3435">预训练：Next Token</text>
+    <text x="224" y="255" font-size="17" fill="#3f3435">持续预训练：领域适应</text>
+    <text x="224" y="285" font-size="17" fill="#3f3435">SFT：遵循指令</text>
+
+    <text x="600" y="185" font-size="21" font-weight="700" fill="#8b1e24">训练稳定性</text>
+    <text x="600" y="225" font-size="17" fill="#3f3435">Warmup + Decay</text>
+    <text x="600" y="255" font-size="17" fill="#3f3435">梯度裁剪 / AdamW</text>
+    <text x="600" y="285" font-size="17" fill="#3f3435">混合精度 / 激活重计算</text>
+
+    <text x="976" y="185" font-size="21" font-weight="700" fill="#8b1e24">推理阶段</text>
+    <text x="976" y="225" font-size="17" fill="#3f3435">KV Cache</text>
+    <text x="976" y="255" font-size="17" fill="#3f3435">量化</text>
+    <text x="976" y="285" font-size="17" fill="#3f3435">投机采样 / 受控服务</text>
+  </g>
+  <g stroke="#8b1e24" stroke-width="3" fill="none" marker-end="url(#arrow)">
+    <path d="M384 235 H432"/>
+    <path d="M760 235 H808"/>
+  </g>
+
+  <g transform="translate(64 380)">
+    <rect x="0" y="0" width="1072" height="150" rx="14" fill="#fff" stroke="#e3d6d6" stroke-width="2"/>
+    <text x="28" y="36" font-family="Noto Sans SC, Microsoft YaHei, sans-serif" font-size="18" font-weight="700" fill="#8b1e24">分布式并行的分工</text>
+    <g font-family="Noto Sans SC, Microsoft YaHei, sans-serif">
+      <text x="32" y="78" font-size="16" fill="#3f3435"><tspan font-weight="700">数据并行</tspan>：模型复制，数据切片，最后同步梯度。</text>
+      <text x="32" y="108" font-size="16" fill="#3f3435"><tspan font-weight="700">张量并行</tspan>：拆开单层矩阵，减少单卡显存，增加通信。</text>
+      <text x="550" y="78" font-size="16" fill="#3f3435"><tspan font-weight="700">流水线并行</tspan>：拆分模型层，减少重复存储，产生气泡等待。</text>
+      <text x="550" y="108" font-size="16" fill="#3f3435"><tspan font-weight="700">3D 并行</tspan>：组合三者，实际收益受通信与同步限制。</text>
+    </g>
+  </g>
+</svg>

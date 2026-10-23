@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" role="img" aria-labelledby="title desc">
+  <title id="title">大模型数据准备流水线</title>
+  <desc id="desc">从多源数据经过质量过滤、去重、隐私处理和分词，进入训练数据集。</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#8b1e24"/>
+    </marker>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="5" stdDeviation="7" flood-color="#351d22" flood-opacity=".14"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="520" fill="#fafaf7"/>
+  <text x="64" y="58" font-family="Noto Sans SC, Microsoft YaHei, sans-serif" font-size="30" font-weight="700" fill="#201b1c">数据先决定模型会学到什么</text>
+  <text x="64" y="92" font-family="Noto Sans SC, Microsoft YaHei, sans-serif" font-size="17" fill="#6e6061">训练前的每一次筛选，都会改变后续的分布与风险。</text>
+
+  <g filter="url(#shadow)">
+    <rect x="58" y="150" width="190" height="250" rx="14" fill="#fff" stroke="#d9c7c8" stroke-width="2"/>
+    <rect x="280" y="150" width="190" height="250" rx="14" fill="#fff" stroke="#d9c7c8" stroke-width="2"/>
+    <rect x="502" y="150" width="190" height="250" rx="14" fill="#fff" stroke="#d9c7c8" stroke-width="2"/>
+    <rect x="724" y="150" width="190" height="250" rx="14" fill="#fff" stroke="#d9c7c8" stroke-width="2"/>
+    <rect x="946" y="150" width="196" height="250" rx="14" fill="#fff8f7" stroke="#b31b1b" stroke-width="2"/>
+  </g>
+
+  <g font-family="Noto Sans SC, Microsoft YaHei, sans-serif" text-anchor="middle">
+    <text x="153" y="193" font-size="20" font-weight="700" fill="#8b1e24">多源采集</text>
+    <text x="153" y="238" font-size="16" fill="#3f3435">网页 / 书籍</text>
+    <text x="153" y="270" font-size="16" fill="#3f3435">对话 / 代码</text>
+    <text x="153" y="302" font-size="16" fill="#3f3435">论文 / 双语语料</text>
+    <text x="153" y="352" font-size="14" fill="#7a6869">来源、授权、版本</text>
+
+    <text x="375" y="193" font-size="20" font-weight="700" fill="#8b1e24">质量过滤</text>
+    <text x="375" y="238" font-size="16" fill="#3f3435">语言与长度</text>
+    <text x="375" y="270" font-size="16" fill="#3f3435">乱码与低信息量</text>
+    <text x="375" y="302" font-size="16" fill="#3f3435">规则 + 统计指标</text>
+    <text x="375" y="352" font-size="14" fill="#7a6869">把噪声挡在训练前</text>
+
+    <text x="597" y="193" font-size="20" font-weight="700" fill="#8b1e24">去重与脱敏</text>
+    <text x="597" y="238" font-size="16" fill="#3f3435">句子 / 文档 / 数据集</text>
+    <text x="597" y="270" font-size="16" fill="#3f3435">相似度与重复检测</text>
+    <text x="597" y="302" font-size="16" fill="#3f3435">姓名、电话、地址</text>
+    <text x="597" y="352" font-size="14" fill="#7a6869">防止记忆偏差和泄露</text>
+
+    <text x="819" y="193" font-size="20" font-weight="700" fill="#8b1e24">Token 化</text>
+    <text x="819" y="238" font-size="16" fill="#3f3435">字符 → 子词</text>
+    <text x="819" y="270" font-size="16" fill="#3f3435">BPE / WordPiece</text>
+    <text x="819" y="302" font-size="16" fill="#3f3435">词表 ID → 向量</text>
+    <text x="819" y="352" font-size="14" fill="#7a6869">编码与解码必须匹配</text>
+
+    <text x="1044" y="193" font-size="20" font-weight="700" fill="#8b1e24">训练数据</text>
+    <text x="1044" y="238" font-size="16" fill="#3f3435">数据配比</text>
+    <text x="1044" y="270" font-size="16" fill="#3f3435">版本记录</text>
+    <text x="1044" y="302" font-size="16" fill="#3f3435">质量抽检</text>
+    <text x="1044" y="352" font-size="14" fill="#8b1e24">分布进入模型</text>
+  </g>
+
+  <g stroke="#8b1e24" stroke-width="3" fill="none" marker-end="url(#arrow)">
+    <path d="M248 275 H272"/>
+    <path d="M470 275 H494"/>
+    <path d="M692 275 H716"/>
+    <path d="M914 275 H938"/>
+  </g>
+  <text x="64" y="468" font-family="Noto Sans SC, Microsoft YaHei, sans-serif" font-size="16" fill="#6e6061">同一条语料经过不同清洗规则，训练出来的模型会呈现不同的知识覆盖、风格与失败模式。</text>
+</svg>

@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 620" role="img" aria-labelledby="title desc">
+  <title id="title">Transformer Decoder 层的计算路径</title>
+  <desc id="desc">Token 经过嵌入和位置编码后，依次通过因果自注意力、残差归一化、前馈网络和输出投影，预测下一个 Token。</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#8b1e24"/>
+    </marker>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="5" stdDeviation="7" flood-color="#351d22" flood-opacity=".14"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="620" fill="#fafaf7"/>
+  <text x="64" y="58" font-family="Noto Sans SC, Microsoft YaHei, sans-serif" font-size="30" font-weight="700" fill="#201b1c">Transformer Decoder 层：一条带约束的表示更新路径</text>
+  <text x="64" y="92" font-family="Noto Sans SC, Microsoft YaHei, sans-serif" font-size="17" fill="#6e6061">注意力负责“看谁”，前馈网络负责“怎样变换”，残差连接负责让信息持续流动。</text>
+
+  <g filter="url(#shadow)">
+    <rect x="70" y="165" width="170" height="110" rx="14" fill="#fff" stroke="#d9c7c8" stroke-width="2"/>
+    <rect x="285" y="135" width="200" height="170" rx="14" fill="#fff" stroke="#d9c7c8" stroke-width="2"/>
+    <rect x="530" y="135" width="200" height="170" rx="14" fill="#fff8f7" stroke="#b31b1b" stroke-width="2"/>
+    <rect x="775" y="135" width="200" height="170" rx="14" fill="#fff" stroke="#d9c7c8" stroke-width="2"/>
+    <rect x="1020" y="165" width="120" height="110" rx="14" fill="#fff" stroke="#d9c7c8" stroke-width="2"/>
+  </g>
+
+  <g font-family="Noto Sans SC, Microsoft YaHei, sans-serif" text-anchor="middle">
+    <text x="155" y="205" font-size="20" font-weight="700" fill="#8b1e24">Token 输入</text>
+    <text x="155" y="238" font-size="16" fill="#3f3435">词表 ID</text>
+    <text x="155" y="266" font-size="14" fill="#7a6869">嵌入 + 位置</text>
+
+    <text x="385" y="178" font-size="20" font-weight="700" fill="#8b1e24">多头自注意力</text>
+    <text x="385" y="218" font-size="16" fill="#3f3435">Q、K、V</text>
+    <text x="385" y="248" font-size="16" fill="#3f3435">缩放点积</text>
+    <text x="385" y="278" font-size="16" fill="#3f3435">Causal Mask</text>
+
+    <text x="630" y="178" font-size="20" font-weight="700" fill="#8b1e24">残差 + 归一化</text>
+    <text x="630" y="218" font-size="16" fill="#3f3435">保留输入通路</text>
+    <text x="630" y="248" font-size="16" fill="#3f3435">稳定深层训练</text>
+    <text x="630" y="278" font-size="14" fill="#8b1e24">Pre-LN 常见</text>
+
+    <text x="875" y="178" font-size="20" font-weight="700" fill="#8b1e24">前馈网络 FFN</text>
+    <text x="875" y="218" font-size="16" fill="#3f3435">升维 → 激活</text>
+    <text x="875" y="248" font-size="16" fill="#3f3435">降维 → 残差</text>
+    <text x="875" y="278" font-size="14" fill="#7a6869">逐位置非线性变换</text>
+
+    <text x="1080" y="205" font-size="20" font-weight="700" fill="#8b1e24">输出</text>
+    <text x="1080" y="238" font-size="16" fill="#3f3435">Logits</text>
+    <text x="1080" y="266" font-size="14" fill="#7a6869">下一个 Token</text>
+  </g>
+
+  <g stroke="#8b1e24" stroke-width="3" fill="none" marker-end="url(#arrow)">
+    <path d="M240 220 H277"/>
+    <path d="M485 220 H522"/>
+    <path d="M730 220 H767"/>
+    <path d="M975 220 H1012"/>
+  </g>
+
+  <g transform="translate(120 380)">
+    <rect x="0" y="0" width="940" height="152" rx="14" fill="#fff" stroke="#e3d6d6" stroke-width="2"/>
+    <text x="30" y="36" font-family="Noto Sans SC, Microsoft YaHei, sans-serif" font-size="18" font-weight="700" fill="#8b1e24">核心公式</text>
+    <text x="30" y="83" font-family="IBM Plex Mono, Consolas, monospace" font-size="24" fill="#201b1c">Attention(Q,K,V) = softmax(QKᵀ / √dₖ)V</text>
+    <text x="30" y="122" font-family="Noto Sans SC, Microsoft YaHei, sans-serif" font-size="15" fill="#6e6061">因果掩码把未来位置设为不可见；多头让不同子空间的关系并行建模。</text>
+  </g>
+</svg>
