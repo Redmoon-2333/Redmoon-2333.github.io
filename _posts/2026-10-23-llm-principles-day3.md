@@ -1,6 +1,6 @@
 ---
 title: 大模型语言原理 Day3：从数据工程到 Transformer 训练系统
-date: 2026-10-23 16:00:00 +0800
+date: 2026-10-23 10:00:00 +0800
 categories: [课堂笔记]
 topic: llm-principles
 lesson_day: 3
