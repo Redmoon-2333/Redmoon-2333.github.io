@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600" role="img" aria-labelledby="title desc">
   <title id="title">大模型训练与推理优化地图</title>
   <desc id="desc">展示从预训练到部署的阶段，以及数据并行、张量并行、流水线并行和推理优化的作用位置。</desc>
   <defs>

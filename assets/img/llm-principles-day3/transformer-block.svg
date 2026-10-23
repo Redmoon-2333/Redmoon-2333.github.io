@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 620" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="620" viewBox="0 0 1200 620" role="img" aria-labelledby="title desc">
   <title id="title">Transformer Decoder 层的计算路径</title>
   <desc id="desc">Token 经过嵌入和位置编码后，依次通过因果自注意力、残差归一化、前馈网络和输出投影，预测下一个 Token。</desc>
   <defs>
