@@ -13,7 +13,7 @@ tags:
 - 区间动态规划
 - 矩阵链乘法
 - 钢条切割
-excerpt: 从重复子问题进入动态规划，梳理钢条切割与矩阵链乘法的状态、转移、填表顺序和复杂度，并解答矩阵链递归作业。
+excerpt: 从重复子问题进入动态规划，梳理钢条切割与矩阵链乘法，并解答三道课后作业。
 math: true
 ---
 
@@ -205,43 +205,6 @@ $$
 
 这里的空间包括最优代价表 $M$ 和还原切分所需的 $S$。矩阵链乘法展示了区间动态规划的常见结构：状态由左右端点定义，转移枚举区间内部的分割位置。
 
-### 4. 作业解答：矩阵链乘法的递归版本
-
-课件最后要求把矩阵链乘法改写成递归算法。直接递归时，函数返回区间 $A_i\cdots A_j$ 的最少标量乘法次数；每一种最后分割点都要重新递归计算左右子区间：
-
-```text
-MatrixChainRecursive(p, i, j):
-    if i == j:
-        return 0
-
-    best = +∞
-    for k = i..j-1:
-        left_cost = MatrixChainRecursive(p, i, k)
-        right_cost = MatrixChainRecursive(p, k + 1, j)
-        multiply_cost = p[i - 1] * p[k] * p[j]
-        candidate = left_cost + right_cost + multiply_cost
-        best = min(best, candidate)
-
-    return best
-```
-
-其中，`p` 的含义仍是 $A_r$ 为 $p_{r-1}\times p_r$。递归边界 $i=j$ 表示区间只有一个矩阵，不需要进行乘法；循环枚举的 $k$ 表示最后一次乘法把区间分成 $[i,k]$ 和 $[k+1,j]$。
-
-若链长为 $n$，直接递归会反复计算相同区间。设长度为 $n$ 的调用时间为 $T(n)$，则：
-
-$$
-T(1)=\Theta(1),
-$$
-
-$$
-T(n)=\sum_{r=1}^{n-1}\bigl(T(r)+T(n-r)+\Theta(1)\bigr)
-=2\sum_{r=1}^{n-1}T(r)+\Theta(n).
-$$
-
-因此该调用树的时间复杂度为 $\Theta(3^n)$，属于指数级算法；递归栈深度最多为 $O(n)$。它能表达正确的最优子结构，但没有利用重叠子问题，所以不适合作为实际求解方法。
-
-如果为每个区间 $[i,j]$ 增加缓存，首次计算仍枚举全部 $k$，之后直接复用结果，就得到自顶向下的记忆化动态规划：区间状态数为 $O(n^2)$，每个状态枚举 $O(n)$ 个分割点，时间复杂度降为 $O(n^3)$，缓存空间为 $O(n^2)$。
-
 ## 五、把动态规划写出来的检查顺序
 
 面对新的优化或计数问题，可以按以下顺序推导，而不是先猜代码：
@@ -271,3 +234,148 @@ $$
 - 钢条切割的状态按长度 $t$ 定义，转移枚举第一段长度。
 - 矩阵链乘法的状态按区间 $[i,j]$ 定义，转移枚举最后一次乘法的分割点。
 - 写转移前，先确认状态完整、边界正确、所有决策都已覆盖；如果子问题间存在未表达的交互，需要重新设计状态。
+
+## 七、课后作业：题目与解答
+
+### 1. 钢条切割：每次切割有固定成本
+
+**题目（课件习题 15.1-3）**
+
+> Consider a modification of the rod-cutting problem in which, in addition to a price $p_i$ for each rod, each cut incurs a fixed cost of $c$. The revenue associated with a solution is now the sum of the prices of the pieces minus the costs of making the cuts. Give a dynamic-programming algorithm to solve this modified problem.
+
+也就是说，长度为 $i$ 的钢条售价为 $p_i$，每切一刀要支付固定成本 $c$。一套切法的收益是各段售价之和减去切割成本之和；设计动态规划算法求最大收益。
+
+**解答**
+
+令 $R(t)$ 表示长度为 $t$ 的钢条在计入切割成本后的最大收益。$R(0)=0$；长度为 1 时不能再切，$R(1)=p_1$。当 $t\ge2$ 时，分别考虑不切和切下第一段：
+
+$$
+R(t)=\max\left(
+  p_t,\;
+  \max_{1\le i<t}\left\{p_i+R(t-i)-c\right\}
+\right).
+$$
+
+不切时直接得到 $p_t$，不扣成本；切下长度为 $i$ 的一段时，需要支付一次成本 $c$，剩余部分的后续切割成本已包含在 $R(t-i)$ 中。枚举第一段长度即可覆盖所有切法。
+
+```text
+CutRodWithCost(price, n, c):
+    best[0] = 0
+    for t = 1..n:
+        best[t] = price[t]       // 整段出售，不发生切割
+        first_piece[t] = t
+        for i = 1..t-1:
+            candidate = price[i] + best[t - i] - c
+            if candidate > best[t]:
+                best[t] = candidate
+                first_piece[t] = i
+    return best[n], first_piece
+```
+
+`first_piece[t]` 记录最优方案的第一段长度，反复取出这一长度并从 $t$ 中减去，即可还原一种最优切法。
+
+例如，取 $p_1=1,p_2=5,p_3=8,p_4=9$，每次切割成本 $c=1$，得到 $R(1),R(2),R(3),R(4)=1,5,8,9$。长度为 4 时，整段出售收益为 $9$；切成 $2+2$ 的收益为 $5+5-1=9$，两种方案同为最优。
+
+共计算 $n$ 个长度，每个长度最多枚举 $n-1$ 个切割位置，时间复杂度为 $O(n^2)$；收益表和方案表各占 $O(n)$ 空间。
+
+### 2. House Robber：相邻房屋不能同时选择
+
+**题目（LeetCode 198）**
+
+> You are a professional robber planning to rob houses along a street. Each house has a certain amount of money stashed, the only constraint stopping you from robbing each of them is that adjacent houses have security systems connected and it will automatically contact the police if two adjacent houses were broken into on the same night.
+>
+> Given an integer array `nums` representing the amount of money of each house, return the maximum amount of money you can rob tonight without alerting the police.
+
+给定数组 `nums`，其中每个元素是对应房屋里的金额。不能同时选择相邻房屋，求能取得的最大金额。课件中的两个例子是：
+
+- 输入 `[1,2,3,1]`，输出 `4`：选择第 1、3 间，金额为 $1+3=4$。
+- 输入 `[2,7,9,3,1]`，输出 `12`：选择第 1、3、5 间，金额为 $2+9+1=12$。
+
+**解答**
+
+令 $F(i)$ 表示前 $i$ 间房屋能取得的最大金额，第 $i$ 间的金额为 $a_i$。对第 $i$ 间，只有两种选择：
+
+- 不选第 $i$ 间，收益为 $F(i-1)$；
+- 选择第 $i$ 间，就不能选第 $i-1$ 间，收益为 $F(i-2)+a_i$。
+
+因此边界和转移为：
+
+$$
+F(0)=0,\qquad F(1)=\max(0,a_1),
+$$
+
+$$
+F(i)=\max\bigl(F(i-1),\,F(i-2)+a_i\bigr)
+\quad(i\ge2).
+$$
+
+每次只依赖前两个状态，可以用两个变量滚动更新：
+
+```text
+HouseRobber(nums):
+    prev2 = 0
+    prev1 = 0
+    for amount in nums:
+        current = max(prev1, prev2 + amount)
+        prev2 = prev1
+        prev1 = current
+    return prev1
+```
+
+对于 `[2,7,9,3,1]`，依次得到的最优值为 $2,7,11,11,12$。遍历数组一次，时间复杂度为 $O(n)$；只保存常数个变量，额外空间为 $O(1)$。若要还原具体选择的房屋，可保存完整状态表再回溯。
+
+### 3. 矩阵链乘法的递归实现
+
+**题目**
+
+> 课程中讲的矩阵链乘法算法也可以用递归的方式进行实现。请用伪代码写出递归版本，并分析其时间复杂度。
+
+**解答**
+
+直接递归时，函数返回区间 $A_i\cdots A_j$ 的最少标量乘法次数；每一种最后分割点都要重新递归计算左右子区间。用 `split` 记录各区间的最优分割点，便可同时还原计算方式：
+
+```text
+MatrixChainRecursive(p, i, j, split):
+    if i == j:
+        return 0
+
+    best = +∞
+    for k = i..j-1:
+        left_cost = MatrixChainRecursive(p, i, k, split)
+        right_cost = MatrixChainRecursive(p, k + 1, j, split)
+        multiply_cost = p[i - 1] * p[k] * p[j]
+        candidate = left_cost + right_cost + multiply_cost
+        if candidate < best:
+            best = candidate
+            split[i][j] = k
+
+    return best
+
+PrintParenthesization(split, i, j):
+    if i == j:
+        输出 A_i
+        return
+    k = split[i][j]
+    输出 "("
+    PrintParenthesization(split, i, k)
+    输出 " × "
+    PrintParenthesization(split, k + 1, j)
+    输出 ")"
+```
+
+其中，$A_r$ 的维度为 $p_{r-1}\times p_r$。递归边界 $i=j$ 表示只有一个矩阵，不需要进行乘法；$k$ 表示最后一次乘法将区间分成 $[i,k]$ 和 $[k+1,j]$。调用 `MatrixChainRecursive(p, 1, n, split)` 求得最小代价，再调用 `PrintParenthesization(split, 1, n)` 输出括号方案。
+
+以前文的 $p=[2,1,10,3]$ 为例，在 $k=1$ 处分割的代价为 $36$，在 $k=2$ 处分割的代价为 $80$，因此返回 $36$，对应方案为 $A_1(A_2A_3)$。
+
+**复杂度分析**
+
+设 $C(n)$ 为处理长度为 $n$ 的矩阵链时的递归调用次数。每个分割点都产生左右两个递归调用，因此：
+
+$$
+C(1)=1,\qquad
+C(n)=1+2\sum_{r=1}^{n-1}C(r)\quad(n\ge2).
+$$
+
+相邻两项相减得 $C(n)=3C(n-1)$，所以 $C(n)=3^{n-1}$。每次循环恰好产生两个子调用，循环迭代总次数为 $(C(n)-1)/2$，故在基本算术运算按常数时间计算时，直接递归的时间复杂度为 $\Theta(3^n)$。递归栈最多深 $n$ 层，`split` 表占 $O(n^2)$ 空间，因此上述算法的额外空间为 $O(n^2)$；若只求代价、不保存方案，额外空间为 $O(n)$。
+
+如果为每个区间 $[i,j]$ 增加缓存，首次计算仍枚举全部分割点，之后直接复用结果，就得到自顶向下的记忆化动态规划：时间复杂度为 $O(n^3)$，缓存空间为 $O(n^2)$。
