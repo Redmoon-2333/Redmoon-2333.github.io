@@ -54,6 +54,11 @@ items:
     section: practice
     url: /practice/reinforcement-learning/
     order_by: series_order
+  - id: huali-security
+    title: 华师砺剑 · 网络安全实践
+    section: practice
+    url: /practice/huali-security/
+    order_by: series_order
   - id: llm-foundations
     title: 大模型基础与经典论文
     section: papers
