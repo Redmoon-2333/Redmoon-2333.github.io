@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">团队结果转化为多智能体策略更新的闭环</title>
+  <desc id="desc">联合策略产生多角色轨迹，环境或 verifier 给出团队结果，信用机制把团队信号转换为角色、动作、消息或证据级反馈，再更新策略并执行下一轮。比较经典 MARL 与 LLM 扩展方法。</desc>
+  <defs>
+    <style>
+      text { font-family: "Microsoft YaHei", "Noto Sans CJK SC", Arial, sans-serif; fill: #20303b; }
+      .title { font-size: 32px; font-weight: 700; }
+      .sub { font-size: 17px; fill: #53636d; }
+      .head { font-size: 20px; font-weight: 700; }
+      .body { font-size: 16px; }
+      .small { font-size: 14px; fill: #53636d; }
+      .line { stroke: #506873; stroke-width: 3; fill: none; }
+    </style>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="4" orient="auto">
+      <path d="M0,0 L0,8 L11,4 z" fill="#506873"/>
+    </marker>
+  </defs>
+  <rect width="1600" height="900" fill="#f8faf9"/>
+  <text x="64" y="70" class="title">核心问题：团队结果怎样变成可学习的个体信号？</text>
+  <text x="64" y="104" class="sub">经典 MARL 提供信用分配工具；LLM-MARL 把角色、消息、语言策略和多模态证据纳入训练闭环。</text>
+
+  <rect x="64" y="168" width="280" height="210" rx="8" fill="#eaf1f4" stroke="#8ca5b2" stroke-width="2"/>
+  <text x="88" y="207" class="head">1 · 联合策略</text>
+  <text x="88" y="246" class="body">各角色策略 π₁ … πₙ</text>
+  <text x="88" y="278" class="body">局部观测 / 记忆 / 消息</text>
+  <text x="88" y="323" class="small">经典：数值 Actor / Q 网络</text>
+  <text x="88" y="348" class="small">LLM：角色提示 / 语言策略 / VLA</text>
+
+  <rect x="408" y="168" width="280" height="210" rx="8" fill="#e8f4ef" stroke="#70a58d" stroke-width="2"/>
+  <text x="432" y="207" class="head">2 · 联合轨迹</text>
+  <text x="432" y="246" class="body">状态 → 动作/消息 → 状态</text>
+  <text x="432" y="278" class="body">多轮讨论 / 工具 / 机器人动作</text>
+  <text x="432" y="323" class="small">保留时序、角色与信息边界</text>
+  <text x="432" y="348" class="small">记录 token、工具和交互预算</text>
+
+  <rect x="752" y="168" width="280" height="210" rx="8" fill="#fff2e9" stroke="#d59a6d" stroke-width="2"/>
+  <text x="776" y="207" class="head">3 · 团队结果</text>
+  <text x="776" y="246" class="body">环境回报 / verifier / 成功率</text>
+  <text x="776" y="278" class="body">安全性 / 答案质量 / 效率</text>
+  <text x="776" y="323" class="small">只给终局分数时，信用信号稀疏</text>
+  <text x="776" y="348" class="small">验证器错误会污染后续更新</text>
+
+  <rect x="1096" y="168" width="440" height="210" rx="8" fill="#f1eef7" stroke="#9c8eb8" stroke-width="2"/>
+  <text x="1120" y="207" class="head">4 · 信用分配 / 奖励塑形</text>
+  <text x="1120" y="246" class="body">COMA：固定队友，反事实替换本人动作</text>
+  <text x="1120" y="278" class="body">LLM-MCA / LCA：语义信用、角色奖励</text>
+  <text x="1120" y="310" class="body">CoSIR：分享/请求/使用的信息价值</text>
+  <text x="1120" y="350" class="small">关键检查：信号是否对应可检验的干预？</text>
+
+  <path d="M344 272 H399" class="line" marker-end="url(#arrow)"/>
+  <path d="M688 272 H743" class="line" marker-end="url(#arrow)"/>
+  <path d="M1032 272 H1087" class="line" marker-end="url(#arrow)"/>
+
+  <rect x="424" y="483" width="752" height="210" rx="8" fill="#fff" stroke="#70a58d" stroke-width="2"/>
+  <text x="454" y="523" class="head">5 · 更新对象要分清</text>
+  <text x="454" y="557" class="body">A. 更新 LLM 策略：MARFT · TeamTR · MARCH · LangMARL · DLM</text>
+  <text x="454" y="582" class="small">Strat-Reasoner：双角色策略更新；验证范围是双人轮流博弈。</text>
+  <text x="454" y="614" class="body">B. 更新下层策略/控制器：CREW · ReMAC · LAMARL · LMAC · MARLIN</text>
+  <text x="454" y="640" class="small">LLM-MCA / LCA / Speaking Teamwork：LLM 提供信用或奖励信号。</text>
+  <text x="454" y="666" class="small">判定依据是梯度更新对象；LLM 执行文本任务不等于其权重被 RL 更新。</text>
+
+  <path d="M1316 378 C1316 438, 1190 454, 1158 478" class="line" marker-end="url(#arrow)"/>
+  <path d="M424 570 C270 570, 204 474, 204 388" class="line" marker-end="url(#arrow)"/>
+  <text x="90" y="465" class="small">更新后重新采样</text>
+  <text x="90" y="487" class="small">形成下一轮策略分布</text>
+
+  <rect x="64" y="719" width="1472" height="116" rx="8" fill="#fff" stroke="#aab7bd" stroke-width="2"/>
+  <text x="88" y="760" class="head">评估闭环不能只报一个最终分数</text>
+  <text x="88" y="797" class="body">团队质量 + 个体/角色归因 + 多随机种子 + 交叉队友/协议兼容性 + token/调用/环境成本 + 冻结执行测试</text>
+</svg>

@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="960" viewBox="0 0 1600 960" role="img" aria-labelledby="title desc">
+  <title id="title">大模型与多智能体强化学习的研究分类</title>
+  <desc id="desc">按被优化对象和大模型在训练中的角色划分为经典 MARL 基础、直接优化 LLM 策略、LLM 辅助传统 MARL 或动作控制器，以及相邻但非严格 MARL 的研究。底部列出多模态具身交叉方向。</desc>
+  <defs>
+    <style>
+      text { font-family: "Microsoft YaHei", "Noto Sans CJK SC", Arial, sans-serif; fill: #20303b; }
+      .title { font-size: 32px; font-weight: 700; }
+      .subtitle { font-size: 17px; fill: #53636d; }
+      .head { font-size: 20px; font-weight: 700; }
+      .body { font-size: 16px; }
+      .small { font-size: 14px; fill: #53636d; }
+      .tag { font-size: 14px; font-weight: 700; }
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#647780"/>
+    </marker>
+  </defs>
+  <rect width="1600" height="960" fill="#f8faf9"/>
+  <text x="64" y="70" class="title">大模型 × 多智能体强化学习：先看“谁在学”</text>
+  <text x="64" y="104" class="subtitle">分类依据：策略参数/行为规则是否被奖励信号更新，而不是论文标题里是否出现“multi-agent”或“reinforcement learning”。</text>
+
+  <rect x="64" y="145" width="286" height="514" rx="8" fill="#eaf1f4" stroke="#8ca5b2" stroke-width="2"/>
+  <rect x="368" y="145" width="392" height="514" rx="8" fill="#e8f4ef" stroke="#70a58d" stroke-width="2"/>
+  <rect x="778" y="145" width="392" height="514" rx="8" fill="#fff2e9" stroke="#d59a6d" stroke-width="2"/>
+  <rect x="1188" y="145" width="348" height="514" rx="8" fill="#f1eef7" stroke="#9c8eb8" stroke-width="2"/>
+
+  <text x="88" y="185" class="head">经典 MARL 基础</text>
+  <text x="88" y="216" class="small">被优化：传统数值策略 / Q 网络</text>
+  <text x="88" y="261" class="body">MADDPG · CTDE critic</text>
+  <text x="88" y="297" class="body">VDN · 加和价值分解</text>
+  <text x="88" y="333" class="body">COMA · 反事实优势</text>
+  <text x="88" y="369" class="body">QMIX · 单调价值混合</text>
+  <text x="88" y="405" class="body">MAPPO · 合作 PPO 基线</text>
+  <text x="88" y="431" class="body">Submodular Reward · 子模奖励</text>
+  <line x1="90" y1="455" x2="322" y2="455" stroke="#b7c7cd"/>
+  <text x="88" y="481" class="small">提供训练与归因工具：</text>
+  <text x="88" y="511" class="body">CTDE · team reward</text>
+  <text x="88" y="541" class="body">counterfactual · value mixing</text>
+  <text x="88" y="599" class="small">这些方法是后续 LLM-MARL 的方法底座，</text>
+  <text x="88" y="623" class="small">不等于 LLM 已参与策略学习。</text>
+
+  <text x="392" y="185" class="head">直接优化 LLM 策略</text>
+  <text x="392" y="216" class="small">被优化：LLM agent 的策略 / 决策</text>
+  <text x="392" y="261" class="body">CORY · MAPoRL2 · MAGRPO</text>
+  <text x="392" y="297" class="body">MARFT · TeamTR · MPDF</text>
+  <text x="392" y="333" class="body">DECOR · MHGPO · LangMARL</text>
+  <text x="392" y="369" class="body">CoLLM-MAAC · CoSIR · DLM · MARCH</text>
+  <text x="392" y="405" class="body">SELF-REDTEAM · AdvEvo · Strat-Reasoner*</text>
+  <text x="392" y="431" class="small">* Strat-Reasoner：双人轮流博弈；</text>
+  <text x="392" y="449" class="small">更广 N-agent / 同步设置列为未来工作。</text>
+  <line x1="394" y1="468" x2="736" y2="468" stroke="#a8c9b9"/>
+  <text x="392" y="497" class="small">共同问题：</text>
+  <text x="392" y="527" class="body">团队结果 → agent / role / token 级信号</text>
+  <text x="392" y="557" class="body">策略更新 → 再采样 → 稳定协作</text>
+  <text x="392" y="615" class="small">核心挑战：信用分配、上下文漂移、</text>
+  <text x="392" y="639" class="small">采样成本与长时域稳定性。</text>
+
+  <text x="802" y="185" class="head">LLM 辅助传统 MARL</text>
+  <text x="802" y="216" class="small">被优化：传统策略；LLM 提供辅助信号</text>
+  <text x="802" y="261" class="body">LLM-MCA · LCA / Speaking Teamwork</text>
+  <text x="802" y="297" class="body">CREW controller · ReMAC · LAMARL</text>
+  <text x="802" y="333" class="body">YOLO-MARL · MARLIN · LMAC</text>
+  <line x1="804" y1="371" x2="1146" y2="371" stroke="#e3b99b"/>
+  <text x="802" y="413" class="small">LLM 角色可能是：</text>
+  <text x="802" y="443" class="body">信用 / 奖励 / 先验信号生成</text>
+  <text x="802" y="473" class="body">通信设计 / 执行文本任务</text>
+  <text x="802" y="527" class="small">CREW：IPPO 更新 MLP 控制器</text>
+  <text x="802" y="557" class="small">Qwen 执行文本动作，不是 RL 微调对象。</text>
+  <text x="802" y="623" class="small">“LLM 帮助了 MARL”不代表训练对象是 LLM。</text>
+
+  <text x="1212" y="185" class="head">相邻：多智能体 LLM</text>
+  <text x="1212" y="216" class="small">协作研究，但不自动等于 MARL</text>
+  <text x="1212" y="261" class="body">TRUCE · 提示规则优化</text>
+  <text x="1212" y="297" class="body">Great Minds · 离线默契规则</text>
+  <text x="1212" y="333" class="body">Zero-Cost · 合作行为评估</text>
+  <text x="1212" y="369" class="body">Teams Hold Experts Back</text>
+  <text x="1212" y="405" class="body">COMPASS · SynCoord · 视觉语言规划</text>
+  <line x1="1214" y1="445" x2="1512" y2="445" stroke="#c6bdd7"/>
+  <text x="1212" y="481" class="small">可作对照或问题诊断，但逐篇核对：</text>
+  <text x="1212" y="511" class="body">奖励信号是否驱动策略更新？</text>
+  <text x="1212" y="541" class="body">还是只改 prompt / workflow？</text>
+  <text x="1212" y="623" class="small">没有 RL 策略更新时，归为相邻方法。</text>
+
+  <rect x="64" y="699" width="1472" height="192" rx="8" fill="#fff" stroke="#aab7bd" stroke-width="2"/>
+  <text x="88" y="738" class="head">多模态 / 具身交叉层</text>
+  <text x="88" y="772" class="body">CH-MARL（基准） · MMedAgent-RL（医疗视觉语言） · VIKI-R（具身协作） · MRC-MMAgent（视觉工具搜索） · Cooperative Multi-Agent VLA-RFT（VLA 微调）</text>
+  <text x="88" y="815" class="small">这是任务与观测模态维度，不是与上方互斥的算法类别；需另核策略更新对象、监督信号与评测场景。</text>
+  <text x="88" y="851" class="small">证据范围：本目录 42 篇主文献；3 组不同版本单独存档。精选范围综述，非穷尽系统检索。</text>
+</svg>

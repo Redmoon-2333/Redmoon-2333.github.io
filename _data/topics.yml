@@ -67,6 +67,11 @@ items:
     title: 多智能体强化学习
     section: papers
     url: /papers/multi-agent-rl/
+  - id: llm-rl
+    title: LLM 与强化学习
+    section: papers
+    url: /papers/llm-rl/
+    order_by: series_order
   - id: ramblings
     title: 碎碎念
     section: notes
