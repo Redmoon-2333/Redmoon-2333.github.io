@@ -36,8 +36,9 @@
   <text x="88" y="481" class="small">提供训练与归因工具：</text>
   <text x="88" y="511" class="body">CTDE · team reward</text>
   <text x="88" y="541" class="body">counterfactual · value mixing</text>
-  <text x="88" y="599" class="small">这些方法是后续 LLM-MARL 的方法底座，</text>
-  <text x="88" y="623" class="small">不等于 LLM 已参与策略学习。</text>
+  <text x="88" y="585" class="small">这些方法是后续 LLM-MARL</text>
+  <text x="88" y="609" class="small">的方法底座，不等于 LLM 已参与</text>
+  <text x="88" y="633" class="small">策略学习。</text>
 
   <text x="392" y="185" class="head">直接优化 LLM 策略</text>
   <text x="392" y="216" class="small">被优化：LLM agent 的策略 / 决策</text>
