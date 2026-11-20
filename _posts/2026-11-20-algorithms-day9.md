@@ -6,6 +6,8 @@ categories:
 - 课堂笔记
 topic: algorithms
 lesson_day: 9
+series_order: 9
+series_label: 第9章
 tags:
 - 算法设计与分析
 - 课堂记录

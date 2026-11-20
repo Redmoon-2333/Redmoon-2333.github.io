@@ -6,6 +6,8 @@ categories:
 - 课堂笔记
 topic: algorithms
 lesson_day: 9
+series_order: 9.5
+series_label: 期中复习
 tags:
 - 算法设计与分析
 - 期中复习
