@@ -80,3 +80,8 @@ items:
     title: AI 前沿
     section: notes
     url: /notes/ai-frontiers/
+  - id: llm-rl-practice
+    title: LLM 与强化学习
+    section: practice
+    url: /practice/llm-rl/
+    order_by: series_order

@@ -19,7 +19,10 @@ layout: default
     {{ content }}
   </div>
   <footer class="post-foot rise" style="--d:.12s">
-    {% if topic.order_by == 'series_order' %}
+    {% if page.reading_prev or page.reading_next %}
+    {% if page.reading_prev %}<a class="back mono" href="{{ page.reading_prev.url | relative_url }}">← 阅读顺序 · {{ page.reading_prev.title }}</a>{% endif %}
+    {% if page.reading_next %}<a class="back mono" href="{{ page.reading_next.url | relative_url }}">阅读顺序 · {{ page.reading_next.title }} →</a>{% endif %}
+    {% elsif topic.order_by == 'series_order' %}
     {% assign series_posts = site.posts | where: 'topic', topic.id | sort: 'series_order' %}
     {% for sp in series_posts %}
       {% if sp.url == page.url %}
