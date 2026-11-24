@@ -102,28 +102,28 @@ L 611.382857 95.794526
 " clip-path="url(#p69f57d60fc)" style="fill: none; stroke-dasharray: 1.6,2.64; stroke-dashoffset: 0; stroke: #dc2626; stroke-width: 1.6"/>
    </g>
    <g id="text_1">
-    <text style="font-weight: 700; font-size: 9.5px; font-family: 'Microsoft YaHei', 'SimHei', 'PingFang SC', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #2563eb" x="48.394286" y="74.042947" transform="rotate(-0 48.394286 74.042947)">模式 A：AND 汇合 (栅栏同步) —— builder.add_edge(['node_c', 'node_d'], 'node_e')</text>
+    <text style="font-weight: 700; font-size: 12px; font-family: 'Microsoft YaHei', 'SimHei', 'PingFang SC', sans-serif; fill: #2563eb" x="48.394286" y="74.042947">列表边：等 c、d 都完成</text>
    </g>
    <g id="text_2">
-    <text style="font-weight: 700; font-size: 8px; font-family: 'Microsoft YaHei', 'SimHei', 'PingFang SC', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #2563eb" x="48.394286" y="117.546105" transform="rotate(-0 48.394286 117.546105)">node_c (耗时 1 步)</text>
+    <text style="font-weight: 700; font-size: 11px; font-family: 'Microsoft YaHei', 'SimHei', 'PingFang SC', sans-serif; fill: #2563eb" x="48.394286" y="117.546105">node_c</text>
    </g>
    <g id="text_3">
-    <text style="font-weight: 700; font-size: 8px; font-family: 'Microsoft YaHei', 'SimHei', 'PingFang SC', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #2563eb" x="48.394286" y="161.049263" transform="rotate(-0 48.394286 161.049263)">node_d (耗时 2 步)</text>
+    <text style="font-weight: 700; font-size: 11px; font-family: 'Microsoft YaHei', 'SimHei', 'PingFang SC', sans-serif; fill: #2563eb" x="48.394286" y="161.049263">node_d 的支路</text>
    </g>
    <g id="text_4">
     <text style="font-weight: 700; font-size: 8px; font-family: 'Microsoft YaHei', 'SimHei', 'PingFang SC', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #7c3aed" x="48.394286" y="204.552421" transform="rotate(-0 48.394286 204.552421)">node_e (AND 汇合)</text>
    </g>
    <g id="text_5">
-    <text style="font-weight: 700; font-size: 7.2px; font-family: 'Microsoft YaHei', 'SimHei', 'PingFang SC', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #2563eb" x="298.992857" y="117.546105" transform="rotate(-0 298.992857 117.546105)">Step 2: node_c 执行完毕</text>
+    <text style="font-weight: 700; font-size: 11px; font-family: 'Microsoft YaHei', 'SimHei', 'PingFang SC', sans-serif; text-anchor: middle; fill: #2563eb" x="298.992857" y="117.546105">第 1 轮：c 完成</text>
    </g>
    <g id="text_6">
-    <text style="font-weight: 700; font-size: 7.2px; font-family: 'Microsoft YaHei', 'SimHei', 'PingFang SC', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #2563eb" x="401.978571" y="161.049263" transform="rotate(-0 401.978571 161.049263)">Step 2 ~ Step 3: node_d 持续执行...</text>
+    <text style="font-weight: 700; font-size: 11px; font-family: 'Microsoft YaHei', 'SimHei', 'PingFang SC', sans-serif; text-anchor: middle; fill: #2563eb" x="401.978571" y="161.049263">第 1 轮准备，第 2 轮 d 完成</text>
    </g>
    <g id="text_7">
     <text style="font-weight: 700; font-size: 7.5px; font-family: 'Microsoft YaHei', 'SimHei', 'PingFang SC', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #dc2626" x="611.382857" y="86.127158" transform="rotate(-0 611.382857 86.127158)">同步栅栏：等待全部前驱到达</text>
    </g>
    <g id="text_8">
-    <text style="font-weight: 700; font-size: 7.5px; font-family: 'Microsoft YaHei', 'SimHei', 'PingFang SC', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #7c3aed" x="748.697143" y="204.552421" transform="rotate(-0 748.697143 204.552421)">Step 4: node_e 仅触发执行 1 次！</text>
+    <text style="font-weight: 700; font-size: 11px; font-family: 'Microsoft YaHei', 'SimHei', 'PingFang SC', sans-serif; text-anchor: middle; fill: #7c3aed" x="748.697143" y="204.552421">第 3 轮：e 汇总两份结果</text>
    </g>
   </g>
   <g id="axes_2">
@@ -208,7 +208,7 @@ L 899.742857 482.972632
 " clip-path="url(#p6863f0594a)" style="fill: none; stroke-dasharray: 3.7,1.6; stroke-dashoffset: 0; stroke: #e2e8f0"/>
    </g>
    <g id="text_9">
-    <text style="font-weight: 700; font-size: 9.5px; font-family: 'Microsoft YaHei', 'SimHei', 'PingFang SC', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #d97706" x="48.394286" y="352.463158" transform="rotate(-0 48.394286 352.463158)">模式 B：OR 汇合 (竞速/独立触发) —— builder.add_edge('node_c', 'node_e') 与 add_edge('node_d', 'node_e')</text>
+    <text style="font-weight: 700; font-size: 12px; font-family: 'Microsoft YaHei', 'SimHei', 'PingFang SC', sans-serif; fill: #92400e" x="48.394286" y="352.463158">两条独立边：有结果就排入下一轮</text>
    </g>
    <g id="text_10">
     <text style="font-weight: 700; font-size: 8px; font-family: 'Microsoft YaHei', 'SimHei', 'PingFang SC', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #d97706" x="48.394286" y="395.966316" transform="rotate(-0 48.394286 395.966316)">node_c (先完成)</text>
@@ -217,16 +217,17 @@ L 899.742857 482.972632
     <text style="font-weight: 700; font-size: 8px; font-family: 'Microsoft YaHei', 'SimHei', 'PingFang SC', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #d97706" x="48.394286" y="439.469474" transform="rotate(-0 48.394286 439.469474)">node_d (后完成)</text>
    </g>
    <g id="text_12">
-    <text style="font-weight: 700; font-size: 8px; font-family: 'Microsoft YaHei', 'SimHei', 'PingFang SC', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #dc2626" x="48.394286" y="482.972632" transform="rotate(-0 48.394286 482.972632)">node_e (OR 触发)</text>
+    <text style="font-weight: 700; font-size: 11px; font-family: 'Microsoft YaHei', 'SimHei', 'PingFang SC', sans-serif; fill: #dc2626" x="48.394286" y="482.972632">node_e</text>
    </g>
    <g id="text_13">
-    <text style="font-weight: 700; font-size: 7.2px; font-family: 'Microsoft YaHei', 'SimHei', 'PingFang SC', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #d97706" x="298.992857" y="395.966316" transform="rotate(-0 298.992857 395.966316)">Step 2 完成</text>
+    <text style="font-weight: 700; font-size: 11px; font-family: 'Microsoft YaHei', 'SimHei', 'PingFang SC', sans-serif; text-anchor: middle; fill: #92400e" x="298.992857" y="395.966316">第 1 轮：c 完成</text>
    </g>
    <g id="text_14">
-    <text style="font-weight: 700; font-size: 7.2px; font-family: 'Microsoft YaHei', 'SimHei', 'PingFang SC', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #d97706" x="401.978571" y="439.469474" transform="rotate(-0 401.978571 439.469474)">Step 3 完成</text>
+    <text style="font-weight: 700; font-size: 11px; font-family: 'Microsoft YaHei', 'SimHei', 'PingFang SC', sans-serif; text-anchor: middle; fill: #92400e" x="298.992857" y="439.469474">第 1 轮：准备</text>
+    <text style="font-weight: 700; font-size: 11px; font-family: 'Microsoft YaHei', 'SimHei', 'PingFang SC', sans-serif; text-anchor: middle; fill: #92400e" x="504.964286" y="439.469474">第 2 轮：d 完成</text>
    </g>
    <g id="text_15">
-    <text style="font-weight: 700; font-size: 7.2px; font-family: 'Microsoft YaHei', 'SimHei', 'PingFang SC', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #dc2626" x="494.665714" y="482.972632" transform="rotate(-0 494.665714 482.972632)">第 1 次触发 (by c)</text>
+    <text style="font-weight: 700; font-size: 11px; font-family: 'Microsoft YaHei', 'SimHei', 'PingFang SC', sans-serif; text-anchor: middle; fill: #dc2626" x="494.665714" y="482.972632">第 2 轮：e 第一次运行</text>
    </g>
    <g id="patch_11">
     <path d="M 385.343546 409.97571 
@@ -238,7 +239,7 @@ L 401.477384 476.207452
 " style="fill: none; stroke: #dc2626; stroke-width: 1.4; stroke-linecap: round"/>
    </g>
    <g id="text_16">
-    <text style="font-weight: 700; font-size: 7.2px; font-family: 'Microsoft YaHei', 'SimHei', 'PingFang SC', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #dc2626" x="700.637143" y="482.972632" transform="rotate(-0 700.637143 482.972632)">第 2 次触发 (by d)</text>
+    <text style="font-weight: 700; font-size: 11px; font-family: 'Microsoft YaHei', 'SimHei', 'PingFang SC', sans-serif; text-anchor: middle; fill: #dc2626" x="700.637143" y="482.972632">第 3 轮：e 第二次运行</text>
    </g>
    <g id="patch_12">
     <path d="M 591.884463 453.229719 
@@ -249,12 +250,10 @@ L 609.427441 479.989833
 L 605.561797 477.741101 
 " style="fill: none; stroke: #dc2626; stroke-width: 1.4; stroke-linecap: round"/>
    </g>
-   <g id="text_17">
-    <text style="font-weight: 700; font-size: 7.5px; font-family: 'Microsoft YaHei', 'SimHei', 'PingFang SC', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #dc2626" x="817.354286" y="482.972632" transform="rotate(-0 817.354286 482.972632)">⚠️ 执行 2 次！需下游幂等</text>
-   </g>
   </g>
   <g id="text_18">
-   <text style="font-weight: 700; font-size: 15px; font-family: 'Microsoft YaHei', 'SimHei', 'PingFang SC', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #0f172a" x="482.4" y="19.835156" transform="rotate(-0 482.4 19.835156)">LangGraph 汇合语义深度辨析：AND 汇合 (列表边) vs OR 汇合 (独立边) [CP2-08]</text>
+   <text style="font-weight: 700; font-size: 18px; font-family: 'Microsoft YaHei', 'SimHei', 'PingFang SC', sans-serif; text-anchor: middle; fill: #0f172a" x="482.4" y="23">前驱错开一轮时，汇合节点什么时候运行？</text>
+   <text style="font-size: 11px; font-family: 'Microsoft YaHei', 'SimHei', 'PingFang SC', sans-serif; text-anchor: middle; fill: #475569" x="482.4" y="39">若 c、d 同轮完成，两种接法都只在下一轮运行一次 e。</text>
   </g>
  </g>
  <defs>

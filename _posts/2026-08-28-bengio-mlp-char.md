@@ -5,7 +5,7 @@ title: "Day5：字符级 MLP 实战——把 Bengio 的图跑通在名字上"
 date: 2026-08-28 08:01:00 +0800
 categories: [技术实践]
 tags: [makemore, Bengio, MLP, Embedding, BatchNorm, PyTorch]
-excerpt: 追随Karpathy大佬的脚步
+excerpt: 读懂 Bengio 的词向量为什么能一起训练，再把同一套查表、拼接和预测用到英文名字上。
 math: true
 ---
 
@@ -18,11 +18,11 @@ Day3 的 bigram 给每个字符存了一行转移概率。这次我想弄清楚�
 
 ![字符级 MLP 从名字数据到新名字的完整流程](/assets/img/mlp-pipeline-overview.svg)
 
-词向量与语言模型联合训练后，查表得到的表示也能随预测目标更新。字符级实现沿用这套结构，将查表、拼接、隐藏层和 softmax 接到字符数据上。
+bigram 只记住当前字符，读到 `...em` 和 `...am` 时都从 `m` 的一行取概率。要让前面的 `e` 或 `a` 影响结果，可以把最近几个字符各查成一个短向量，再按顺序交给网络。Bengio 的论文把这套结构用于预测下一个词，下面的练习改成预测下一个字母。
 
 ## 0.1 预备：先把符号一次性讲清（看到后面不再卡住）
 
-> 本节把论文里反复出现的 `V, m, C, g, R, n, h, U, H, W, b, d, x, y` 用一句话讲清含义、形状与来龙去脉，后面再出现就直接用，不再展开。
+先认 `C` 和 `g`：`C` 存向量，`g` 用这些向量做预测。其余符号按公式需要回查即可。
 
 | 符号 | 怎么读 | 它是什么 | 形状/取值 | 一句话通俗理解 |
 | --- | --- | --- | --- | --- |
@@ -53,11 +53,11 @@ Day3 的 bigram 给每个字符存了一行转移概率。这次我想弄清楚�
 
 ## 0.2 这篇论文解决了什么
 
-n-gram 靠“背诵短语”泛化，神经模型靠“词的相似性”泛化。
+计数模型可以把长上下文回退到较短的统计。Bengio 提供另一种共享：如果两个词查到的向量接近，放进同一个预测网络后，模型对许多候选词的打分也可以接近。
 
 ![n-gram 靠拼接短块 vs 神经模型靠语义邻居的泛化对比](/assets/img/curse-vs-distributed.png)
 
-> 某种意义上，相当于给模型真正加入了“语义”这一概念。
+图上画的是可能共享预测的邻居。向量相近具体对应哪些语言现象，要用任务上的预测或单独的分析来检验。
 
 ## 1. 维度灾难：为什么离散建模注定走不远
 
@@ -67,11 +67,9 @@ n-gram 靠“背诵短语”泛化，神经模型靠“词的相似性”泛化�
 
 **解释**：
 
-想象词表是 10 万个抽屉，10 个词的句子就是从 10 万个抽屉里连续抽 10 次，有 $100000^{10}$ 种抽法。为了给每种抽法都单独学一个概率，你需要 $10^{50}$ 个独立旋钮——比地球原子数还多，根本学不完。
+从两个可能的词 `cat`、`dog` 里连续选三个词，已经有 `2³=8` 种序列。词表换成 10 万、长度换成 10，完整联合表就有 $10^{50}$ 格；概率的和必须为 1，所以少一个自由参数。真实语料覆盖不了这么多组合。
 
-核心矛盾是：**离散空间没有“中间地带”**。连续世界里 `3.01` 和 `3.02` 很近，学了前者就能猜后者；但离散世界里 `cat` 和 `dog` 是两个毫不相干的编号，`cat` 的统计结果分不到 `dog` 半点好处。
-
-**为什么重要**：这一段给出了全文的立论基石：只要还是离散 one-hot/计数表，参数就会随上下文长度 `n` 指数爆炸，后续所有 n-gram 技巧（back-off、平滑、聚类）都是在“修补”这个根因，但这个病因是所谓的**痼疾**，根本没法修正。
+这里爆炸的是给每种组合单独设参数的做法。one-hot 本身只是一种编码，从 one-hot 选出向量也能共享权重；回退和平滑则让计数模型可以处理没见过的序列。
 
 ![计数表的指数墙：参数量随 n 指数飙升，神经模型用 Embedding 将其拉平](/assets/img/exponential-wall.png)
 
@@ -83,13 +81,7 @@ n-gram 靠“背诵短语”泛化，神经模型靠“词的相似性”泛化�
 
 **解释**：
 
-把每个词从“门牌号”变成“坐标”：$C(\mathrm{the})=[0.2,-1.1,\ldots,0.5]$，$m$ 通常 30/60/100，远小于 $\lvert V\rvert=17000$。然后所有概率都基于这些坐标来算，而坐标本身和算概率的神经网络一起被反向传播更新——词的意义是在预测下一个词的任务中“顺带”学会的。
-
-注意“同时”二字的分量：**不是先用别的办法把词向量训好，再去训语言模型；而是端到端一起学**。这让词向量天生就对“预测下一个词”最有用，而不是对“统计共现”最有用。
-
-**为什么重要**：这是实现 MLP 时 `nn.Embedding(vocab, m)` + `MLP` 的精确对应。
-
-**关键思想提炼**：**表示学习与概率建模联合优化**。$C(\lvert V\rvert\times m)$ 是知识载体，`g`（MLP）是概率计算器，二者共享梯度，泛化源于 $向量近\approx语义近\approx概率近$。
+每个词先有一个编号，再用编号从 `C` 取一行。例如 `the` 可能被表示成 `[0.2, -1.1, …, 0.5]`。网络用这些数字算预测；同一份预测损失沿计算图传回来，分别更新预测网络和查表时用到的行。词向量的数字因此受到下一个词的训练信号，而不是事先固定的编码。
 
 ## 3. 为什么能泛化：一个训练句照亮指数个邻居
 
@@ -99,9 +91,7 @@ n-gram 靠“背诵短语”泛化，神经模型靠“词的相似性”泛化�
 
 **解释**：
 
-论文把句子看成“词向量序列在空间中的路径”：路径上每个点抖一点点，整条路径的概率就抖一点点。训练集只采了几条路径，但**路径周围的指数条“抖动的”路径**都被照亮了——这就是“一个训练句顶一群语义邻居”的来源。
-
-**关键思想提炼**：泛化不靠“背更多短语”，靠 **向量空间的度量 + 光滑函数的连续性**，实现组合式（compositional）外推。
+把 `the cat is` 中的 `cat` 换成 `dog`。如果两者的向量只差一点，且网络在这一带的输出平缓，那么包括 `sleeping` 在内的下一个词的概率，也只会差一点。共享的网络使它有机会借用已经见过的组合，实际能借到多少，取决于训练学到了怎样的向量和预测函数。
 
 ## 4. 模型全貌：C 表 + g 网络
 
@@ -130,7 +120,7 @@ $$
 | 查表 | $W\in\mathbb{R}^{27\times27}$，one-hot 选行，等价于查表 | $C\in\mathbb{R}^{\lvert V\rvert\times m}$，编号查表 |
 | 上下文 | 只看前 1 个词 (`n=2`) | 看前 `n-1` 个词，拼接成长向量 |
 | 非线性 | 无（线性+softmax） | `tanh` 隐藏层，学复杂交互 |
-| 参数共享 | 无 | `C` 在所有位置、所有样本间共享 |
+| 参数共享 | 同一个字符的转移分数行可在所有该字符出现处复用 | `C` 跨位置复用，预测网络也由不同上下文共同使用 |
 
 **为什么重要**：`C` 在各位置之间共享。同一个词出现在不同位置，都会查到同一行向量；反向传播时，各位置对这行参数的梯度累加起来，方向不必相同。
 
@@ -138,7 +128,7 @@ $$
 
 ### 4.2 维度与复杂度
 
-- **参数量**：$C:\lvert V\rvert\times m$ 主导（如 $17000\times30=510k$），$H:h\times(n-1)m$，$U:\lvert V\rvert\times h$，$W:\lvert V\rvert\times(n-1)m$（直连可省）。总数百万级，2003 年已算“大模型”。
+- **参数量**：$C$ 有 $\lvert V\rvert\times m$ 个参数（如 $17000\times30=510000$）。$H$ 有 $h\times(n-1)m$ 个，$U$ 有 $\lvert V\rvert\times h$ 个；加上可选直连 $W$ 时还要计入 $\lvert V\rvert\times(n-1)m$。哪一部分最大取决于配置。
 - **计算量**：每预测一次只算一次前向，与 $\lvert V\rvert^n$ 无关，因此 `n` 可从 trigram 的 3 轻松提到 5/8。
 - **训练目标**：最大化对数似然 $\sum_t \log f(w_t\mid w_{t-n+1}\ldots w_{t-1})$，等价于最小化困惑度（perplexity）。
 
@@ -184,164 +174,26 @@ $$
 L = -\frac{1}{T}\sum_t \log \hat{P}(w_t | w_{t-n+1}...w_{t-1}) + \lambda\|\theta\|^2
 $$
 
-> **过渡**：其实感觉这篇论文的核心概念就是“学习语义”——在学习某些语义相近的句子的过程中，模型自然而然的学会某些**语法**。但涉及到一些数学公式的推导可能还是看不太懂。没关系，因为卡帕西说了，下一节课虽然和这篇论文说的不一样，但整体思路完全一致：**从词的级别下降到字母的级别（降低维度），方便实操**。前面看不懂的，向后看着看着或许就看懂了。
+字符练习保留查表、拼接、非线性和下一个符号预测。词表变成 26 个字母加一个起止标记，所以下面的张量能一眼数清。
 
 ---
 
-# MLP 实战：把 Bengio 的图跑通在字符上
+## 实作与运行结果
 
-## 8. 上下文窗口：block_size=3
+Bengio 的方法用同一张向量表服务所有上下文。字符练习把词换成字母，让 `...`、`..e`、`.em` 这样的窗口逐个预测下一个字符。
 
-**类比：** 模型是“滑窗猜下一个字母”。`block_size=3` 就是窗口宽度——每次只看前 3 个字符来猜第 4 个。像玩填空：`... → e`、`..e → m`、`.em → m`，哪怕名字很长，也是一格一格滑过去的。
+[继续阅读：字符级 MLP 实作：从三个字母到下一个字母的概率](/2026/08/28/bengio-mlp-char/implementation/)
 
-**公式：** 训练集构造
-
-$$
-\mathcal{D} = \{(X_i, Y_i)\}_{i=1}^{N},\quad X_i\in\{0..26\}^{3},\; Y_i\in\{0..26\},\quad N\approx 228146
-$$
-
-$$
-\text{emma}: [\_,\_,\_]\!\to\!e,\; [\_,\_,e]\!\to\!m,\; [\_,e,m]\!\to\!m,\; [e,m,m]\!\to\!a,\; [m,m,a]\!\to\!.
-$$
-
-> **实现要点：** `context = [0]*block_size` 滑窗 → `X,Y`，全量 `build_dataset()` 再做 `Xtr/Xdev/Xte = 8:1:1` 切分——思路与 `Day3 §8.1` 的 `emma` 5 样本拆解一致。
-
-![滑窗 block_size=3 构造 (X,Y) 的过程](/assets/img/mlp-block-context.svg)
-
----
-
-## 9. Embedding 查表：C 是字典
-Day3 的代码用 one-hot 乘 `W` 选行，本质上还是查表；MLP 里直接 `C[X]` 就是查表——`C` 是 `27×m` 的“字符字典”，`C[5]` 就是字母 `e` 的 10 维坐标。梯度可以直接更新这本“字典”，使字符表示与预测网络一起训练。
-
-**公式：** 查表前向（`m=10` 版更贴近实战）
-
-$$
-C \in \mathbb{R}^{27\times 10},\quad \text{emb}=C[X]\in\mathbb{R}^{B\times 3 \times 10},\quad \text{emb}_{b,t,:}=C[X_{b,t}]
-$$
-
-$$
-\text{Day3: } \text{onehot}(X)W = W[X] \equiv C[X]\ \text{（选行等价）}
-$$
-
-> **实现要点：** `C[X]` 批量查表——`C` 是 `27×m` 字符字典，`C[5]` 即 `e` 的向量；与 `Day3 §9.2` 的 `one-hot @ W` 选行等价，只是此处的 `W` 有了 `m=10` 的瓶颈。
-
-![Embedding 查表：C[X] 选行 vs one-hot 乘法等价](/assets/img/mlp-embedding-lookup.svg)
-
----
-
-## 10. 拼接：cat 与 view
-
-`emb` 是 `(B,3,10)`，要喂给 `W1(30×200)`，需要拼成 `(B,30)`。`torch.cat([emb[:,0,:],emb[:,1,:],emb[:,2,:]],dim=1)` 会创建拼接后的张量；这里的连续存储也允许直接用 `emb.view(B,-1)`。`view` 通过形状和步长重新解释同一块内存，不搬动数据；两种写法的区别在于是否创建新的数据存储。
-
-**公式：** 形状变换
-
-$$
-\text{emb}\in\mathbb{R}^{B\times 3 \times 10}\ \xrightarrow{\text{view}}\ x\in\mathbb{R}^{B\times 30},\quad x_b = [\text{emb}_{b,0};\text{emb}_{b,1};\text{emb}_{b,2}]
-$$
-
-$$
-\text{cat 版：拼接 }3\times(B\times10)\quad\text{vs}\quad\text{view 版：重解释 }(B\cdot3\cdot10)\text{ 连续内存}
-$$
-
-> **实现要点：** `emb` 为 `(B,3,10)`，`view(-1,30)` 零拷贝拼为 `(B,30)` 再进 `W1(30×200)`；`cat/unbind` 直观但多一次拷贝。
-
-![cat 拷贝 vs view 透镜：同一块内存的两种视图](/assets/img/mlp-cat-vs-view.svg)
-
----
-
-## 11. tanh 隐层
-
-`x @ W1 + b1` 再线性到 logits，整体还是线性映射，3 个字符的非线性交互学不出来。`tanh` 让 `(e,m)` 和 `(m,m)` 这种组合能产生非线性响应。对应 Bengio 论文里的 `h = tanh(d+Hx)`，这里使用 `h = tanh(xW1+b1)`，形状从 `(B,30) → (B,200)`。
-
-**公式：** 隐层前向（论文 ↔ MLP 对照）
-
-$$
-\text{论文: } h = \tanh(d + Hx),\; y = b + Wx + Uh \qquad\Longleftrightarrow\qquad
-\text{MLP: } h = \tanh(\text{emb.view}(B,30)W_1 + b_1),\; \text{logits}=hW_2+b_2
-$$
-
-$$
-W_1\in\mathbb{R}^{30\times 200},\; b_1\in\mathbb{R}^{200},\; W_2\in\mathbb{R}^{200\times 27}
-$$
-
-> **实现要点：** `h = tanh(emb.view(B,30)W1 + b1)`，形状 `(B,30)→(B,200)`；去掉 `tanh` 则退化为 `Day3` 的线性 bigram。
-
-![tanh 隐层：线性拼接待非线性门](/assets/img/mlp-tanh-hidden.png)
-
----
-
-## 12. 小批量梯度
-
-全量 `228k` 样本算一次梯度的开销较大，这里采用小批量训练。每步 `ix=torch.randint(0,Xtr.shape[0],(32,))` 随机抽取 32 个名字片段，以小批量梯度估计全量梯度，降低单步计算量；`C[Xtr[ix]]` 的梯度只涉及这 32 个片段所用的 Embedding 行。
-
-**公式：** 小批量交叉熵
-
-$$
-\mathcal{L}_{\text{batch}} = -\frac{1}{32}\sum_{i\in\text{ix}}\log \frac{\exp(\text{logits}_{i,Y_i})}{\sum_j\exp(\text{logits}_{i,j})},\quad \text{ix}\sim\mathcal{U}[0,N)
-$$
-
-$$
-\theta_{t+1}=\theta_t - \eta \nabla_{\theta}\mathcal{L}_{\text{batch}}(\theta_t)
-$$
-
-> **实现要点：** 小批量 `randint(0,N,(32,))` 随机捞 32 行，`F.cross_entropy` 等价手写 `log_softmax+NLL`——与 `Day3 §9.3` 同构。
-
-![小批量采样：32 个随机索引撬动全量 228k](/assets/img/mlp-minibatch.svg)
-
----
-
-## 13. 学习率与 loss 曲线
-
-学习率也会影响训练结果：这组设置下，`lr=1.0` 发散、`lr=0.001` 进展较慢、`lr=0.1` 则较合适。Karpathy 演示的测试方法是先用 `lre=linspace(-3,0,1000), lrs=10**lre` 做指数扫描，每种学习率进行一次训练的前向反向传播，画 `loss.log10()` 找拐点。随后固定 `lr=0.1` 跑 5 万步，`stepi/lossi` 曲线从 `~2.5 → ~2.0` 平滑下降。
-
-**公式：** 学习率扫描
-
-$$
-\text{lrs}=10^{\text{linspace}(-3,0,1000)},\quad \mathcal{L}(\eta)=\text{CrossEntropy}(\theta - \eta\nabla\mathcal{L}),\quad \eta^* \approx 0.1
-$$
-
-
-![学习率扫描与 loss 曲线：log10 loss 随 lr/步数下降](/assets/img/mlp-lr-loss-curve.svg)
-> 以上为概念图，实际的曲线是一个先下后上的曲线，大概有点像对勾函数吧，然后最低点在0.1处左右:
-![lr 扫描实际曲线：先下后上的对勾形，最低点约 0.1](/assets/img/mlp-lr-actual.png)
----
-
-## 14. 采样复盘：multinomial 如何“写”出新名字
-
-训练完的模型像一个“接龙”：从 `[.,.,.]` 开始，每步把上下文喂进去得到 `probs`，再 `multinomial` 掷骰子抽下一个字符，滑窗 `context = context[1:]+[ix]` 继续。比起bigram 只能看 1 个字符，MLP 看 3 个字符后生成的名字明显更像人名。
-
-**公式：** 自回归采样
-
-$$
-p(\cdot\mid c_{t-2},c_{t-1},c_t)=\text{softmax}(hW_2+b_2),\quad c_{t+1}\sim\text{Multinomial}(p),\quad \text{context}_{t+1}=[c_{t-1},c_t,c_{t+1}]
-$$
-
-> **实现要点：** `context=[0]*3 → emb=C[context] → tanh → softmax → multinomial` 接龙 20 行，与 `Day3 §6` 的 `multinomial` 采样同源。
-
-![自回归采样：滑窗上下文 → 概率 → 掷骰子 → 新字符](/assets/img/mlp-sampling.png)
-
----
-
-## 17. 收工小结：N-gram → Bengio → MLP 的递进
-
-1.  **N-gram**：`N[27,27]` 把转移次数摆在桌上，按行归一就是概率，窗口稍长参数会指数爆炸。
-2.  **Bengio**：`C(|V|×m)` 把离散编号压进连续空间，`g=C→H→U` 的光滑函数让“相似词相似句”自动泛化，`C` 与 `g` 联合端到端优化。
-3.  **MLP**：`C[X] → view 拼接 → tanh(30→200) → logits(200→27) → cross_entropy` 在 `32` 的小批量下用 `lr≈0.1` 跑 5 万步，图中可见部分元音字母的表示聚集。后续重训未得到相同的聚集效果，原因尚未确认，不能把这次可视化当成稳定结论。
-
-![Embedding 2D 投影：首次训练后 a/e/i/o/u 的聚类情况（成功）](/assets/img/mlp-embedding-scatter-try1.png)
-
-不妨再附上一次重新训练过的话，虽然这五小只没有成功聚集到一起，但是还是有四只重新聚集到一起了QAQ：
-
-![Embedding 2D 投影：重新训练后的聚类情况（较分散）](/assets/img/mlp-embedding-scatter-try2.png)
-
----
-
-## 附 · 资料下载
-
-本篇配套的 Bengio 精读与 MLP 字符级实战代码、图示，可直接下载。
-
-### 完整实验代码与笔记
-
-- [MLP.ipynb](https://github.com/Redmoon-2333/Redmoon-2333.github.io/releases/download/day5-assets/MLP.ipynb)：注释版 MLP（在原始课程跟写版上新增 123 行中文注释）
-- [MLP_original.ipynb](https://github.com/Redmoon-2333/Redmoon-2333.github.io/releases/download/day5-assets/MLP_original.ipynb)：原版备份（无注释原版，含输出）
-
+<ul>
+<li id="mlp-实战把-bengio-的图跑通在字符上"><a href="/2026/08/28/bengio-mlp-char/implementation/#mlp-实战把-bengio-的图跑通在字符上">MLP 实战：把 Bengio 的图跑通在字符上</a></li>
+<li id="8-上下文窗口block_size3"><a href="/2026/08/28/bengio-mlp-char/implementation/#8-上下文窗口block_size3">8. 上下文窗口：block_size=3</a></li>
+<li id="9-embedding-查表c-是字典"><a href="/2026/08/28/bengio-mlp-char/implementation/#9-embedding-查表c-是字典">9. Embedding 查表：C 是字典</a></li>
+<li id="10-拼接cat-与-view"><a href="/2026/08/28/bengio-mlp-char/implementation/#10-拼接cat-与-view">10. 拼接：cat 与 view</a></li>
+<li id="11-tanh-隐层"><a href="/2026/08/28/bengio-mlp-char/implementation/#11-tanh-隐层">11. tanh 隐层</a></li>
+<li id="12-小批量梯度"><a href="/2026/08/28/bengio-mlp-char/implementation/#12-小批量梯度">12. 小批量梯度</a></li>
+<li id="13-学习率与-loss-曲线"><a href="/2026/08/28/bengio-mlp-char/implementation/#13-学习率与-loss-曲线">13. 学习率与 loss 曲线</a></li>
+<li id="14-采样复盘multinomial-如何写出新名字"><a href="/2026/08/28/bengio-mlp-char/implementation/#14-采样复盘multinomial-如何写出新名字">14. 采样复盘：multinomial 如何“写”出新名字</a></li>
+<li id="17-收工小结n-gram--bengio--mlp-的递进"><a href="/2026/08/28/bengio-mlp-char/implementation/#17-收工小结n-gram--bengio--mlp-的递进">17. 收工小结：N-gram → Bengio → MLP 的递进</a></li>
+<li id="附--资料下载"><a href="/2026/08/28/bengio-mlp-char/implementation/#附--资料下载">附 · 资料下载</a></li>
+<li id="完整实验代码与笔记"><a href="/2026/08/28/bengio-mlp-char/implementation/#完整实验代码与笔记">完整实验代码与笔记</a></li>
+</ul>

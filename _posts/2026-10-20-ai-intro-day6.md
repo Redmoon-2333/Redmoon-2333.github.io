@@ -179,7 +179,7 @@ $$
 
 共享卷积核让同一种局部模式在不同位置使用同一套检测规则。理想的步长为 1 的卷积满足平移等变：输入平移后，输出特征也相应平移，写作 $f(Tx)=T f(x)$。平移不变则是 $f(Tx)=f(x)$，要求输出保持不变。边界填充、步长和下采样会影响实际等变关系。[4]
 
-池化或全局汇总可以减弱部分位置变化对分类输出的影响，但不能据此认定整个 CNN 对任何平移都严格不变。
+举个一维例子。特征 `[0, 0, 4, 0]` 往右移一格变成 `[0, 0, 0, 4]`，最大的响应跟着移位，这是等变；对这两组特征各取全局最大值，结果都是 4，这一步丢掉了位置。若改成每两格一组取最大值，峰值从第 2 格移到第 3 格就会换组。窗口边界和步长会影响池化以后的表现。
 
 ### 2. 局部信息怎样变成整体判断
 
@@ -196,7 +196,7 @@ $$
 
 $x_t$ 是当前输入，$h_{t-1}$ 汇总此前历史，$h_t$ 是更新后的隐藏状态。共享的是参数；同一段序列中的隐藏状态随输入不断改变。[5]
 
-课堂借助马尔可夫链解释递推。这里“一步更新只直接读取前一隐藏状态”，不等于模型只能使用前一个原始输入。因为 $h_{t-1}$ 又由更早状态递推而来，$h_t$ 可以间接依赖整个前缀。真正的问题是有限状态怎样保存有用信息，以及长时间跨度的依赖能否有效学到。
+课堂借助马尔可夫链解释递推。把循环更新暂时简化为一个标量：$h_t=0.5h_{t-1}+x_t$，从 $h_0=0$ 开始。输入 `[4, 0, 0]` 得到状态 `[4, 2, 1]`，也就是第一步写入 4、后两步各保留一半。末步输入虽是 0，但状态里的 1 仍来自第一步；如果在最后一次更新前丢掉旧状态，末步结果就只剩 0。实际 RNN 用可训练的参数和激活函数来决定哪些历史能留下来。
 
 ### 长序列为什么难训练
 
@@ -239,7 +239,7 @@ Softmax 给出连续权重。对于没有被屏蔽、分数有限的项，权重
 
 取 $q=[1,0]$，三个 Key 分别为 $[1,0]$、$[0,1]$、$[1,1]$。按 $\sqrt2$ 缩放后的分数为 $[0.7071,0,0.7071]$，Softmax 约为 $[0.4011,0.1978,0.4011]$。
 
-若 Value 分别为 $[1,0]$、$[0,2]$、$[3,1]$，这行注意力的输出约为 $[1.6044,0.7967]$。输出是按相关程度组合后的新表示。
+若 Value 分别为 $[1,0]$、$[0,2]$、$[3,1]$，第一维是 $0.4011\times1+0.1978\times0+0.4011\times3=1.6044$，第二维是 $0+0.1978\times2+0.4011\times1=0.7967$。两维共用同一组权重。输出仍为两维，三份候选信息已经按权重汇在一起。
 
 ![同一组查询和键在双向与因果掩码下的注意力权重](/assets/img/ai-intro-day6/fig2-attention.png)
 
@@ -296,10 +296,10 @@ CNN、RNN 和 GNN 都把数据关系写进模型：分别围绕空间邻域、�
 自回归语言模型将序列概率分解为：
 
 $$
-p_\theta(x_{1:T})
-=\prod_{t=1}^{T}p_\theta(x_t\mid x_{<t}),\qquad
-\mathcal L_{\mathrm{AR}}
-=-\sum_{t=1}^{T}\log p_\theta(x_t\mid x_{<t}).
+\begin{gathered}
+p_\theta(x_{1:T})=\prod_{t=1}^{T}p_\theta(x_t\mid x_{\lt t}),\\
+\mathcal L_{\mathrm{AR}}=-\sum_{t=1}^{T}\log p_\theta(x_t\mid x_{\lt t}).
+\end{gathered}
 $$
 
 训练样本本身就提供目标 token。输入通常整体右移对齐预测目标，并用因果掩码防止未来信息泄露。在 Transformer 训练中，可以同时计算多个位置的损失；常见自回归推理则根据已知前缀逐个生成新 token。[6]
@@ -370,7 +370,7 @@ $$
 
 ## 参考资料
 
-课堂主线依据《深度学习核心算法与前沿模型综述》转写，`Day6.md` 摘要用于交叉核对。XOR、标量梯度、注意力权重和温度曲线为补充推演；以下资料用于核对标准定义、训练目标与模型区别。
+课堂主线依据《深度学习核心算法与前沿模型综述》。文中的 XOR、梯度和注意力小例子可直接按给出的输入手算。
 
 1. Silver 等，[AlphaGo Zero: Starting from scratch](https://deepmind.google/blog/alphago-zero-starting-from-scratch/)，Google DeepMind，2017；[Mastering the game of Go without human knowledge](https://www.nature.com/articles/nature24270)，Nature，2017。
 2. Silver 等，[AlphaZero: Shedding new light on chess, shogi, and Go](https://deepmind.google/blog/alphazero-shedding-new-light-on-chess-shogi-and-go/)，Google DeepMind，2018；[A general reinforcement learning algorithm that masters chess, shogi, and Go through self-play](https://www.science.org/doi/10.1126/science.aar6404)，Science，2018。

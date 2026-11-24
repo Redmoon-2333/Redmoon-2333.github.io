@@ -11,20 +11,20 @@ tags:
   - Checkpoint
   - Agent
   - Pregel
-excerpt: 从状态模式、Reducer归约，到动态分支Send、Command指令式路由，再到Postgres检查点持久化与时间旅行回放，系统拆解 LangGraph 核心内核。
+excerpt: 用写诗和写笑话的并行任务解释 LangGraph：节点怎样更新状态，哪些工作该并行，程序怎样保存进度。
 math: true
 ---
 
 
 ## 前言
 
-感觉每天学同类型的内容终究有点审美疲劳（可能也和我三天打鱼两天晒网的性格有关），总之今天就从繁杂的理论学习中脱离出来（我希望不会烂尾吧！），稍微轻松一点，总结一下前段时间另一个技术——Langgraph的学习进展。听的课是尚硅谷的Langgraph课程哦。
+前几天都在跟模型结构，今天换个脑子，翻回尚硅谷的 LangGraph 课。用一个小流程串起来：用户发来“写一首诗和一个笑话”，程序得分派两项工作，等结果齐了再合成回复。图决定先跑谁，状态保存已经拿到的文字，检查点让程序停下后还能接回来。
 
 ---
 
 ## 0. 目前的学习进展
 
-可以将目前的学习进度分为三个部分（当然部分三还在进行中）：
+课上的例子按三个部分组织。先看节点怎样读写状态，再看图怎样分派任务，最后给图加上检查点：
 
 ```text
 【CP1 状态底座】
@@ -42,7 +42,7 @@ TypedDict / dataclass / BaseModel 三形态
 → 多路分支 Sequence 扇出与 defer 延迟审计节点
 → 动态分支（Send API）：输入决定并行度的 Map-Reduce
 → 指令式控制流：Command(goto, update) 原生状态跳转
-→ 汇合语义：AND 扇入（全部到达）vs OR 扇入（任一触发）
+→ 汇合语义：列表边等齐结果，独立边按到达轮次触发
 → ReAct 工具调用循环与随机失败模拟
 → 递归上限限制与 RemainingSteps 优雅退避
 → RetryPolicy 异常重试策略与 CachePolicy(TTL) 内存缓存
@@ -59,25 +59,25 @@ InMemorySaver 内存检查点与 thread_id 会话隔离
 
 ## 1. 状态底座（CP1）：State 的三形态与 Reducer 归约机制
 
-在 LangGraph 中，**State 是整个图计算流转的“单一事实源（Single Source of Truth）”**。图中的每一个节点都接受当前 State 的快照作为输入，并返回对其的部分增量修改。
+State 是图在一次运行中要记住的数据，例如主题、写好的诗和写好的笑话。节点读取自己需要的字段，返回本次产生的更新。两项工作并行时，各节点在这一轮读不到另一项尚未合并的新结果。
 
 ![State 的三种声明形态](/assets/img/day4-state-schemas.svg)
 
 ### 1.1 State 的三种声明形态与选型对比
 
-在 `CP1/02_state.ipynb` 中，演示了三种声明 State 的方式：
+同一个日志字段可以写在字典、数据类或 Pydantic 模型里。先看节点如何取值，再看返回值怎样合并。
 
-| 特性 | TypedDict（官方推荐） | dataclass | Pydantic BaseModel |
+| 特性 | TypedDict | dataclass | Pydantic BaseModel |
 | :--- | :--- | :--- | :--- |
 | **定义语法** | `class S(TypedDict): ...` | `@dataclass class S: ...` | `class S(BaseModel): ...` |
 | **字段访问** | 字典语法：`state["logs"]` | 属性语法：`state.logs` | 属性语法：`state.logs` |
-| **节点返回** | 返回字典增量补丁 | 需构造并返回新的 dataclass 对象 | 可返回字典或 BaseModel 实例 |
-| **校验开销** | 编译期静态类型检查，运行期零开销 | 基础对象封装，无内置数据校验 | 运行期严格字段类型校验与转换 |
-| **双重累加风险** | **无**（返回字典增量） | **极高**（若在构造函数中自行拼接会与 Reducer 发生双重累加） | **低** |
+| **节点返回** | 可以只返回要更新的字段 | 也可以返回字典增量 | 也可以返回字典增量 |
+| **类型校验** | 类型提示可供静态工具检查 | 构造方法管理字段，不自动检查字段类型 | 构建模型时可校验或转换字段，行为由配置决定 |
+| **列表重复的条件** | 返回旧列表加新增项 | 相同 | 相同 |
 
 #### ⚠️ dataclass 中的“双重累加陷阱”代码深度解析
 
-在 `CP1/02_state.ipynb` 的第一个 Cell 中，暴露出一个非常典型的概念陷阱：
+下面的节点把旧日志和一条新日志一起交还给框架：
 
 ```python
 @dataclass
@@ -87,19 +87,44 @@ class OverAllState:
 
 def node_1(state: OverAllState) -> OverAllState:
     pre_id = state.cur_id
-    # 错误写法：开发者在内部做了 state.logs + ["..."]，又返回了 OverAllState 对象
+    # 返回的 logs 已经带上了旧值。
     return OverAllState(state.logs + ["node_1 运行完毕"], pre_id + ", node_1")
 ```
 
-**陷阱剖析**：`logs` 字段已经通过 `Annotated[..., add]` 注册了框架级的列表累加 Reducer。当 `node_1` 内部手动执行 `state.logs + [...]` 并返回时，框架接收到该全量列表，又在原有 `state.logs` 基础之上执行了一次 `operator.add`，导致 `node_1 运行完毕` 在最终日志中被重复累加了两次！
+假设旧列表是 `["收到请求"]`。如果节点返回 `["收到请求", "写完诗"]`，`add` 会再和旧列表拼接一次，结果是 `["收到请求", "收到请求", "写完诗"]`。重复的是旧记录。保留相同的 Reducer，改成只返回 `{"logs": ["写完诗"]}`，结果就只有两项。这和选择哪种 State 声明无关。装好 `langgraph==1.2.9` 后，可以直接运行下面的代码对照两种结果。
 
-**正解**：在 LangGraph 节点中，**永远只返回需要更新的增量字段（Partial Update）**，交给 Reducer 统一执行合并，这也是为什么 `TypedDict` 是最不容易踩坑的推荐形态。
+```python
+from dataclasses import dataclass
+from operator import add
+from typing import Annotated
+
+from langgraph.graph import END, START, StateGraph
+
+@dataclass
+class LogState:
+    logs: Annotated[list[str], add]
+
+def collect_logs(return_old_logs):
+    def write(state: LogState):
+        new_logs = ["写完诗"]
+        return {"logs": state.logs + new_logs if return_old_logs else new_logs}
+
+    builder = StateGraph(LogState)
+    builder.add_node("write", write)
+    builder.add_edge(START, "write")
+    builder.add_edge("write", END)
+    result = builder.compile().invoke({"logs": ["收到请求"]})
+    return result["logs"]
+
+print(collect_logs(True))   # ['收到请求', '收到请求', '写完诗']
+print(collect_logs(False))  # ['收到请求', '写完诗']
+```
 
 ---
 
 ### 1.2 Reducer 的本质与归约规则
 
-如果多个节点在执行过程中都需要修改同一个字段，或者同一个字段在图的流转中需要保留历史轨迹，就必须通过 `typing.Annotated` 显式挂载 Reducer。
+Reducer 是写入规则：收到一个字段的新值时，告诉框架怎样和旧值合并。给 `logs` 声明 `Annotated[list[str], add]` 后，节点只返回这一轮新增的日志；框架把它们接到已有列表后面。
 
 Reducer 的数学定义是一个二元归约函数：
 
@@ -107,16 +132,16 @@ $$
 \text{State}_{\text{new}}[k] = \text{Reducer}\left(\text{State}_{\text{old}}[k],\; \Delta\text{State}_{\text{node}}[k]\right)
 $$
 
-![Reducer 归约语义](/assets/img/day4-reducer-semantics.svg)
+![同一个字段的四种写法：逐步替换、列表追加、显式覆盖和按消息 ID 更新](/assets/img/day4-reducer-examples.svg)
 
-- **默认覆盖语义（无 Annotated）**：若未指定 Reducer，框架执行等价于 `lambda old, new: new`，即后执行的节点直接覆盖前序值。
+- **默认覆盖语义（无 Annotated）**：对先后到达的单次更新，新值覆盖旧值。同一个超步里有两个任务同时写普通字段时，框架会报并发更新错误，而不是选一个“最后完成”的值。
 - **列表追加归约（`operator.add`）**：`lambda old, new: old + new`，适合收集各节点执行日志或分布式子任务结果。
 - **消息专用归约（`add_messages`）**：针对对话消息设计的智能 Reducer，具备按 `message.id` 覆盖更新、无 ID 追加以及特殊删除标记识别功能。
 
 ```python
 # 自定义 Reducer 示例（CP1/03_reducer.ipynb）
 def my_reducer(left: list[str], right: list[str]) -> list[str]:
-    return left + right  # 严格保持时序合并
+    return left + right  # 一次合并：已有列表在前，本次增量在后
 
 class OverAllState(TypedDict):
     logs: Annotated[list[str], my_reducer]
@@ -171,15 +196,13 @@ builder = StateGraph(
 )
 ```
 
-**多 Schema 核心收益**：
-1. **接口安全与清晰契约**：调用方清晰知晓必传字段，无法窥探或篡改内部中间态；
-2. **状态解耦**：内部各子节点可按需使用私有状态进行细粒度封装，防止全局命名污染。
+这个调用接口接收 `username`，结束时返回 `graph_output`；中间算出的 `nickname` 不出现在普通返回里。Schema 划分字段，用户权限仍由调用层控制，例如谁能调用 `get_state` 读取线程的检查点。
 
 ---
 
 ## 2. 控制流拓扑演进（CP2）：从静态边到动态分发与指令式跳转
 
-如果说 CP1 解决了“数据如何存与合”，那么 CP2 则全面解决了“任务如何调度与流转”。
+前面已经能把两份更新写入同一张状态表。下面决定先运行哪个节点，以及什么时候等齐两条支路。
 
 ![控制流家族拓扑](/assets/img/day4-control-flows.svg)
 
@@ -212,7 +235,7 @@ builder.add_conditional_edges(
 
 ### 2.2 延迟节点（`defer=True`）
 
-在 `CP2/05_defer.ipynb` 中引入了 `defer=True` 属性。声明为延迟执行的节点，无论在图拓扑中处于何种前驱位置，Pregel 调度器都会**保证该超步内的所有常规并行节点均执行完毕后，才最后调度该延迟节点**。该机制天然适用于全链路审计日志记录、资源清理以及指标打点上报。
+`defer=True` 让已经被触发的节点等普通任务跑完再上场。设主线是 `START → first → second`，另有 `START → audit`。`audit` 虽然从起点就能触发，实跑顺序仍是 `first、second、audit`；它会等跨超步的 `second`，不是只等同一轮的 `first`。如果图走在循环中，循环仍需要自己的结束条件。
 
 ```python
 builder.add_node("audit_node", audit_node, defer=True)
@@ -223,7 +246,7 @@ builder.add_edge(START, "audit_node")  # 虽然连自 START，但会在常规任
 
 ### 2.3 动态分支（`Send` API）与 MapReduce 范式
 
-传统的 `add_edge` 或 `add_conditional_edges` 必须在编译期静态确定拓扑分支数量。而现实业务中，往往需要**根据用户输入的数组长度动态并行触发 N 个 Worker 节点**。
+静态边指定固定后继，条件边可以在运行时选择路径。若想按收到的文档数启动任务，而且每个任务有自己的输入，可用 `Send`：三个文档就给同一个摘要节点发三个任务，每次只带一份文档；结果再写回共享状态。
 
 `CP2/06_dynamic_branch.ipynb` 与 `CP2/09_mapreduce.ipynb` 展示了 `Send` API 的能力：
 
@@ -271,37 +294,39 @@ def llm_node(state: OverAllState) -> Command[Literal["tool_node", "output_node"]
     )
 ```
 
-**Command 的核心优势**：
-- 节点兼具“计算”与“动态流转决策”能力，大幅精简图中复杂的条件边声明；
-- 工具调用后，可以根据结果决定继续执行还是结束。
+图收到这份 `Command`，会保存本轮消息并安排选中的下一跳。`goto` 会增加动态路径；原来从这个节点引出的静态边仍然生效。只想执行一条后继路径时，就用一种方式配置。
 
 ---
 
 ### 2.5 扇入汇合语义：AND 汇合 vs OR 汇合
 
-在多分支汇合时，`CP2/08_fan_in_and.ipynb` 揭示了两种完全不同的扇入语义：
+假设两条支路分别整理一份材料，`node_e` 把两份材料合成一份摘要。`node_c` 在第一轮整理完；另一支多经过一个准备节点，`node_d` 到第二轮才完成。需要等齐两份结果时，把两个前驱写在同一条列表边里。
 
-![扇入语义对比：AND 一次 vs OR 多次](/assets/img/day4-fanin-and-or.svg)
+![前驱错开一轮完成时，列表边在两份结果到齐后运行一次；独立边分别跟随两轮到达](/assets/img/day4-fanin-and-or.svg)
+
+图中画的是两支错开一轮的情况。这里的「轮」是图调度的超步（superstep）；同一超步里的两个节点即使耗时不同，也属于同一轮。
 
 ```python
 # 1. AND 汇合（列表边）：node_e 必须等待 node_c 和 node_d 全部执行完毕才触发一次
 builder.add_edge(["node_c", "node_d"], "node_e")
 
-# 2. OR 汇合（多条独立边）：node_c 完成触发一次 node_e，node_d 完成又触发一次 node_e
+# 2. 独立边：任一前驱可触发；错开一轮到达时可运行两次
 # builder.add_edge("node_c", "node_e")
 # builder.add_edge("node_d", "node_e")
 ```
 
 | 汇合模式 | 语法形式 | 触发条件 | 执行次数 | 适用场景 |
 | :--- | :--- | :--- | :--- | :--- |
-| **AND 扇入** | `builder.add_edge([A, B], C)` | 前驱 A 与 B **全部完成** | **仅触发 1 次** | 数据合并、协同完成、栅栏同步 |
-| **OR 扇入** | 连续两条 `add_edge(A, C)`, `add_edge(B, C)` | 前驱 A 或 B **任一完成** | **共触发 2 次** | 竞速模式、事件通知（需下游节点幂等） |
+| 列表边 | `builder.add_edge([A, B], C)` | A、B 都完成 | 两个例子中均为 1 次 | 等齐后汇总 |
+| 两条独立边 | `add_edge(A, C)` 加 `add_edge(B, C)` | 任一前驱完成 | 同轮到达 1 次，错开到达 2 次 | 每轮有新结果时更新 |
+
+这个时序用 LangGraph 1.2.9 实跑过。让两个前驱直接接在同一个起点后，下一轮的汇合节点只排进一次；多加一个准备节点后，两条独立边会把汇合节点排进两个不同的轮次。
 
 ---
 
 ## 3. 循环、容错与运行时防护（CP2 后半）
 
-真实生产环境中的 Agent 绝非一帆风顺，网络抖动、模型幻觉、死循环和超时是必须治理的常态。
+工具接口偶尔超时，可以重试；如果图一直走回同一个节点，则需要在步数耗尽前结束。这两种情况分别在节点和整张图上处理。
 
 ![循环的两面：如何进入循环与如何优雅退出](/assets/img/day4-loop-remaining.svg)
 
@@ -345,7 +370,7 @@ def router(state: OverAllState) -> Literal["loop_node", END]:
 
 ### 3.2 节点故障重试策略：`RetryPolicy`
 
-在 `CP2/14_retry_ipynb.ipynb` 中，通过在 `add_node` 时挂载 `RetryPolicy`，可实现对指定瞬时异常（如 `HTTPError` 502/504）的自动退避重试：
+在 `add_node` 上配置 `RetryPolicy`，可以指定哪些错误值得再试。下面只重试网关错误 502/504；收到 400（请求有误）时，把错误交给上层处理。
 
 ```python
 from langgraph.types import RetryPolicy
@@ -354,13 +379,15 @@ from urllib.error import HTTPError
 builder.add_node(
     "node_a",
     node_a,
-    retry=RetryPolicy(
-        max_attempts=3,          # 最大重试 3 次（含首次共 3 次）
-        retry_on=(HTTPError,),   # 仅捕获 HTTPError 触发重试，其余异常直接向上抛出
-        jitter=False             # 关闭随机抖动（开启后可在指数退避上增加微小随机扰动以削峰）
+    retry_policy=RetryPolicy(
+        max_attempts=3,         # 含首次调用，最多执行三次
+        retry_on=lambda exc: isinstance(exc, HTTPError) and exc.code in (502, 504),
+        jitter=False,
     )
 )
 ```
+
+用这条规则做三次试验：`502 → 504 → 200` 要调用三次才成功；首次返回 `400`，只调用一次就失败；一直返回 `502`，第三次后停止。`max_attempts` 数的是调用总次数，设为 `3` 等于首次调用加最多两次重试。
 
 ---
 
@@ -381,13 +408,13 @@ builder.add_node("node_a", node_a, cache_policy=CachePolicy(ttl=10))
 graph = builder.compile(cache=InMemoryCache())
 ```
 
-**缓存命中规则**：缓存 Key 由 `node_name` + `节点输入状态的哈希指纹` 组合生成。在 10 秒内使用相同输入再次触发该节点时，将跳过 3 秒的模拟执行耗时，以 0ms 瞬间返回历史缓存；超过 10 秒后缓存失效，重新执行节点函数。
+缓存用节点命名空间和输入键定位结果。10 秒内遇到匹配项时，可以跳过节点函数，比如复用上一次摘要；过期后重新生成。它适合输入不变时允许沿用结果的步骤。检查点保存的是某个线程进行到了哪一步，与按输入复用结果的缓存用途不同。
 
 ---
 
 ## 4. 记忆与状态持久化（CP3）：Checkpointer 与时间旅行
 
-智能体若只能在单次执行期间驻留内存，便无法支撑长周期任务、多轮用户对话以及人工介入审核（Human-in-the-Loop）。**Checkpointer（检查点保存器）是 LangGraph 实现记忆、状态恢复与分支探索的底层中枢。**
+Checkpointer 是图保存执行状态的地方。只在一个进程里做试验，可以把记录放在内存；想重启后接着上一次的对话或处理任务，则把检查点存在持久化后端。
 
 ![Checkpoint 时间线与回放机制](/assets/img/day4-checkpoint-timeline.svg)
 
@@ -403,7 +430,9 @@ graph = builder.compile(checkpointer=checkpointer)
 
 # 2. PostgreSQL 数据库持久化（生产推荐）
 from langgraph.checkpoint.postgres import PostgresSaver
-DB_URL = "postgresql://user:pwd@localhost:5432/db?sslmode=disable"
+import os
+
+DB_URL = os.environ["LANGGRAPH_DB_URL"]
 
 with PostgresSaver.from_conn_string(DB_URL) as checkpointer:
     checkpointer.setup()  # 首次使用自动初始化 checkpoints 表结构
@@ -412,7 +441,7 @@ with PostgresSaver.from_conn_string(DB_URL) as checkpointer:
 
 #### 会话级隔离：`thread_id`
 
-挂载 Checkpointer 的图在执行时，必须在 `config["configurable"]` 中传入 `thread_id`。所有使用相同 `thread_id` 的调用都会自动沿用上一轮保存的 State；换用新的 `thread_id` 则立即开启一条全新的独立上下文链。
+在同一个保存器与命名空间内，`thread_id` 区分对话，`checkpoint_id` 区分这段对话的不同时间点。只传 `thread_id` 时默认定位该线程的最近检查点；想选过去某一步，要传那一步的 `checkpoint_id`。换成新 `thread_id`，不会自动拿到旧会话的消息或节点状态。
 
 ---
 
@@ -471,9 +500,9 @@ print("历史快照状态:", snapshot.values)
 | **`Edge`** | 节点之间的确定性有向连接 | 静态声明控制权转移，支持一对一、扇出（一对多）以及 AND 汇合（多对一列表形式）。 |
 | **`ConditionalEdge`** | 基于状态判断的动态路由边 | 接收路由函数，根据返回值动态决定下游走向；推荐配合 `path_map` 实现业务标签与节点名解耦。 |
 | **`Send`** | 动态并行子任务投递原语 | 允许在路由函数中返回 `Sequence[Send]`，根据运行时数据动态分发 N 个子任务，是 MapReduce 的核心支撑。 |
-| **`Command`** | 节点内部的指令式流转原语 | 允许节点在一次返回中同时完成状态修改（`update`）与下一跳指定（`goto`），消除对外部显式条件边的依赖。 |
-| **`MessagesState`** | 预置对话消息状态基类 | 预置 `messages: Annotated[list[AnyMessage], add_messages]`，封装了消息去重、更新与时序合并的标准 Reducer。 |
-| **`InMemorySaver` / `PostgresSaver`** | 状态检查点持久化后端 | 在每个超步（Superstep）执行边界自动将全局 State 与任务元信息写入持久化存储，赋予图“记忆”与“回滚”能力。 |
+| **`Command`** | 在返回更新时安排下一步 | `update` 提交字段变更，`goto` 增加运行路径；原有静态边仍生效。 |
+| **`MessagesState`** | 预置消息列表 | `add_messages` 按消息 ID 追加或替换。同样的文字使用不同 ID 时，仍是两条消息。 |
+| **`InMemorySaver` / `PostgresSaver`** | 检查点保存后端 | 保存图的状态与调度进度，可在同一线程继续或从历史位置重跑。外部业务写入由应用单独管理。 |
 | **`RemainingSteps`** | 框架托管的剩余步数变量 | 受 `recursion_limit` 约束逐步递减，节点或路由函数可感知剩余可用步数以实现优雅降级退出。 |
 | **`RetryPolicy`** | 节点级故障重试规则配置 | 声明 `max_attempts`、`retry_on` 及指数退避抖动 `jitter`，增强面对不稳定外设/API 时的系统鲁棒性。 |
 | **`CachePolicy`** | 节点级计算结果缓存规则配置 | 结合编译时挂载的 Cache 后端（如 `InMemoryCache`），按入参指纹与 `ttl` 自动复用计算结果。 |
@@ -492,6 +521,4 @@ print("历史快照状态:", snapshot.values)
 
 ## 附 · 项目仓库
 
-本篇对应的完整实战代码（CP1 / CP2 / CP3 共 26 个 Notebooks）与 8 张架构图已整理至 GitHub，开箱可复现博客全部案例：
-
-- [Redmoon-2333/Langgraph — GuiGU 课程实战（CP1-CP3）](https://github.com/Redmoon-2333/Langgraph) — 含精析长文 Day4.md、CP1/ CP2/ CP3/ 全量 notebooks 与 assets/img/ 原图，依 CP1 → CP2 → CP3 顺序执行即可复现。
+先用内存状态跑通日志例子，再读[并行任务失败后如何续跑](/2026/08/31/langgraph-cp3-error-replay-fork/)。课程中的模型调用和数据库配置可在 [LangGraph 课程实战仓库](https://github.com/Redmoon-2333/Langgraph) 查到。

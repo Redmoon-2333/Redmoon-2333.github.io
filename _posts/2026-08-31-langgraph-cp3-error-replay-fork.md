@@ -5,7 +5,7 @@ title: "Day6：图驱动 Agent 的错误恢复、Replay 与 Fork"
 date: 2026-08-31 08:00:00 +0800
 categories: [技术实践]
 tags: [LangGraph, Checkpoint, StateSnapshot, Replay, Fork, ErrorRecovery, Postgres]
-excerpt: 从并行超步中的故障注入，到 StateSnapshot 定位、失败任务恢复、历史 Replay 与 update_state 分支，完整拆解 LangGraph 的可恢复执行。
+excerpt: 写诗成功、写笑话失败。用一段可运行的 LangGraph 示例区分从故障续跑、回到历史重跑和修改历史状态后另跑。
 math: true
 ---
 
@@ -22,9 +22,7 @@ math: true
 - 如果我想从历史某一时刻重新试一次，怎样避免覆盖原来的未来？
 - 人工审核发现路由错了，能不能修改过去的状态，分出一条新的执行路径？
 
-于是又听了几节尚硅谷的课，大概学习了以下内容：
-
-> **Checkpoint 保存执行现场，StateSnapshot 描述现场，Replay 重新走旧未来，Fork 修改现场后长出新未来。**
+拿“写诗和写笑话”这一单来试：诗已经写好，笑话节点报错。先读检查点查出缺哪一项，再从原线程续跑。也可以回到更早一步重新执行，或者在那一步换个主题再跑。
 
 ![CP3-04 到 CP3-06：错误、检查点与恢复流程](/assets/img/day6-error-recovery-flow.svg)
 
@@ -42,9 +40,7 @@ math: true
 
 ![统一图结构：猫主题并行流（matplotlib 生成）](/assets/img/day6-unified-graph-matplotlib.png)
 
-> `matplotlib` 生成的扇出—并行—扇入拓扑。`node_change_topic` 扇出到 `node_poem`/`node_joke`，二者同超步并行，`node_output` 需两者完成后才执行。
-
-`node_change_topic` 先把输入的 `猫` 与轮换得到的子主题拼成 `猫:布偶猫`。它的两条边把任务扇出到 `node_poem` 和 `node_joke`；两个节点都完成后，框架才允许 `node_output` 执行。这种“扇出—并行—扇入”关系，是理解失败检查点的关键。
+`node_change_topic` 把输入的 `猫` 扩成 `猫:布偶猫`，再把同一个主题交给写诗和写笑话的节点。原例用两条独立边汇合：这两个前驱在同一超步成功时，`node_output` 会在下一超步运行一次。若以后给某一支增加前置步骤，需要等齐两份结果，就把汇合边改成 `add_edge(["node_poem", "node_joke"], "node_output")`。
 
 ### 0.2 状态视角
 
@@ -63,22 +59,11 @@ math: true
 
 ### 1.1 Checkpoint：执行现场的持久化快照
 
-Checkpoint 不是简单的“把最终结果存到数据库”。在 LangGraph 中，每个超步结束时，检查点后端可能保存：
-
-- 当前已经合并的 `values`；
-- 下一步要执行的节点 `next`；
-- 当前线程的 `thread_id` 与唯一 `checkpoint_id`；
-- 本次超步的 `tasks`，包括任务结果、错误和中断信息；
-- `metadata.step`、`source` 等运行元数据；
-- `parent_config`，用于把一个检查点连接到父检查点。
-
-因此它既像数据库中的一行状态，也像一张“程序暂停时的调试快照”。
+LangGraph 在超步边界保存检查点，记录截至这一轮的状态和执行进度。一个 `thread_id` 标记整次对话，`checkpoint_id` 找到对话里的某一站。单个任务先完成时，保存器还可以写下它在本轮的结果；同轮另一项任务失败时，续跑可以复用这份结果。
 
 ### 1.2 StateSnapshot：读取出来的对象
 
-`graph.get_state(config)` 或 `graph.get_state_history(config)` 返回的就是 `StateSnapshot`。可以把它理解为：**当时的状态值 + 下一步位置 + 任务执行证据 + 时间线关系**。
-
-排错时最重要的不是把快照整个 `print` 出来，而是先看四个字段：
+`graph.get_state(config)` 给出一份 `StateSnapshot`；`get_state_history(config)` 逐份给出历史快照。先看 `next` 还有谁没跑，再用 `tasks` 看报错和任务结果。`values` 是这次读取能看到的状态值；`metadata.step` 和 `parent_config` 则帮忙沿时间线找前一站：
 
 ```python
 {
@@ -94,20 +79,95 @@ Checkpoint 不是简单的“把最终结果存到数据库”。在 LangGraph �
 | 机制 | 是否修改历史状态 | 从哪里开始 | 典型调用 | 主要用途 |
 | --- | --- | --- | --- | --- |
 | Resume / 恢复 | 不修改旧快照 | 当前失败检查点 | `invoke(None, config)` | 修复故障后继续跑 |
-| Replay / 回放 | 不修改被选中的起点 | 指定历史 `checkpoint_id` | `invoke(None, snapshot.config)` | 重现某个历史未来 |
-| Fork / 分支 | 在旧快照上写入新值，生成新检查点 | 指定历史锚点 | `update_state(...)` | 人工纠错、反事实尝试 |
+| Replay / 回放 | 保留选中的快照，从后继重新执行 | 指定历史 `checkpoint_id` | `invoke(None, snapshot.config)` | 重新运行那一步以后的节点 |
+| Fork / 分支 | 以旧快照为起点另存带有新值的检查点 | 指定历史锚点 | `update_state(...)` | 从改过的状态试另一条路 |
 
 ![Replay 与 Fork：同一检查点的两种未来](/assets/img/day6-replay-fork.svg)
+
+比如检查点里的主题是“猫”。续跑补齐缺失的笑话；回放从旧的“猫”状态重新调用后继节点，模型生成的文字可以不同；分支先把主题改成“狗”，再按新检查点向下运行。三者要找的起点和需要重新执行的节点都不同。
 
 ---
 
 ## 2. CP3-04：制造错误——并行超步里的局部失败
 
+先用固定文字跑一遍，依赖是 `langgraph==1.2.9`。写诗和写笑话仍属同一轮并行任务。为把故障放在想观察的位置，保存器写入诗句后发出信号，写笑话节点收到信号才报错。这样每次都能看到「诗句已保存，笑话还缺」的现场。
+
+```python
+from threading import Event
+from typing import TypedDict
+
+from langgraph.checkpoint.memory import InMemorySaver
+from langgraph.graph import END, START, StateGraph
+
+class State(TypedDict, total=False):
+    poem: str
+    joke: str
+    output: str
+
+def demonstrate_resume():
+    calls = {"poem": 0, "joke": 0, "output": 0}
+    broken = True
+    poem_saved = Event()
+
+    class ObservedSaver(InMemorySaver):
+        def put_writes(self, config, writes, task_id, task_path=""):
+            super().put_writes(config, writes, task_id, task_path)
+            if any(key == "poem" for key, _ in writes):
+                poem_saved.set()
+
+    def poem(_state):
+        calls["poem"] += 1
+        return {"poem": "一首诗"}
+
+    def joke(_state):
+        calls["joke"] += 1
+        if broken:
+            if not poem_saved.wait(timeout=10):
+                raise TimeoutError("poem write was not saved")
+            raise ValueError("controlled failure")
+        return {"joke": "一个笑话"}
+
+    def output(state):
+        calls["output"] += 1
+        return {"output": state["poem"] + "；" + state["joke"]}
+
+    builder = StateGraph(State)
+    builder.add_node("poem", poem)
+    builder.add_node("joke", joke)
+    builder.add_node("output", output)
+    builder.add_edge(START, "poem")
+    builder.add_edge(START, "joke")
+    builder.add_edge("poem", "output")
+    builder.add_edge("joke", "output")
+    builder.add_edge("output", END)
+    graph = builder.compile(checkpointer=ObservedSaver())
+    config = {"configurable": {"thread_id": "resume-demo"}}
+
+    try:
+        graph.invoke({}, config, durability="sync")
+    except ValueError as exc:
+        if str(exc) != "controlled failure":
+            raise
+    else:
+        raise AssertionError("Expected the controlled failure")
+    before = calls.copy()
+    snapshot = graph.get_state(config)
+    assert snapshot.values["poem"] == "一首诗"
+
+    broken = False
+    result = graph.invoke(None, config, durability="sync")
+    return before, snapshot.next, calls, result["output"]
+
+print(demonstrate_resume())
+```
+
+失败时，`poem/joke/output` 的调用次数是 `1/1/0`，快照里有诗句，`next` 只剩 `("joke",)`。把 `broken` 改为 `False` 后，用同一个 `thread_id` 续跑，次数变成 `1/2/1`，输出“一首诗；一个笑话”。`None` 的作用是让图从该线程的检查点接着走；传一个新的请求字典会开启一次新调用。`Event` 只用来安排这次故障注入；两条分支在图里仍没有先后依赖。原练习用 PostgreSQL 保存检查点，另一段程序也能读取同一线程的记录。
+
 对应代码：[`CP3/04_error.ipynb`](https://github.com/Redmoon-2333/Langgraph/blob/main/CP3/04_error.ipynb)
 
 ### 2.1 代码概览
 
-本 Notebook 为单代码单元，结构为 `状态声明 -> 节点定义 -> 构图 -> 检查点后端 -> 编译与调用`。模型与数据库采用硬编码，便于课堂开箱即用：
+本 Notebook 为单代码单元，结构为 `状态声明 -> 节点定义 -> 构图 -> 检查点后端 -> 编译与调用`。下面保留图的状态声明与模型配置：
 
 ```python
 from langchain_deepseek import ChatDeepSeek
@@ -124,7 +184,7 @@ class OutputState(TypedDict): final_output:str
 topics = ["布偶猫","狸花猫","金渐层"]; topic_index = 0
 ```
 
-> 建议：生产环境请将 `DB_URL` 与 `DEEPSEEK_API_KEY` 改为从环境变量读取，避免将教学用的 `langgraph_user:123456` 带到线上。
+PostgreSQL 的连接串从 `LANGGRAPH_DB_URL` 读取。使用远程模型时，由对应 SDK 从 `DEEPSEEK_API_KEY` 读取访问凭据。
 
 ### 2.2 节点与故障注入
 
@@ -164,7 +224,9 @@ builder.add_edge("node_poem","node_output")
 builder.add_edge("node_joke","node_output")       # 扇入
 builder.add_edge("node_output",END)
 
-DB_URL = "postgresql://langgraph_user:123456@localhost:5432/langgraph_db?sslmode=disable"
+import os
+
+DB_URL = os.environ["LANGGRAPH_DB_URL"]
 with PostgresSaver.from_conn_string(DB_URL) as checkpointer:
     #checkpointer.setup()  # 首次建库取消注释
     graph = builder.compile(checkpointer=checkpointer)
@@ -263,7 +325,7 @@ node_output正在执行
 {'final_output': '关于猫:布偶猫的七言绝句:《咏布偶猫》雪裹蓝眸... \n 笑话:这里有几个关于布偶猫的笑话...'}
 ```
 
-说明：`change_topic` 未重跑，已成功的 `poem` 通过检查点的 `cached write` 复用，仅 `joke` 与 `output` 被执行。若提示无待执行节点，说明 `chapter03-05` 已走到 `END`，需换新 `thread_id` 重做 04→05→06。
+`poem` 的更新留在检查点后端，叫作 **pending writes（待合并写入）**：节点结果已保存，整轮状态要等 `joke` 也完成才能一起合并。这里按同一线程、同一次任务找回诗句；`CachePolicy` 则按节点输入查找可复用结果。若失败的节点已在外部创建订单，续跑会再次执行该节点，检查点不会撤销原订单。写入端可按原业务操作编号去重。
 
 ---
 
@@ -429,7 +491,7 @@ pip install langgraph langchain-deepseek langgraph-checkpoint-postgres "psycopg[
 jupyter lab
 ```
 
-- `04~07` 的 `DB_URL` 与 `model` 为硬编码，开箱即用；生产环境请改为从环境变量读取。
+- 数据库实验需要可连接的 PostgreSQL 和可用的模型配置。正文把连接串从 `LANGGRAPH_DB_URL` 读取；查看历史和续跑时使用同一数据库与线程编号。
 - `04` 的 `#checkpointer.setup()` 首次需取消注释以建表，`08` 为内存后端无需此步。
 - 启动路径应在仓库根，使 `load_dotenv(override=True)` 能找到 `.env`。
 
@@ -448,16 +510,9 @@ jupyter lab
 
 ## 9. 复习卡片
 
-1. **失败节点在哪里看？** 看 `StateSnapshot.tasks` 的 `task.error`（05 的 `state_history`）。
-2. **哪些节点已经成功？** 看 `task.result`，以及 `snapshot.values` 中是否已有对应字段。
-3. **从失败点继续怎么写？** `graph.invoke(None, config=config)`（06）。
-4. **从指定历史点重放怎么写？** 先 `get_state_history` 找 `next==('node_poem','node_joke')`，再 `graph.invoke(None, config=new_checkpoint.config)`（07）。
-5. **修改过去并分支怎么写？** `graph.update_state(config, values, as_node=...)`（08）。
-6. **`as_node=START` 做什么？** 把更新当成新输入，后续节点重新走。
-7. **`as_node="router_node"` 做什么？** 伪造该节点产出，跳过节点本身，但重算出边。
-8. **PostgresSaver 和 InMemorySaver 的区别？** 前者跨进程持久化，后者只在当前 Python 进程中存在（08 重启即失）。
-9. **Replay 是否保证 LLM 文本一致？** 不保证，除非额外做缓存或确定性控制。
-10. **为什么必须记录 checkpoint_id？** 因为它是时间线中唯一的历史定位点。
+- 先读 `tasks` 查任务错误和已保存的写入，再用 `values` 核对已合并状态。两者的时间点可以不同。
+- 从当前故障点续跑用线程配置，回到历史位置则带上该快照的 `checkpoint_id`。回放中的模型调用会重新执行。
+- `update_state(..., as_node=...)` 生成新检查点。选 `START` 从输入端重新路由；指定路由节点则把新值当作该节点的输出，接下来重新计算出边。
 
 ---
 

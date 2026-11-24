@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 478" width="640" height="478" role="img" aria-labelledby="title desc">
+  <title id="title">LangGraph 状态字段怎样接收一条写入</title>
+  <desc id="desc">普通字段每个超步可写一次；列表 reducer 追加；Overwrite 清空列表；add_messages 按 ID 替换或追加消息。</desc>
+  <rect width="640" height="478" rx="8" fill="#fafaf7"/>
+  <g font-family="Microsoft YaHei, PingFang SC, Noto Sans CJK SC, sans-serif" fill="#232323">
+    <text x="34" y="47" font-size="28" font-weight="700">LangGraph 如何更新一个字段</text>
+    <g font-size="23" font-weight="700">
+      <text x="34" y="110">普通字段：新值替换旧值</text>
+      <text x="34" y="206">列表追加：现有值 + 新增值</text>
+      <text x="34" y="302">显式覆盖：直接写入给定值</text>
+      <text x="34" y="398">消息列表：按消息 ID 查找</text>
+    </g>
+    <g font-size="20" fill="#494949">
+      <text x="34" y="146">跨超步：A → B；同一超步写两次会报错</text>
+      <text x="34" y="242">[开始] + [检查完成] → [开始, 检查完成]</text>
+      <text x="34" y="338">旧列表 [开始] 收到 Overwrite([]) → []</text>
+      <text x="34" y="434">已有 ID 就替换对应消息，新 ID 则追加</text>
+    </g>
+  </g>
+  <path d="M34 71H606 M34 172H606 M34 268H606 M34 364H606" fill="none" stroke="#d4d1cb"/>
+  <path d="M34 71H114" fill="none" stroke="#b31b1b" stroke-width="3"/>
+</svg>

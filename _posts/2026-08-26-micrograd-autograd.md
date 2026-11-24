@@ -4,7 +4,7 @@ title: "Day1：从零手写 autograd：micrograd 全记录"
 date: 2026-08-26 05:00:00 +0800
 categories: [技术实践]
 tags: [micrograd, 反向传播, Karpathy, autograd, 零基础]
-excerpt: 追随Karpathy大佬的脚步
+excerpt: 用一个乘法节点和一步参数更新，算清计算图如何把损失的梯度传回参数。
 math: true
 ---
 
@@ -35,6 +35,8 @@ micrograd 是一个 **约 100 行的标量级 autograd 引擎**，用一个紧�
 
 PyTorch 的 `.backward()` 同样沿计算图反向传播并累加梯度。张量运算和工程实现更复杂，micrograd 则把这一过程展开在标量运算上。
 
+先看它要解的题。设模型用 `w * x` 做预测，输入 `x=2`，正确答案是 `4`，但参数 `w=1`，所以预测成了 `2`。把预测误差平方，得到损失 `(2-4)²=4`。接下来该把 `w` 调大还是调小？autograd 计算的是**损失相对于 `w` 的变化率**，训练器才根据这个数决定怎么更新。第 10 节会用这组数完整走一遍更新。
+
 ## 1. 导数与梯度：一切从割线开始
 
 **导数的数值定义**：
@@ -59,7 +61,7 @@ print((d2 - d1)/h)  # ≈ -3.0，正是 b 的值 → ∂d/∂a = b
 ```
 
 乘积式的偏导有个好记的规律：**求谁谁的搭档留下来**（∂d/∂a = b，∂d/∂b = a）。这个"互换"就是后面乘法节点梯度规则的来源。
-**梯度**就是"把每个输入的偏导打包成一个向量"，指 loss 上升最快的方向；**负梯度**就是下降最快的方向——训练时参数沿它进行逐步变化。
+把每个参数的偏导排成一列，就得到了梯度。对足够小的一步，沿负梯度移动会降低当前损失；如果步子太大，可能跨过低点，损失反而上升。训练代码里的学习率决定这一步迈多远。
 
 ## 2. 计算图：把表达式记成图
 
@@ -184,11 +186,11 @@ print(a.grad)    # 正确答案 2.0（d(a+a)/da = 2）
 
 ## 6. 手推一遍神经元的梯度（链式法则）
 
-以 $o = \tanh(x_1 w_1 + x_2 w_2 + b)$（反传后那张图）为例，数值：$x_1=2, w_1=-3, x_2=0, w_2=1, b=6.8814$，算出 $n = 0.8814$，$o = \tanh(0.8814) \approx 0.7067$。
+以 $o = \tanh(x_1 w_1 + x_2 w_2 + b)$（反传后那张图）为例，数值：$x_1=2, w_1=-3, x_2=0, w_2=1, b\approx6.8814$，算出 $n \approx 0.8814$，$o = \tanh(n) \approx 0.7071$。
 运用链式法则逐级递推：
 
 $$
-\frac{\partial o}{\partial n} = 1 - \tanh^2(n) = 1 - o^2 \approx 1 - 0.7067^2 \approx 0.5000
+\frac{\partial o}{\partial n} = 1 - \tanh^2(n) = 1 - o^2 \approx 1 - 0.7071^2 \approx 0.5000
 $$
 
 $$
@@ -196,18 +198,20 @@ $$
 $$
 
 $$
-\frac{\partial o}{\partial x_1} = 0.5 \times w_1 = -1.5, \qquad \frac{\partial o}{\partial x_2} = 0.5 \times w_2 = 0
+\frac{\partial o}{\partial x_1} \approx -1.5, \qquad
+\frac{\partial o}{\partial x_2} \approx 0.5 \times w_2 = 0.5, \qquad
+\frac{\partial o}{\partial w_2} \approx 0.5 \times x_2 = 0
 $$
 
-对照第 3 节"反传后"的图：`w1.grad = 1.0`、`x1.grad = -1.5`、`x2.grad = 0`、`b.grad = 0.5`——**代码算的和手推的完全一致**。
+`x2=0` 时，怎么改 `w2` 都只会得到 `0 * w2 = 0`，所以 `w2.grad` 为零。反过来，改 `x2` 会改变 `x2 * 1`，所以 `x2.grad` 是 `0.5`。第 3 节的图显示的也是这两个值。
 
 ## 7. tanh 拆成原子运算：分层的自由度
 
-把 tanh 手工展开成 $\dfrac{e^{2n}-1}{e^{2n}+1}$，用 exp/加减除重新搭建后再反传——**梯度结果和整体 tanh 版一字不差**：
+把 tanh 手工展开成 $\dfrac{e^{2n}-1}{e^{2n}+1}$，每个 `exp`、加减和除法都单独建节点。这组输入下，两种图算出的梯度在图示精度内一致。
 
 ![tanh 拆原子后的计算图](/assets/img/micrograd-tanh-atoms.svg)
 
-**autograd 不关心运算打包过程如何**。粗粒度（tanh 一个节点）快，细粒度（exp/除法）灵活，梯度都正确。
+拆开来方便看链式法则。实际代码可直接调用 `tanh`；手写的指数式在输入很大时会先遇到指数溢出。
 
 ## 8. 与 PyTorch 对比
 
@@ -215,12 +219,15 @@ $$
 
 ```python
 import torch
-x1 = torch.Tensor([2.0]).double(); x1.requires_grad = True   # 叶子默认不求导，须显式开
-...
-n = x1*w1 + x2*w2 + b
-o = torch.tanh(n)
+
+x1, w1, x2, w2, b = [
+    torch.tensor(v, dtype=torch.float64, requires_grad=True)
+    for v in (2.0, -3.0, 0.0, 1.0, 6.881373587019543)
+]
+o = torch.tanh(x1 * w1 + x2 * w2 + b)
 o.backward()
-print(x1.grad.item())   # -1.5……与 micrograd 完全一致
+print([round(v.grad.item(), 4) for v in (x1, w1, x2, w2, b)])
+# [-1.5, 1.0, 0.5, 0.0, 0.5]
 ```
 
 对照表：
@@ -238,6 +245,8 @@ print(x1.grad.item())   # -1.5……与 micrograd 完全一致
 三件套就是**套娃**：神经元 → 层（一排神经元）→ 多层感知机（一摞层）。
 
 ```python
+import random
+
 class Neuron:
     def __init__(self, nin):
         self.w = [Value(random.uniform(-1,1)) for _ in range(nin)]  # nin 个权重
@@ -251,6 +260,9 @@ class Neuron:
 class Layer:
     def __init__(self, nin, nout):
         self.neurons = [Neuron(nin) for _ in range(nout)]           # nout 个并列
+    def __call__(self, x):
+        outputs = [neuron(x) for neuron in self.neurons]
+        return outputs[0] if len(outputs) == 1 else outputs
     def parameters(self):
         return [p for neuron in self.neurons for p in neuron.parameters()]
 
@@ -319,9 +331,13 @@ Layer(4→1) → +0.4297                                   ← 标量
 
 **参数量**：第1层 4×(3+1)=16，第2层 4×(4+1)=20，第3层 1×(4+1)=5，共 **41 个**——`len(n.parameters())` 验证一致。每个参数都是 `Value`，所以 41 个参数全部自动进图、自动拿梯度。
 
-三个工程小细节：`__call__` 让 `neuron(x)` 语法成立；`Layer.__call__` 在单神经元时返回标量而非 `[标量]`（最后一层好用）；`parameters()` 层层向上汇总，MLP 一口气交出全部可训练参数。
+`__call__` 让 `neuron(x)` 和 `layer(x)` 成立。这份实现把单神经元层的输出取成标量，适合单输出的最后一层；如果要让中间层宽度也等于 1，就要让中间层继续传 `[输出]`，供下一层逐项读取。`parameters()` 把各层的权重和偏置收成一个列表，训练循环据此更新它们。
 
 ## 10. 训练循环：深度学习的“公式”
+
+先回到 `x=2、w=1、目标=4`。误差平方对预测值的导数是 $2(2-4)=-4$，而预测值对 `w` 的导数是 `x=2`。两段相乘，`w.grad=-8`。取学习率 `0.1`，更新成 `1 - 0.1 * (-8) = 1.8`；再算一次，预测变成 `3.6`，损失从 `4` 降到 `0.16`。梯度为负，所以这一步把参数往上调。
+
+下面的多样本训练做的是同一件事。一次前向用当前参数计算全部预测，再把各样本的平方误差加起来；`backward()` 求的是这份总损失对每个参数的导数。
 
 ```python
 for k in range(100):
@@ -346,7 +362,4 @@ loss 从 **6.01 → 0.0051**，预测 `[0.959, -0.992, -0.960, 0.958]` vs 标签
 
 ## 11. Day 1 收工小结
 
-前前后后花了近六个小时（一直出bug这一块）一天刚好把深度学习的最小闭环搞定了：
-1. **autograd = 把求值过程记成图**：`Value` 用 `_prev`/`_op` 记录“该数据是从哪来的”，最终的表达式就可回放、可求导。
-2. **反向传播 = 拓扑序 + 链式法则 + `+=`**：全局调度只是一次逆序遍历，每个节点只管自己的局部规则（链式法则发力）；多路径梯度必须累加，所以每轮训练前要清零。
-3. **网络 = 套娃**：Neuron → Layer → MLP，`parameters()` 层层上交，41 个参数全部自动进图、自动拿梯度；训练简单来说呢，就是四步——前向、清零、反向、更新。
+调试这份练习前后用了近六小时。遇到梯度不对，先用 `a+a` 检查同一个输入是否收到两次贡献，再用 `x2*w2` 区分对输入求导和对权重求导。小图能手算，问题容易定位。
